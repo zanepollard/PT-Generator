@@ -4,26 +4,26 @@ import fnmatch
 import os
 
 siteid = "" #6 chars from header file ***DONE***
-seqnum = "" #4 chars from variable file; named "SEQUENCE#"
+seqnum = [] #4 chars from variable file; named "SEQUENCE#"
 STATCODE = "00" #"00"
-totAmt = "" #6 chars from header file; formatted like 0000.00 minus the decimal eg 002730 = 0027.30
+totAmt = [] #6 chars from header file; formatted like 0000.00 minus the decimal eg 002730 = 0027.30 ***DONE***
 ACT = "00"
 TRANTYPE ="00"
-pCode = "" #2 char product code ***DONE***
+pCode = [] #2 char product code ***DONE***
 price = "10000000" #8 char price 0.0000000 ***DONE***
-quantity = "" #8 chars from d log, index 10 ***DONE***
-odometer = "" #7 chars in variables file
+quantity = [] #8 chars from d log, index 10 ***DONE***
+odometer = [] #7 chars in variables file
 OID = "0" #odometer implied decimal
-pump = "" #2 char from variables file
-tranNum = "" #4 char from variable file ***DONE***
-tranDate = "" #6 chars YYMMDD
-tranTime = "" #4 char HHNN (military time)
+pump = [] #2 char from variables file
+tranNum = [] #4 char from variable file ***DONE***
+tranDate = [] #6 chars YYMMDD ***DONE***
+tranTime = [] #4 char HHNN (military time)
 fill = "00000000"
-id_vehicle = "" #8 char from variable file name is id_vehicle
-id_card = "" #7 char from variable file
+id_vehicle = [] #8 char from variable file name is id_vehicle
+id_card = [] #7 char from variable file
 part_id ="000"
-id_acct = "" #6 chars from variable file of the same name
-vehicle = "" #4 chars, same as id_vehicle but without leading zeros
+id_acct = [] #6 chars from variable file of the same name
+vehicle = [] #4 chars, same as id_vehicle but without leading zeros
 end = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000DCF000000000000000000000000"
 
 #Formats date in the proper PT file format
@@ -39,12 +39,12 @@ def decimalSplit(number, x, y): #y is decimal t/f
                 temp[0]= "0"+temp[0]
             for i in range(3-len(temp[1])):
                 temp[1]= temp[1]+"0"
-            quantity = temp[0]+temp[1]
+            quantity.append(temp[0]+temp[1])
         else:
             temp = number
             for i in range(5-len(temp)):
                 temp = "0"+temp
-            quantity = temp + "000"
+            quantity.append(temp + "000")
     else:
         if y:
             temp = number.split('.')
@@ -57,7 +57,7 @@ def decimalSplit(number, x, y): #y is decimal t/f
             else:
                 for i in range(2-len(temp[1])):
                     temp[1]= temp[1]+"0"
-            totAmt  =temp[0]+temp[1]
+            totAmt.append(temp[0]+temp[1])
 
 def decimalCheck(number, x):
     decimalfind = re.compile(r"\d+\.\d+")
@@ -79,8 +79,7 @@ def ptGen():
         
         for row in reader:
             rowdata = row
-            tranNum = rowdata[3][1:8]
-            #print(tranNum)
+            tranNum.append(rowdata[3][1:8])
             if firstRun:
                 raw_id = rowdata[0]
                 raw_id = re.sub(r'[a-z_\s-]','', raw_id, flags=re.IGNORECASE)
@@ -94,16 +93,13 @@ def ptGen():
                     DFile = file
             with open(DFile, newline='') as csvfile:
                 dreader = csv.reader(csvfile, quotechar="\"")
-                dPattern = "[0-9]" + tranNum
+                dPattern = "[0-9]" + tranNum[0] #!TODO
                 for drow in dreader:
                     ddata = drow
                     if re.search(dPattern, drow[3]):
                         decimalCheck(drow[10], True) #True = Quantity
                         decimalCheck(drow[48], False)
-                        #quantity = drow[10]
-                        #pCode = drow[11]
-                        #totAmt = drow[48]
-            #print(pCode)
-        #print(tranDate)
-    print(siteid)
+                        pCode.append(drow[11])
+    print(siteid+"9999"+totAmt[0]+ACT+TRANTYPE+pCode[0]+price+quantity[0]) #test line
+    #print(siteid)
 ptGen()
