@@ -41,7 +41,11 @@ def decimalSplit(number, x):
         quantity=temp[0]+temp[1]
         print(quantity)
     else:
-        pass
+        temp = number
+        for i in range(5-len(temp)):
+            temp = "0"+temp
+        quantity = temp + "000"
+        print(quantity)
 
 def decimalCheck(number):
     decimalfind = re.compile(r"\d+\.\d+")
