@@ -31,28 +31,40 @@ def dFormat(date):
     fDate = date[8:10] + date[0:2] + date[3:5]
     return fDate
 
-def decimalSplit(number, x):
+def decimalSplit(number, x, y): #y is decimal t/f
     if x:
-        temp = number.split('.')
-        for i in range(5-len(temp[0])):
-            temp[0]= "0"+temp[0]
-        for i in range(3-len(temp[1])):
-            temp[1]= temp[1]+"0"
-        quantity=temp[0]+temp[1]
-        print(quantity)
+        if y:
+            temp = number.split('.')
+            for i in range(5-len(temp[0])):
+                temp[0]= "0"+temp[0]
+            for i in range(3-len(temp[1])):
+                temp[1]= temp[1]+"0"
+            quantity = temp[0]+temp[1]
+        else:
+            temp = number
+            for i in range(5-len(temp)):
+                temp = "0"+temp
+            quantity = temp + "000"
     else:
-        temp = number
-        for i in range(5-len(temp)):
-            temp = "0"+temp
-        quantity = temp + "000"
-        print(quantity)
+        if y:
+            temp = number.split('.')
+            for i in range(4-len(temp[0])):
+                temp[0]= "0"+temp[0]
+            if len(temp[1])>2:
+                temp[1]= temp[1][0:2]
+                for i in range(2-len(temp[1])):
+                    temp[1]= temp[1]+"0"
+            else:
+                for i in range(2-len(temp[1])):
+                    temp[1]= temp[1]+"0"
+            totAmt  =temp[0]+temp[1]
 
-def decimalCheck(number):
+def decimalCheck(number, x):
     decimalfind = re.compile(r"\d+\.\d+")
     if decimalfind.match(number):
-        decimalSplit(number, True)
+        decimalSplit(number, x, True)
     else:
-        decimalSplit(number, False)
+        decimalSplit(number, x, False)
 
 def ptGen():
     firstRun = True
@@ -86,8 +98,8 @@ def ptGen():
                 for drow in dreader:
                     ddata = drow
                     if re.search(dPattern, drow[3]):
-                        decimalCheck(drow[10]) #True = Quantity
-
+                        decimalCheck(drow[10], True) #True = Quantity
+                        decimalCheck(drow[48], False)
                         #quantity = drow[10]
                         #pCode = drow[11]
                         #totAmt = drow[48]
