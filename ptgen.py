@@ -31,13 +31,24 @@ def dFormat(date):
     fDate = date[8:10] + date[0:2] + date[3:5]
     return fDate
 
-def decimalCheck(number, x):
-    decimalfind = re.compile(r"\d+\.\d+")
-    if decimalfind.match(number):
-        if x:
-            pass
+def decimalSplit(number, x):
+    if x:
+        temp = number.split('.')
+        for i in range(5-len(temp[0])):
+            temp[0]= "0"+temp[0]
+        for i in range(3-len(temp[1])):
+            temp[1]= temp[1]+"0"
+        quantity=temp[0]+temp[1]
+        print(quantity)
     else:
         pass
+
+def decimalCheck(number):
+    decimalfind = re.compile(r"\d+\.\d+")
+    if decimalfind.match(number):
+        decimalSplit(number, True)
+    else:
+        decimalSplit(number, False)
 
 def ptGen():
     firstRun = True
@@ -71,7 +82,7 @@ def ptGen():
                 for drow in dreader:
                     ddata = drow
                     if re.search(dPattern, drow[3]):
-                        decimalCheck(drow[10], True) #True = Quantity
+                        decimalCheck(drow[10]) #True = Quantity
 
                         #quantity = drow[10]
                         #pCode = drow[11]
