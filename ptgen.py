@@ -58,6 +58,11 @@ def decimalSplit(number, x, y): #y is decimal t/f
                 for i in range(2-len(temp[1])):
                     temp[1]= temp[1]+"0"
             totAmt.append(temp[0]+temp[1])
+        else:
+            temp = number
+            for i in range(4-len(number)):
+                temp = "0"+temp
+            totAmt.append(temp+"00")
 
 def decimalCheck(number, x):
     decimalfind = re.compile(r"\d+\.\d+")
@@ -67,6 +72,7 @@ def decimalCheck(number, x):
         decimalSplit(number, x, False)
 
 def ptGen():
+    runCount = 0
     firstRun = True
     raw_id = ""
     rowdata = []
@@ -93,13 +99,15 @@ def ptGen():
                     DFile = file
             with open(DFile, newline='') as csvfile:
                 dreader = csv.reader(csvfile, quotechar="\"")
-                dPattern = "[0-9]" + tranNum[0] #!TODO
+                dPattern = "[0-9]" + tranNum[runCount] #!TODO
                 for drow in dreader:
                     ddata = drow
                     if re.search(dPattern, drow[3]):
                         decimalCheck(drow[10], True) #True = Quantity
                         decimalCheck(drow[48], False)
-                        pCode.append(drow[11])
-    print(siteid+"9999"+totAmt[0]+ACT+TRANTYPE+pCode[0]+price+quantity[0]) #test line
+                        pCode.append(drow[11])               
+            runCount+=1
+        for i in range(runCount):
+            print(siteid+"9999"+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]) #test line
     #print(siteid)
 ptGen()
