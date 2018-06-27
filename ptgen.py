@@ -155,12 +155,33 @@ def ptGen():
                         elif vrow[8] == "ID_ACCT":
                             id_acct.append(format(vrow[9],6))
                         elif vrow[8] == "VEHICLE":
-                            vehicle.append(format(vrow[9],4))               
+                            vehicle.append(format(vrow[9],4))
+
+                        #checks for null values in the variables 
+                        if len(odometer) < runCount:
+                            odometer.append("0000000")
+                        elif len(seqnum)< runCount:
+                            seqnum.append("0000")
+                        elif len(pump)< runCount:
+                            pump.append("00")
+                        elif len(id_vehicle)< runCount:
+                            id_vehicle.append("00000000")
+                        elif len(id_card)< runCount:
+                            id_card.append("0000000")
+                        elif len(id_acct)< runCount:
+                            id_acct.append("000000")
+                        elif len(vehicle)< runCount:
+                            vehicle.append("0000")
+                                     
             runCount+=1
     #Outputs the data line by line to the .dat file
     ptFileName = cday()
-    f= open("pt%s.dat" % ptFileName,"w+")
-    for i in range(runCount):
-        f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
+    #f= open("pt%s.dat" % ptFileName,"w+")
+    f= open("odlog.txt", "w+")
+    print(len(odometer))
+
+    for i in odometer: #range(runCount):
+        f.write("%s\n" % i)
+        #f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
 
 ptGen()
