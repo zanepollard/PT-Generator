@@ -4,27 +4,27 @@ import fnmatch
 import os
 import datetime
 
-siteid = "" #6 chars from header file ***DONE***
-seqnum = [] #4 chars from variable file; named "SEQUENCE#"
-STATCODE = "00" #"00"
-totAmt = [] #6 chars from header file; formatted like 0000.00 minus the decimal eg 002730 = 0027.30 ***DONE***
+siteid = ""
+seqnum = []
+STATCODE = "00"
+totAmt = [] 
 ACT = "00"
 TRANTYPE ="00"
-pCode = [] #2 char product code ***DONE***
-price = "10000000" #8 char price 0.0000000 ***DONE***
-quantity = [] #8 chars from d log, index 10 ***DONE***
-odometer = [] #7 chars in variables file
-OID = "0" #odometer implied decimal
-pump = [] #2 char from variables file
-tranNum = [] #4 char from variable file ***DONE***
-tranDate = [] #6 chars YYMMDD ***DONE***
-tranTime = [] #4 char HHNN (military time) ***DONE***
+pCode = [] 
+price = "10000000"
+quantity = []
+odometer = []
+OID = "0"
+pump = [] 
+tranNum = []
+tranDate = []
+tranTime = []
 fill = "00000000"
-id_vehicle = [] #8 char from variable file name is id_vehicle
-id_card = [] #7 char from variable file
+id_vehicle = []
+id_card = []
 part_id ="000"
-id_acct = [] #6 chars from variable file of the same name
-vehicle = [] #4 chars, same as id_vehicle but without leading zeros
+id_acct = []
+vehicle = []
 end = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000DCF000000000000000000000000"
 fileDate = ""
 
@@ -37,9 +37,9 @@ def dFormat(date):
     return fDate
 
 
-def decimalSplit(number, x, y): #y is decimal t/f
-    if x:
-        if y:
+def decimalSplit(number, x, y): #y is decimal true/false
+    if x: #quantity value check
+        if y: #check if it has a decimal or not
             temp = number.split('.')
             for i in range(5-len(temp[0])):
                 temp[0]= "0"+temp[0]
@@ -77,17 +77,18 @@ def decimalCheck(number, x):
     else:
         decimalSplit(number, x, False)
 
+#Ensures the value that was put into it has the proper amount of zeros
 def format(oD, num):
     temp = oD
     for i in range(num-len(oD)):
         temp = "0"+temp
     return temp
 
+#pulls today's date in the format requred of the naming covention
 def cday():
     now = datetime.datetime.now()
     day=""
     month=""
-    year=""
     if len(str(now.month))<2:
         month = "0" + str(now.month)
     else:
@@ -114,7 +115,7 @@ def ptGen():
         for row in reader:
             rowdata = row
             tranNum.append(rowdata[3][1:8])
-            if firstRun:
+            if firstRun: #Pulls all the single use variables into memory from the csv
                 raw_id = rowdata[0]
                 raw_id = re.sub(r'[a-z_\s-]','', raw_id, flags=re.IGNORECASE)
                 firstRun = False
@@ -125,11 +126,10 @@ def ptGen():
             for file in os.listdir('.'):
                 if fnmatch.fnmatch(file,'}d*.d1c'):
                     DFile = file
-            with open(DFile, newline='') as csvfile:
+            with open(DFile, newline='') as csvfile: #opening the data file csv
                 dreader = csv.reader(csvfile, quotechar="\"")
                 dPattern = "[0-9]" + tranNum[runCount] #!TODO
                 for drow in dreader:
-                    ddata = drow
                     if re.search(dPattern, drow[3]):
                         decimalCheck(drow[10], True) #True = Quantity
                         decimalCheck(drow[48], False)
@@ -138,7 +138,7 @@ def ptGen():
             for file in os.listdir('.'):
                 if fnmatch.fnmatch(file,'}v*.d1c'):
                     VFile = file    
-            with open(VFile, newline='') as csvfile:
+            with open(VFile, newline='') as csvfile: #opening the variable csv file
                 vreader = csv.reader(csvfile, quotechar="\"") 
                 for vrow in vreader:
                     if tranNum[runCount] == vrow[3][1:5]:
@@ -157,6 +157,7 @@ def ptGen():
                         elif vrow[8] == "VEHICLE":
                             vehicle.append(format(vrow[9],4))               
             runCount+=1
+    #Outputs the data line by line to the .dat file
     ptFileName = cday()
     f= open("pt%s.dat" % ptFileName,"w+")
     for i in range(runCount):
