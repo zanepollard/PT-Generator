@@ -3,6 +3,7 @@ import re
 import fnmatch
 import os
 import datetime
+import shutil
 
 siteid = ""
 seqnum = []
@@ -175,9 +176,28 @@ def ptGen():
                                      
             runCount+=1
     #Outputs the data line by line to the .dat file
+    if not os.path.exists("%s" % siteid):
+        os.makedirs("%s" % siteid)
+    os.chdir("%s" % siteid)
+    if not os.path.exists("%s" % tranDate):
+        os.makedirs("%s" % tranDate)
+    os.chdir("%s" % tranDate)
+    if not os.path.exists("d1c files"):
+        os.makedirs("d1c files")
     ptFileName = cday()
     f= open("pt%s.dat" % ptFileName,"w+")
     for i in range(runCount):
         f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
+    os.chdir("..")
+    '''
+    cwd = os.getcwd()
 
+    files = os.listdir(os.path.dirname(os.getcwd()))
+    print(files)
+    for f in files:
+        dest = "{0}{1}{2}{3}{4}{5}".format(cwd, siteid, "\\", tranDate, "\\d1c files\\",f) 
+        _, ext = os.path.splitext(f)
+        if ext == '.d1c':
+            shutil.move(os.path.abspath(f), dest)
+    '''
 ptGen()
