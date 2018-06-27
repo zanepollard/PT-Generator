@@ -176,12 +176,10 @@ def ptGen():
             runCount+=1
     #Outputs the data line by line to the .dat file
     ptFileName = cday()
-    #f= open("pt%s.dat" % ptFileName,"w+")
-    f= open("odlog.txt", "w+")
+    f= open("pt%s.dat" % ptFileName,"w+")
     print(len(odometer))
 
-    for i in odometer: #range(runCount):
-        f.write("%s\n" % i)
-        #f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
+    for i in range(runCount):
+        f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
 
 ptGen()
