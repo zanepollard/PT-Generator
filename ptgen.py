@@ -2,6 +2,7 @@ import csv
 import re
 import fnmatch
 import os
+import datetime
 
 siteid = "" #6 chars from header file ***DONE***
 seqnum = [] #4 chars from variable file; named "SEQUENCE#"
@@ -33,8 +34,8 @@ def tFormat(time):
 
 def dFormat(date):
     fDate = date[8:10] + date[0:2] + date[3:5]
-    filedate = date[0:2] + date[3:5] + date[8:10]
     return fDate
+
 
 def decimalSplit(number, x, y): #y is decimal t/f
     if x:
@@ -81,6 +82,21 @@ def format(oD, num):
     for i in range(num-len(oD)):
         temp = "0"+temp
     return temp
+
+def cday():
+    now = datetime.datetime.now()
+    day=""
+    month=""
+    year=""
+    if len(str(now.month))<2:
+        month = "0" + str(now.month)
+    else:
+        month = str(now.month)
+    if len(str(now.day))<2:
+        day = "0" + str(now.month)
+    else:
+        day = str(now.day)
+    return month + day + str(now.year)[2:4]
 
 def ptGen():
     runCount = 0
@@ -141,8 +157,9 @@ def ptGen():
                         elif vrow[8] == "VEHICLE":
                             vehicle.append(format(vrow[9],4))               
             runCount+=1
-        f= open("testOutput.dat","w+")
-        for i in range(runCount):
-            f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
+    ptFileName = cday()
+    f= open("pt%s.dat" % ptFileName,"w+")
+    for i in range(runCount):
+        f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
 
 ptGen()
