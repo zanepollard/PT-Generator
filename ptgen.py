@@ -188,16 +188,16 @@ def ptGen():
     f= open("pt%s.dat" % ptFileName,"w+")
     for i in range(runCount):
         f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
+    os.chdir("..") 
     os.chdir("..")
-    '''
+    print(os.getcwd())
     cwd = os.getcwd()
+    dest = os.getcwd() + '\\{0}\\{1}\\d1c files\\'.format(siteid,tranDate)
+    h = "\\}}h{0}.d1c".format(tranDate)
+    d = "\\}}d{0}.d1c".format(tranDate)
+    v = "\\}}v{0}.d1c".format(tranDate)
+    shutil.move(cwd + h, dest + h)
+    shutil.move(cwd + d, dest + d)
+    shutil.move(cwd + v, dest + v)
 
-    files = os.listdir(os.path.dirname(os.getcwd()))
-    print(files)
-    for f in files:
-        dest = "{0}{1}{2}{3}{4}{5}".format(cwd, siteid, "\\", tranDate, "\\d1c files\\",f) 
-        _, ext = os.path.splitext(f)
-        if ext == '.d1c':
-            shutil.move(os.path.abspath(f), dest)
-    '''
 ptGen()
