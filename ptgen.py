@@ -42,32 +42,32 @@ def decimalSplit(number, x, y): #y is decimal true/false
     if x: #quantity value check
         if y: #check if it has a decimal or not
             temp = number.split('.')
-            for i in range(5-len(temp[0])):
+            for __ in range(5-len(temp[0])):
                 temp[0]= "0"+temp[0]
-            for i in range(3-len(temp[1])):
+            for __ in range(3-len(temp[1])):
                 temp[1]= temp[1]+"0"
             quantity.append(temp[0]+temp[1])
         else:
             temp = number
-            for i in range(5-len(temp)):
+            for __ in range(5-len(temp)):
                 temp = "0"+temp
             quantity.append(temp + "000")
     else:
         if y:
             temp = number.split('.')
-            for i in range(4-len(temp[0])):
+            for __ in range(4-len(temp[0])):
                 temp[0]= "0"+temp[0]
             if len(temp[1])>2:
                 temp[1]= temp[1][0:2]
-                for i in range(2-len(temp[1])):
+                for __ in range(2-len(temp[1])):
                     temp[1]= temp[1]+"0"
             else:
-                for i in range(2-len(temp[1])):
+                for __ in range(2-len(temp[1])):
                     temp[1]= temp[1]+"0"
             totAmt.append(temp[0]+temp[1])
         else:
             temp = number
-            for i in range(4-len(number)):
+            for __ in range(4-len(number)):
                 temp = "0"+temp
             totAmt.append(temp+"00")
 
@@ -81,7 +81,7 @@ def decimalCheck(number, x):
 #Ensures the value that was put into it has the proper amount of zeros
 def format(oD, num):
     temp = oD
-    for i in range(num-len(oD)):
+    for __ in range(num-len(oD)):
         temp = "0"+temp
     return temp
 
@@ -121,7 +121,7 @@ def ptGen():
                 raw_id = re.sub(r'[a-z_\s-]','', raw_id, flags=re.IGNORECASE)
                 firstRun = False
                 tranDate = dFormat(rowdata[1])
-                for x in range((6-len(raw_id))):
+                for __ in range((6-len(raw_id))):
                     raw_id = '0' + raw_id
                 siteid = raw_id
             for file in os.listdir('.'):
