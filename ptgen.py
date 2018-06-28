@@ -175,7 +175,7 @@ def ptGen():
                             vehicle.append("0000")
                                      
             runCount+=1
-    #Outputs the data line by line to the .dat file
+    #creates directories for the sites, pt file dates, and d1c file backups
     if not os.path.exists("%s" % siteid):
         os.makedirs("%s" % siteid)
     os.chdir("%s" % siteid)
@@ -186,11 +186,12 @@ def ptGen():
         os.makedirs("d1c files")
     ptFileName = cday()
     f= open("pt%s.dat" % ptFileName,"w+")
+    #Outputs the data line by line to the .dat file
     for i in range(runCount):
         f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
     os.chdir("..") 
     os.chdir("..")
-    print(os.getcwd())
+    #
     cwd = os.getcwd()
     dest = os.getcwd() + '\\{0}\\{1}\\d1c files\\'.format(siteid,tranDate)
     h = "\\}}h{0}.d1c".format(tranDate)
