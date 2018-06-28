@@ -28,6 +28,7 @@ id_acct = []
 vehicle = []
 end = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000DCF000000000000000000000000"
 fileDate = ""
+runCount = 0
 
 #Formats date in the proper PT file format
 def tFormat(time):
@@ -100,19 +101,24 @@ def cday():
         day = str(now.day)
     return month + day + str(now.year)[2:4]
 
-def ptGen():
-    runCount = 0
+def hParse():
+    global runCount
+    global siteid
+    global tranDate
     firstRun = True
     raw_id = ""
     rowdata = []
+    filename = None
     #Pulls filename from directory where the script lives
     for file in os.listdir('.'):
         if fnmatch.fnmatch(file,'}h*.d1c'):
             filename = file
+    if filename == None:
+        print("No '}h*.d1c' file found! ")
+        os.system('pause')
+        exit()
     with open(filename, newline='') as csvfile:
-        
         reader = csv.reader(csvfile, quotechar="\"")
-        
         for row in reader:
             rowdata = row
             tranNum.append(rowdata[3][1:8])
@@ -124,68 +130,85 @@ def ptGen():
                 for __ in range((6-len(raw_id))):
                     raw_id = '0' + raw_id
                 siteid = raw_id
-            for file in os.listdir('.'):
-                if fnmatch.fnmatch(file,'}d*.d1c'):
-                    DFile = file
-            with open(DFile, newline='') as csvfile: #opening the data file csv
-                dreader = csv.reader(csvfile, quotechar="\"")
-                dPattern = "[0-9]" + tranNum[runCount] #!TODO
-                for drow in dreader:
-                    if re.search(dPattern, drow[3]):
-                        decimalCheck(drow[10], True) #True = Quantity
-                        decimalCheck(drow[48], False)
-                        pCode.append(drow[11])
-                        tranTime.append(tFormat(drow[2]))
-            for file in os.listdir('.'):
-                if fnmatch.fnmatch(file,'}v*.d1c'):
-                    VFile = file    
-            with open(VFile, newline='') as csvfile: #opening the variable csv file
-                vreader = csv.reader(csvfile, quotechar="\"") 
-                for vrow in vreader:
-                    if tranNum[runCount] == vrow[3][1:5]:
-                        if vrow[8] == "SEQUENCE#":
-                            seqnum.append(vrow[9])
-                        elif vrow[8] == "ODOMETER":
-                            odometer.append(format(vrow[9],7))
-                        elif vrow[8] == "pump":
-                            pump.append(format(vrow[9],2))
-                        elif vrow[8] == "ID_VEHICLE":
-                            id_vehicle.append(format(vrow[9],8))
-                        elif vrow[8] == "ID_CARD":
-                            id_card.append(format(vrow[9],7))
-                        elif vrow[8] == "ID_ACCT":
-                            id_acct.append(format(vrow[9],6))
-                        elif vrow[8] == "VEHICLE":
-                            vehicle.append(format(vrow[9],4))
-
-                        #checks for null values in the variables 
-                        if len(odometer) < runCount:
-                            odometer.append("0000000")
-                        elif len(seqnum)< runCount:
-                            seqnum.append("0000")
-                        elif len(pump)< runCount:
-                            pump.append("00")
-                        elif len(id_vehicle)< runCount:
-                            id_vehicle.append("00000000")
-                        elif len(id_card)< runCount:
-                            id_card.append("0000000")
-                        elif len(id_acct)< runCount:
-                            id_acct.append("000000")
-                        elif len(vehicle)< runCount:
-                            vehicle.append("0000")
-                                     
+            dParse()
+            vParse()                         
             runCount+=1
+    fileIO()
+
+#parses variables from the data file
+def dParse():
+    DFile = None
+    for file in os.listdir('.'):
+        if fnmatch.fnmatch(file,'}d*.d1c'):
+            DFile = file
+    if DFile == None:
+        print("No '}d*.d1c' file found!")
+        os.system('pause')
+        exit()    
+    with open(DFile, newline='') as csvfile: #opening the data file csv
+        dreader = csv.reader(csvfile, quotechar="\"")
+        dPattern = "[0-9]" + tranNum[runCount] #!TODO
+        for drow in dreader:
+            if re.search(dPattern, drow[3]):
+                decimalCheck(drow[10], True) #True = Quantity
+                decimalCheck(drow[48], False)
+                pCode.append(drow[11])
+                tranTime.append(tFormat(drow[2]))
+                
+#parses the variables file
+def vParse():
+    for file in os.listdir('.'):
+        if fnmatch.fnmatch(file,'}v*.d1c'):
+            VFile = file    
+    with open(VFile, newline='') as csvfile: #opening the variable csv file
+        vreader = csv.reader(csvfile, quotechar="\"") 
+        for vrow in vreader:
+            if tranNum[runCount] == vrow[3][1:5]:
+                if vrow[8] == "SEQUENCE#":
+                    seqnum.append(vrow[9])
+                elif vrow[8] == "ODOMETER":
+                    odometer.append(format(vrow[9],7))
+                elif vrow[8] == "pump":
+                    pump.append(format(vrow[9],2))
+                elif vrow[8] == "ID_VEHICLE":
+                    id_vehicle.append(format(vrow[9],8))
+                elif vrow[8] == "ID_CARD":
+                    id_card.append(format(vrow[9],7))
+                elif vrow[8] == "ID_ACCT":
+                    id_acct.append(format(vrow[9],6))
+                elif vrow[8] == "VEHICLE":
+                    vehicle.append(format(vrow[9],4))
+
+                #checks for null values in the variables 
+                if len(odometer) < runCount:
+                    odometer.append("0000000")
+                elif len(seqnum)< runCount:
+                    seqnum.append("0000")
+                elif len(pump)< runCount:
+                    pump.append("00")
+                elif len(id_vehicle)< runCount:
+                    id_vehicle.append("00000000")
+                elif len(id_card)< runCount:
+                    id_card.append("0000000")
+                elif len(id_acct)< runCount:
+                    id_acct.append("000000")
+                elif len(vehicle)< runCount:
+                    vehicle.append("0000")
+
+def fileIO():
+    global siteid
+    global tranDate
     #creates directories for the sites, pt file dates, and d1c file backups
-    if not os.path.exists("%s" % siteid):
-        os.makedirs("%s" % siteid)
-    os.chdir("%s" % siteid)
-    if not os.path.exists("%s" % tranDate):
-        os.makedirs("%s" % tranDate)
-    os.chdir("%s" % tranDate)
+    if not os.path.exists("{0}".format(siteid)):
+        os.makedirs("{0}".format(siteid))
+    os.chdir("{0}".format(siteid))
+    if not os.path.exists("{0}".format(tranDate)):
+        os.makedirs("{0}".format(tranDate))
+    os.chdir("{0}".format(tranDate))
     if not os.path.exists("d1c files"):
         os.makedirs("d1c files")
     ptFileName = cday()
-    f= open("pt%s.dat" % ptFileName,"w+")
+    f= open("pt{0}.dat".format(ptFileName),"w+")
     #Outputs the data line by line to the .dat file
     for i in range(runCount):
         f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
@@ -201,4 +224,4 @@ def ptGen():
     shutil.move(cwd + d, dest + d)
     shutil.move(cwd + v, dest + v)
 
-ptGen()
+hParse()
