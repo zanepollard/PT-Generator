@@ -4,6 +4,8 @@ import fnmatch
 import os
 import datetime
 import shutil
+import win32com.client
+from win32com.client import Dispatch, constants
 
 siteid = ""
 seqnum = []
@@ -127,13 +129,14 @@ def hParse():
                 raw_id = re.sub(r'[a-z_\s-]','', raw_id, flags=re.IGNORECASE)
                 firstRun = False
                 tranDate = dFormat(rowdata[1])
-                for __ in range((6-len(raw_id))):
-                    raw_id = '0' + raw_id
                 siteid = raw_id
+                for __ in range((6-len(raw_id))):
+                    siteid = '0' + siteid
             dParse()
             vParse()                         
             runCount+=1
     fileIO()
+    #email(raw_id, "1","2")
 
 #parses variables from the data file
 def dParse():
@@ -195,9 +198,30 @@ def vParse():
                 elif len(vehicle)< runCount:
                     vehicle.append("0000")
 
+def email(siteid, att1, att2):
+    now = datetime.datetime.now()
+    date = str(now.month) + '/' + str(tranDate[4:6]) + '/' + str(now.year)
+    const=win32com.client.constants
+    olMailItem = 0x0
+    obj = win32com.client.Dispatch("Outlook.Application")
+    newMail = obj.CreateItem(olMailItem)
+    newMail.Subject = "{0} - PT File {1}".format(siteid, date)
+    newMail.BodyFormat = 1 # olFormatHTML https://msdn.microsoft.com/en-us/library/office/aa219371(v=office.11).aspx
+    newMail.HTMLBody = "<HTML><BODY>This time it works and the date is properly formatted</BODY></HTML>"
+    newMail.To = "test@test.com"
+    newMail.Attachments.Add(Source=att1)
+    newMail.Attachments.Add(Source=att2)
+    newMail.display()
+    newMail.Send()
+
 def fileIO():
     global siteid
     global tranDate
+    source = ''
+    for file in os.listdir('.'):
+        if fnmatch.fnmatch(file,'pump*.tot'):
+            pumptot = file
+            source = os.getcwd()+'\\'+pumptot
     #creates directories for the sites, pt file dates, and d1c file backups
     if not os.path.exists("{0}".format(siteid)):
         os.makedirs("{0}".format(siteid))
@@ -208,13 +232,32 @@ def fileIO():
     if not os.path.exists("d1c files"):
         os.makedirs("d1c files")
     ptFileName = cday()
+    pumptotN = os.getcwd()+'\\'+pumptot
+    shutil.move(source, pumptotN)
     f= open("pt{0}.dat".format(ptFileName),"w+")
     #Outputs the data line by line to the .dat file
     for i in range(runCount):
         f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
+    f.close()
+    ptFile= ''
+    for file in os.listdir('.'):
+        if fnmatch.fnmatch(file,'pt*.dat'):
+            filename = file
+            ptFile = os.getcwd()+'\\'+filename
     os.chdir("..") 
     os.chdir("..")
-    #
+    l = True
+    while l:
+        uI = input("would you like to email these files? (y/n): ")
+        if uI =='y':
+            print("sending email...")
+            email(siteid, ptFile, pumptotN)
+            l = False
+        elif uI == "n":
+            print("not sending email...")
+            l = False
+        else:
+            print("please enter either y or n")
     cwd = os.getcwd()
     dest = os.getcwd() + '\\{0}\\{1}\\d1c files\\'.format(siteid,tranDate)
     h = "\\}}h{0}.d1c".format(tranDate)
