@@ -31,6 +31,7 @@ vehicle = []
 end = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000DCF000000000000000000000000"
 fileDate = ""
 runCount = 0
+nDV = ""
 
 #Formats date in the proper PT file format
 def tFormat(time):
@@ -40,6 +41,20 @@ def dFormat(date):
     fDate = date[8:10] + date[0:2] + date[3:5]
     return fDate
 
+def nextDay(d):
+    date = datetime.date(int(d[6:10]),int(d[0:2]),int(d[3:5]))
+    date += datetime.timedelta(days=1)
+    day = ""
+    month = ""
+    if len(str(date.day)) < 2:
+        day = "0" + str(date.day)
+    else:
+        day = str(date.day)
+    if len(str(date.month)) < 2:
+        month = "0" + str(date.month)
+    else:
+        month = str(date.month)
+    return (str(date.year)[2:4] + month + day)
 
 def decimalSplit(number, x, y): #y is decimal true/false
     if x: #quantity value check
@@ -107,6 +122,7 @@ def hParse():
     global runCount
     global siteid
     global tranDate
+    global nDV
     firstRun = True
     raw_id = ""
     rowdata = []
@@ -128,6 +144,7 @@ def hParse():
                 raw_id = rowdata[0]
                 raw_id = re.sub(r'[a-z_\s-]','', raw_id, flags=re.IGNORECASE)
                 firstRun = False
+                nDV = rowdata[1]
                 tranDate = dFormat(rowdata[1])
                 siteid = raw_id
                 for __ in range((6-len(raw_id))):
@@ -217,6 +234,7 @@ def email(siteid, att1, att2):
 def fileIO():
     global siteid
     global tranDate
+    global nDV
     source = ''
     for file in os.listdir('.'):
         if fnmatch.fnmatch(file,'pump*.tot'):
@@ -231,7 +249,7 @@ def fileIO():
     os.chdir("{0}".format(tranDate))
     if not os.path.exists("d1c files"):
         os.makedirs("d1c files")
-    ptFileName = cday()
+    ptFileName = nextDay(nDV)
     pumptotN = os.getcwd()+'\\'+pumptot
     shutil.move(source, pumptotN)
     f= open("pt{0}.dat".format(ptFileName),"w+")
