@@ -35,7 +35,7 @@ nDV = ""
 
 #Formats date in the proper PT file format
 def tFormat(time):
-    return (time[0:2]+time[3:5])
+    return (time[0:2] + time[3:5])
 
 def dFormat(date):
     fDate = date[8:10] + date[0:2] + date[3:5]
@@ -60,11 +60,11 @@ def decimalSplit(number, x, y): #y is decimal true/false
     if x: #quantity value check
         if y: #check if it has a decimal or not
             temp = number.split('.')
-            for __ in range(5-len(temp[0])):
-                temp[0]= "0"+temp[0]
+            for __ in range(5 - len(temp[0])):
+                temp[0] = "0" + temp[0]
             for __ in range(3-len(temp[1])):
-                temp[1]= temp[1]+"0"
-            quantity.append(temp[0]+temp[1])
+                temp[1] = temp[1] + "0"
+            quantity.append(temp[0] + temp[1])
         else:
             temp = number
             for __ in range(5-len(temp)):
@@ -73,21 +73,21 @@ def decimalSplit(number, x, y): #y is decimal true/false
     else:
         if y:
             temp = number.split('.')
-            for __ in range(4-len(temp[0])):
-                temp[0]= "0"+temp[0]
-            if len(temp[1])>2:
-                temp[1]= temp[1][0:2]
-                for __ in range(2-len(temp[1])):
-                    temp[1]= temp[1]+"0"
+            for __ in range(4 - len(temp[0])):
+                temp[0] = "0" + temp[0]
+            if len(temp[1]) > 2:
+                temp[1] = temp[1][0:2]
+                for __ in range(2 - len(temp[1])):
+                    temp[1] = temp[1]+"0"
             else:
-                for __ in range(2-len(temp[1])):
-                    temp[1]= temp[1]+"0"
-            totAmt.append(temp[0]+temp[1])
+                for __ in range(2 - len(temp[1])):
+                    temp[1] = temp[1] + "0"
+            totAmt.append(temp[0] + temp[1])
         else:
             temp = number
-            for __ in range(4-len(number)):
-                temp = "0"+temp
-            totAmt.append(temp+"00")
+            for __ in range(4 - len(number)):
+                temp = "0" + temp
+            totAmt.append(temp + "00")
 
 def decimalCheck(number, x):
     decimalfind = re.compile(r"\d+\.\d+")
@@ -99,15 +99,15 @@ def decimalCheck(number, x):
 #Ensures the value that was put into it has the proper amount of zeros
 def format(oD, num):
     temp = oD
-    for __ in range(num-len(oD)):
-        temp = "0"+temp
+    for __ in range(num - len(oD)):
+        temp = "0" + temp
     return temp
 
 #pulls today's date in the format requred of the naming covention
 def cday():
     now = datetime.datetime.now()
-    day=""
-    month=""
+    day = ""
+    month = ""
     if len(str(now.month))<2:
         month = "0" + str(now.month)
     else:
@@ -147,13 +147,12 @@ def hParse():
                 nDV = rowdata[1]
                 tranDate = dFormat(rowdata[1])
                 siteid = raw_id
-                for __ in range((6-len(raw_id))):
+                for __ in range((6 - len(raw_id))):
                     siteid = '0' + siteid
             dParse()
             vParse()                         
-            runCount+=1
+            runCount += 1
     fileIO()
-    #email(raw_id, "1","2")
 
 #parses variables from the data file
 def dParse():
@@ -202,30 +201,30 @@ def vParse():
                 #checks for null values in the variables 
                 if len(odometer) < runCount:
                     odometer.append("0000000")
-                elif len(seqnum)< runCount:
+                elif len(seqnum) < runCount:
                     seqnum.append("0000")
-                elif len(pump)< runCount:
+                elif len(pump) < runCount:
                     pump.append("00")
-                elif len(id_vehicle)< runCount:
+                elif len(id_vehicle) < runCount:
                     id_vehicle.append("00000000")
-                elif len(id_card)< runCount:
+                elif len(id_card) < runCount:
                     id_card.append("0000000")
-                elif len(id_acct)< runCount:
+                elif len(id_acct) < runCount:
                     id_acct.append("000000")
-                elif len(vehicle)< runCount:
+                elif len(vehicle) < runCount:
                     vehicle.append("0000")
 
 def email(siteid, att1, att2):
     now = datetime.datetime.now()
     date = str(now.month) + '/' + str(tranDate[4:6]) + '/' + str(now.year)
-    const=win32com.client.constants
+    #const=win32com.client.constants
     olMailItem = 0x0
     obj = win32com.client.Dispatch("Outlook.Application")
     newMail = obj.CreateItem(olMailItem)
     newMail.Subject = "{0} - PT File {1}".format(siteid, date)
     newMail.BodyFormat = 1 # olFormatHTML https://msdn.microsoft.com/en-us/library/office/aa219371(v=office.11).aspx
     newMail.HTMLBody = "<HTML><BODY>This time it works and the date is properly formatted</BODY></HTML>"
-    newMail.To = "test@test.com"
+    newMail.To = "pollardzane@gmail.com"
     newMail.Attachments.Add(Source=att1)
     newMail.Attachments.Add(Source=att2)
     newMail.display()
@@ -250,12 +249,16 @@ def fileIO():
     if not os.path.exists("d1c files"):
         os.makedirs("d1c files")
     ptFileName = nextDay(nDV)
-    pumptotN = os.getcwd()+'\\'+pumptot
+    pumptotN = os.getcwd() + '\\' + pumptot
     shutil.move(source, pumptotN)
     f= open("pt{0}.dat".format(ptFileName),"w+")
     #Outputs the data line by line to the .dat file
     for i in range(runCount):
-        f.write(siteid+seqnum[i]+STATCODE+totAmt[i]+ACT+TRANTYPE+pCode[i]+price+quantity[i]+odometer[i]+OID+pump[i]+tranNum[i]+tranDate+tranTime[i]+fill+id_vehicle[i]+id_card[i]+part_id+id_acct[i]+vehicle[i]+end+"\n")
+        f.write(siteid+seqnum[i] + STATCODE + totAmt[i] + 
+        ACT + TRANTYPE + pCode[i] + price + quantity[i] + 
+        odometer[i] + OID + pump[i] + tranNum[i] + tranDate + 
+        tranTime[i] + fill + id_vehicle[i] + id_card[i] + 
+        part_id + id_acct[i] + vehicle[i] + end + "\n")
     f.close()
     ptFile= ''
     for file in os.listdir('.'):
