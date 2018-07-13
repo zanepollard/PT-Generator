@@ -59,7 +59,7 @@ def nextDay(d):
         month = "0" + str(date.month)
     else:
         month = str(date.month)
-    return (str(date.year)[2:4] + month + day)
+    return (month + day + str(date.year)[2:4])
 
 def decimalSplit(number, x, y): #y is decimal true/false
     if x: #quantity value check
