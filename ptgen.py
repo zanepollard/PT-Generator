@@ -189,7 +189,7 @@ def vParse():
         for vrow in vreader:
             if tranNum[runCount] == vrow[3][1:5]:
                 if vrow[8] == "SEQUENCE#":
-                    seqnum.append(format(vrow[9],4));
+                    seqnum.append(format(vrow[9],4))
                 elif vrow[8] == "ODOMETER":
                     odometer.append(format(vrow[9],7))
                 elif vrow[8] == "pump":
