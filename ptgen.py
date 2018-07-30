@@ -14,7 +14,7 @@ totAmt = []
 ACT = "00"
 TRANTYPE ="00"
 pCode = [] 
-price = "10000000"
+PRICE = "10000000"
 quantity = []
 odometer = []
 OID = "0"
@@ -22,13 +22,13 @@ pump = []
 tranNum = []
 tranDate = []
 tranTime = []
-fill = "00000000"
+FILL = "00000000"
 id_vehicle = []
 id_card = []
-part_id ="000"
+PART_ID ="000"
 id_acct = []
 vehicle = []
-end = ("00000000000000000000000000000"
+END = ("00000000000000000000000000000"
        "00000000000000000000000000000"
        "00000000000000000000000000000"
        "00000000000000000000000000000"
@@ -123,12 +123,6 @@ def cday():
         day = str(now.day)
     return month + day + str(now.year)[2:4]
 
-def seqFormat(seq):
-    seq_fmt = seq
-    for __ in range(4-len(seq)):
-        seq_fmt = "0" + seq_fmt
-    return seq_fmt
-
 def hParse():
     global runCount
     global siteid
@@ -195,7 +189,7 @@ def vParse():
         for vrow in vreader:
             if tranNum[runCount] == vrow[3][1:5]:
                 if vrow[8] == "SEQUENCE#":
-                    seqnum.append(seqFormat(vrow[9]));
+                    seqnum.append(format(vrow[9],4));
                 elif vrow[8] == "ODOMETER":
                     odometer.append(format(vrow[9],7))
                 elif vrow[8] == "pump":
@@ -241,6 +235,14 @@ def email(siteid, att1, att2):
     newMail.display()
     newMail.Send()
 
+def check(v, l, n):
+    if len(v) != l:
+        print(n + " is not formatted correctly! check your programming moron")
+        input()
+        exit()
+    else:
+        return v
+
 def fileIO():
     global siteid
     global tranDate
@@ -265,11 +267,11 @@ def fileIO():
     f= open("pt{0}.dat".format(ptFileName),"w+")
     #Outputs the data line by line to the .dat file
     for i in range(runCount):
-        f.write(siteid+seqnum[i] + STATCODE + totAmt[i] + 
-        ACT + TRANTYPE + pCode[i] + price + quantity[i] + 
-        odometer[i] + OID + pump[i] + tranNum[i] + tranDate + 
-        tranTime[i] + fill + id_vehicle[i] + id_card[i] + 
-        part_id + id_acct[i] + vehicle[i] + end + "\n")
+        f.write(check(siteid,6,"SiteId") + check(seqnum[i],4,"seqNum") + STATCODE + check(totAmt[i],6,"TotAMT") + 
+        ACT + TRANTYPE + check(pCode[i],2,"pCode") + PRICE + check(quantity[i],8,"quantity") + 
+        check(odometer[i],7,"odometer") + OID + check(pump[i],2,"pump#") + check(tranNum[i],4,"trans #") + check(tranDate,6,"trandate") + 
+        check(tranTime[i],4,"Trantime") + FILL + check(id_vehicle[i],8,"vehicle id") + check(id_card[i],7,"id_card") + 
+        PART_ID + check(id_acct[i],6,"id_acct") + check(vehicle[i],4,"vehicle") + END + "\n")
     f.close()
     ptFile= ''
     for file in os.listdir('.'):
