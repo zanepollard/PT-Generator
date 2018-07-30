@@ -123,6 +123,12 @@ def cday():
         day = str(now.day)
     return month + day + str(now.year)[2:4]
 
+def seqFormat(seq):
+    seq_fmt = seq
+    for __ in range(4-len(seq)):
+        seq_fmt = "0" + seq_fmt
+    return seq_fmt
+
 def hParse():
     global runCount
     global siteid
@@ -189,7 +195,7 @@ def vParse():
         for vrow in vreader:
             if tranNum[runCount] == vrow[3][1:5]:
                 if vrow[8] == "SEQUENCE#":
-                    seqnum.append(vrow[9])
+                    seqnum.append(seqFormat(vrow[9]));
                 elif vrow[8] == "ODOMETER":
                     odometer.append(format(vrow[9],7))
                 elif vrow[8] == "pump":
