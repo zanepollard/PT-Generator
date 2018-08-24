@@ -25,7 +25,7 @@ id_acct = []
 vehicle = []
 pList =[]
 
-def hParse():
+def hParse(folder):
     global runCount
     global siteid
     global tranDate
@@ -35,13 +35,14 @@ def hParse():
     rowdata = []
     filename = None
     #Pulls filename from directory where the script lives
-    for file in os.listdir('.'):
+    for file in os.listdir(folder):
         if fnmatch.fnmatch(file,'}h*.d1c'):
             filename = file
     if filename == None:
         print("No '}h*.d1c' file found! ")
         os.system('pause')
         exit()
+    os.chdir(folder)
     with open(filename, newline='') as csvfile: 
         reader = csv.reader(csvfile, quotechar="\"")
         for row in reader:
@@ -56,15 +57,15 @@ def hParse():
                 siteid = raw_id
                 for __ in range((6 - len(raw_id))):
                     siteid = '0' + siteid
-            dParse()
-            vParse()                         
+            dParse(folder)
+            vParse(folder)                         
             runCount += 1
     #files.fileIO()
 
 #parses variables from the data file
-def dParse():
+def dParse(folder):
     DFile = None
-    for file in os.listdir('.'):
+    for file in os.listdir(folder):
         if fnmatch.fnmatch(file,'}d*.d1c'):
             DFile = file
     if DFile == None:
@@ -82,8 +83,8 @@ def dParse():
                 tranTime.append(fmt.tFormat(drow[2]))
                 
 #parses the variables file
-def vParse():
-    for file in os.listdir('.'):
+def vParse(folder):
+    for file in os.listdir(folder):
         if fnmatch.fnmatch(file,'}v*.d1c'):
             VFile = file    
     with open(VFile, newline='') as csvfile: #opening the variable csv file
@@ -121,8 +122,9 @@ def vParse():
                 elif len(vehicle) < runCount:
                     vehicle.append("0000")
 
-def parse():
-    hParse()
+def parse(folder):
+    global nDV
+    hParse(folder)
     
     for i in range(runCount):
         
@@ -130,4 +132,5 @@ def parse():
                         pump[i],tranNum[i],tranDate,tranTime[i],id_vehicle[i],
                         id_card[i],id_acct[i],vehicle[i])
         pList.append(temp)
+    return pList
     
