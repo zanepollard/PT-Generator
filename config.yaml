@@ -1,0 +1,31 @@
+# True/False if you want to back up sales/.d1c files
+backup_sales: True
+
+# If backup_sales is set to True, this is where the .d1c files will be saved
+# This folder will be the root, and .d1c files will be in 
+# ./SITENUMBER/YYMMDD 
+# ex: ./001488/180822
+backup_folder: "./"
+
+# What will be included in the PT file name
+file_name:
+  # Allows for custom file name beginning if wanted
+  custom: 
+    custom_beginning: False
+    text: ""
+  siteid: True
+  date: True
+  Extension: ".dat"
+
+# Folders to look in for .d1c files. Add more underneath with
+# -"Path goes here"
+input_folders:
+  - "./"
+
+# Path where PT file will get output
+output_folder: "./"
+
+# value that dictates whether a pump total file will 
+# need to be moved along with the PT file.
+# Used when processing Anaheim sites
+pump_total: False
