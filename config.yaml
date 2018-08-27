@@ -11,16 +11,16 @@ backup_folder: "./"
 file_name:
   # Allows for custom file name beginning if wanted
   custom: 
-    custom_beginning: True
+    custom_beginning: False
     text: "pt"
   siteid: True
   date:
     include: True
     # True = yymmdd
     # False = mmddyy
-    format: False
+    format: True
     # Adds day to date. Only used on Anaheim Truck Depot sites
-    add_day: True
+    add_day: False
   extension: ".dat"
   
 # Folders to look in for .d1c files. Add more underneath with
@@ -28,12 +28,12 @@ file_name:
 # YOU MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders:
-  - "C:\\ICS\\ptGen\\001488\\180711\\d1c files"
+  - "C:\\ICS\\ptGen\\000001\\180822\\d1c files"
 
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
-output_folder: "C:\\Users\\zane.pollard.THESITECONTROLL\\Desktop"
+output_folder: "C:\\ICS\\ptGen"
 
 # value that dictates whether a pump total file will 
 # need to be moved along with the PT file.
