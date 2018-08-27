@@ -23,6 +23,7 @@ def nextDay(d):
         month = str(date.month)
     return (month + day + str(date.year)[2:4])
 
+#splits numbers based on the decimals and pads them with zeros depending on the variable itself
 def decimalSplit(number, x, y): #y is decimal true/false
     if x: #quantity value check
         if y: #check if it has a decimal or not

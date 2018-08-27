@@ -56,7 +56,6 @@ class parse:
                     for __ in range((6 - len(raw_id))):
                         siteid = '0' + siteid
                     self.siteid = siteid
-                    print(self.siteid)
                 self.dParse(folder)
                 self.vParse(folder)
                 self.runCount += 1                  
@@ -65,7 +64,7 @@ class parse:
     def dParse(self, folder):
         DFile = None
         for file in os.listdir(folder):
-            if fnmatch.fnmatch(file,'}d*.d1c'):
+            if fnmatch.fnmatch(file,'}}d{0}.d1c'.format(self.tranDate)):
                 DFile = file
         if DFile == None:
             print("No '}d*.d1c' file found!")
@@ -84,7 +83,7 @@ class parse:
     #parses the variables file
     def vParse(self, folder):
         for file in os.listdir(folder):
-            if fnmatch.fnmatch(file,'}v*.d1c'):
+            if fnmatch.fnmatch(file,'}}v{0}.d1c'.format(self.tranDate)):
                 VFile = file    
         with open(VFile, newline='') as csvfile: #opening the variable csv file
             vreader = csv.reader(csvfile, quotechar="\"") 

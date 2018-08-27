@@ -8,6 +8,4 @@ input_folders = config_data.get('input_folders')
 
 for i in input_folders:
     temp = parse.parse()
-    files.makePT(temp.parse(i), config_data)
-
-
+    files.makePT(temp.parse(i), i, config_data)
