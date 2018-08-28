@@ -7,12 +7,12 @@
 file_name: # What will be included in the PT file name
   custom: # Allows for custom file name beginning if wanted
     custom_beginning: True
-    text: "pt"
+    text: "Example"
   siteid: True
   date:
     include: True
-    format: False # Date formatting. True = yymmdd False = mmddyy
-    add_day: True # Adds day to date. Only used on Anaheim Truck Depot sites
+    format: True # Date formatting. True = yymmdd False = mmddyy
+    add_day: False # Adds day to date. Only used on Anaheim Truck Depot sites
   extension: ".dat"
   
 # Folders to look in for .d1c files. Add more underneath with
@@ -20,12 +20,14 @@ file_name: # What will be included in the PT file name
 # YOU MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders:
-  - "C:\\ICS\\ptGen"
+  - ".\\Example_d1c\\ex1"
+  - ".\\Example_d1c\\ex2"
+  - ".\\Example_d1c\\ex3"
 
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
-output_folder: "C:\\ICS\\ptGen"
+output_folder: ".\\Output"
 output_options:
   site_folder: True
   date_folder: True
@@ -34,10 +36,10 @@ output_options:
 # need to be moved along with the PT file.
 # Used when processing Anaheim sites
 # Placed in the same location as PT files
-pump_total: True
+pump_total: False
 
 # True/False if you want to back up sales/.d1c files
-backup_sales: True
+backup_sales: False
 # If backup_sales is set to True, this is where the .d1c files will be saved
 # This folder will be the root, and .d1c files will be in 
 # ./SITENUMBER/YYMMDD 

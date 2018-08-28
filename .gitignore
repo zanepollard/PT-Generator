@@ -1,4 +1,5 @@
 *.dat
-*.d1c
+*.spec
+./output
 *.pyc
 *.txt
