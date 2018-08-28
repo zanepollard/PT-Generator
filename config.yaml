@@ -27,7 +27,7 @@ input_folders:
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
-output_folder: ".\\Output"
+output_folder: ".\\Output" #".\\Output"
 output_options:
   site_folder: True
   date_folder: True

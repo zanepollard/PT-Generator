@@ -6,8 +6,9 @@ import parse
 import fmt
 
 #generates the file name in standard set in config file, outputs to file
-def makePT(pObj, input, config_data):
+def makePT(pObj, input, config_data,root):
     filename = ''
+    os.chdir(root)
     output = os.path.abspath(config_data.get('output_folder'))
     opFolder = os.path.abspath(ptFilePath(output, config_data, pObj))
     if (config_data.get('backup_sales') == True):
@@ -27,7 +28,7 @@ def makePT(pObj, input, config_data):
             else:
                 filename = filename  + pObj.nDV[0:2]+ pObj.nDV[3:5]+ pObj.nDV[8:10] 
     filename = filename + config_data.get('file_name')['extension']
-    
+    os.chdir(root)
     os.chdir(opFolder)
     f= open(filename, "w+")
     #Outputs the data line by line to the .dat file
