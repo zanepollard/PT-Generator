@@ -8,8 +8,8 @@ import fmt
 #generates the file name in standard set in config file, outputs to file
 def makePT(pObj, input, config_data):
     filename = ''
-    output = config_data.get('output_folder')
-    opFolder = ptFilePath(output, config_data, pObj)
+    output = os.path.abspath(config_data.get('output_folder'))
+    opFolder = os.path.abspath(ptFilePath(output, config_data, pObj))
     if (config_data.get('backup_sales') == True):
         backupSales(opFolder, config_data, pObj)
     if (config_data.get('file_name')['custom']['custom_beginning'] == True):
@@ -75,7 +75,7 @@ def backupSales(iput,config, pObj):
             bkFold = bkFold + pObj.pList[0].siteid
         if(config.get('backup_options')['data_folder'] == True):
             bkFold = bkFold + pObj.pList[0].tranDate
-    bkFold = bkFold + "\\d1c files"
+    bkFold = os.path.abspath(bkFold + "\\d1c files")
     if not os.path.exists(bkFold):
         os.makedirs(bkFold)
     shutil.move(cwd + h, bkFold + h)
