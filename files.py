@@ -7,12 +7,45 @@ import fmt
 
 #generates the file name in standard set in config file, outputs to file
 def makePT(pObj, input, config_data,root):
-    filename = ''
-    os.chdir(root)
+    
     output = os.path.abspath(config_data.get('output_folder'))
     opFolder = os.path.abspath(ptFilePath(output, config_data, pObj))
     if (config_data.get('backup_sales') == True):
         backupSales(opFolder, config_data, pObj)
+    
+    os.chdir(root)
+    os.chdir(opFolder)
+
+    if (config_data.get('multiDayPT')):
+        filename = fileName(pObj,config_data, root)
+
+        f= open(filename, "w+")
+        #Outputs the data line by line to the .dat file
+        for i in range(len(pObj.pList)):
+            f.write(pObj.pList[i].siteid + pObj.pList[i].seqnum + pObj.pList[i].STATCODE + pObj.pList[i].totAmt +
+                    pObj.pList[i].ACT + pObj.pList[i].TRANTYPE + pObj.pList[i].pCode + pObj.pList[i].PRICE + 
+                    pObj.pList[i].quantity + pObj.pList[i].odometer + pObj.pList[i].OID + pObj.pList[i].pump +
+                    pObj.pList[i].tranNum + pObj.pList[i].tranDate + pObj.pList[i].tranTime + pObj.pList[i].FILL +
+                    pObj.pList[i].id_vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
+                    pObj.pList[i].vehicle + pObj.pList[i].END + "\n")
+        f.close()
+    else:
+        #firstrun = True
+        filename = fileName(pObj[len(pObj)-1], config_data, root)
+        for i in pObj:
+            f= open(filename, "w+")
+            #Outputs the data line by line to the .dat file
+            for i in range(len(pObj.pList)):
+                f.write(pObj.pList[i].siteid + pObj.pList[i].seqnum + pObj.pList[i].STATCODE + pObj.pList[i].totAmt +
+                        pObj.pList[i].ACT + pObj.pList[i].TRANTYPE + pObj.pList[i].pCode + pObj.pList[i].PRICE + 
+                        pObj.pList[i].quantity + pObj.pList[i].odometer + pObj.pList[i].OID + pObj.pList[i].pump +
+                        pObj.pList[i].tranNum + pObj.pList[i].tranDate + pObj.pList[i].tranTime + pObj.pList[i].FILL +
+                        pObj.pList[i].id_vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
+                        pObj.pList[i].vehicle + pObj.pList[i].END + "\n")
+
+def fileName(pObj,config_data, root):
+    filename = ''
+    os.chdir(root)
     if (config_data.get('file_name')['custom']['custom_beginning'] == True):
         filename = filename + config_data.get('file_name')['custom']['text']
     if (config_data.get('siteid') == True):
@@ -27,19 +60,7 @@ def makePT(pObj, input, config_data,root):
                 filename = filename + fmt.nextDay(pObj.nDV)
             else:
                 filename = filename  + pObj.nDV[0:2]+ pObj.nDV[3:5]+ pObj.nDV[8:10] 
-    filename = filename + config_data.get('file_name')['extension']
-    os.chdir(root)
-    os.chdir(opFolder)
-    f= open(filename, "w+")
-    #Outputs the data line by line to the .dat file
-    for i in range(len(pObj.pList)):
-        f.write(pObj.pList[i].siteid + pObj.pList[i].seqnum + pObj.pList[i].STATCODE + pObj.pList[i].totAmt +
-                pObj.pList[i].ACT + pObj.pList[i].TRANTYPE + pObj.pList[i].pCode + pObj.pList[i].PRICE + 
-                pObj.pList[i].quantity + pObj.pList[i].odometer + pObj.pList[i].OID + pObj.pList[i].pump +
-                pObj.pList[i].tranNum + pObj.pList[i].tranDate + pObj.pList[i].tranTime + pObj.pList[i].FILL +
-                pObj.pList[i].id_vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
-                pObj.pList[i].vehicle + pObj.pList[i].END + "\n")
-    f.close()
+    return filename + config_data.get('file_name')['extension']
 
 #Generates path PT file will be generated to according to options seet in config
 def ptFilePath(output, config, pObj):
@@ -83,6 +104,26 @@ def backupSales(iput,config, pObj):
     shutil.move(cwd + h, bkFold + h)
     shutil.move(cwd + d, bkFold + d)
     shutil.move(cwd + v, bkFold + v)
+
+def fileFind(folder):
+    h = []
+    d = []
+    v = []
+    for file in os.listdir(folder):
+        if fnmatch.fnmatch(file,'}h*.d1c'):
+            h.append(file)
+        if fnmatch.fnmatch(file,'}d*.d1c'):
+            d.append(file)   
+        if fnmatch.fnmatch(file,'}v*.d1c'):
+            v.append(file)
+    h.sort()        
+    d.sort()        
+    v.sort()
+    if((len(h) == len(d) == len(v)) != True):
+        print("some sales files missing!")
+        exit()
+    return [h,d,v]
+
 
 #Loads YAML config file
 def yaml_loader(filepath):

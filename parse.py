@@ -27,21 +27,12 @@ class parse:
         self.nDV = ""
         self.pList = []
 
-    def hParse(self, folder):
+    def hParse(self, folder, f):
         firstRun = True
         raw_id = ""
         rowdata = []
-        filename = None
-        #Pulls filename from directory where the script lives
-        for file in os.listdir(folder):
-            if fnmatch.fnmatch(file,'}h*.d1c'):
-                filename = file
-        if filename == None:
-            print("No '}h*.d1c' file found! ")
-            os.system('pause')
-            exit()
         os.chdir(folder)
-        with open(filename, newline='') as csvfile: 
+        with open(f[0], newline='') as csvfile: 
             reader = csv.reader(csvfile, quotechar="\"")
             for row in reader:
                 rowdata = row
@@ -56,21 +47,14 @@ class parse:
                     for __ in range((6 - len(raw_id))):
                         siteid = '0' + siteid
                     self.siteid = siteid
-                self.dParse(folder)
-                self.vParse(folder)
-                self.runCount += 1                  
+                self.dParse(folder,f[1])
+                self.vParse(folder,f[2])
+                self.runCount = self.runCount + 1               
 
     #parses variables from the data file
-    def dParse(self, folder):
-        DFile = None
-        for file in os.listdir(folder):
-            if fnmatch.fnmatch(file,'}}d{0}.d1c'.format(self.tranDate)):
-                DFile = file
-        if DFile == None:
-            print("No '}d*.d1c' file found!")
-            os.system('pause')
-            exit()    
-        with open(DFile, newline='') as csvfile: #opening the data file csv
+    def dParse(self, folder, dFile): 
+        os.chdir(folder)
+        with open(dFile, newline='') as csvfile: #opening the data file csv
             dreader = csv.reader(csvfile, quotechar="\"")
             dPattern = "[0-9]" + self.tranNum[self.runCount] #!TODO
             for drow in dreader:
@@ -81,11 +65,9 @@ class parse:
                     self.tranTime.append(fmt.tFormat(drow[2]))
                     
     #parses the variables file
-    def vParse(self, folder):
-        for file in os.listdir(folder):
-            if fnmatch.fnmatch(file,'}}v{0}.d1c'.format(self.tranDate)):
-                VFile = file    
-        with open(VFile, newline='') as csvfile: #opening the variable csv file
+    def vParse(self, folder, vFile):
+        os.chdir(folder)
+        with open(vFile, newline='') as csvfile: #opening the variable csv file
             vreader = csv.reader(csvfile, quotechar="\"") 
             for vrow in vreader:
                 if self.tranNum[self.runCount] == vrow[3][1:5]:
@@ -107,24 +89,25 @@ class parse:
                     #checks for null values in the variables 
                     if len(self.odometer) < self.runCount:
                         self.odometer.append("0000000")
-                    elif len(self.seqnum) < self.runCount:
+                    if len(self.seqnum) < self.runCount:
                         self.seqnum.append("0000")
-                    elif len(self.pump) < self.runCount:
+                    if len(self.pump) < self.runCount:
                         self.pump.append("00")
-                    elif len(self.id_vehicle) < self.runCount:
+                    if len(self.id_vehicle) < self.runCount:
                         self.id_vehicle.append("00000000")
-                    elif len(self.id_card) < self.runCount:
+                    if len(self.id_card) < self.runCount:
                         self.id_card.append("0000000")
-                    elif len(self.id_acct) < self.runCount:
+                    if len(self.id_acct) < self.runCount:
                         self.id_acct.append("000000")
-                    elif len(self.vehicle) < self.runCount:
+                    if len(self.vehicle) < self.runCount:
                         self.vehicle.append("0000")
+                
+                
 
-    def parse(self, folder):
-        self.hParse(folder)
-        
-        for i in range(self.runCount):
-            
+    def parse(self,folder, f):
+        os.chdir(folder)
+        self.hParse(folder, f)
+        for i in range(self.runCount): 
             temp = pt.ptLine(self.siteid,self.seqnum[i],self.totAmt[i],self.pCode[i],self.quantity[i],self.odometer[i],
                             self.pump[i],self.tranNum[i],self.tranDate,self.tranTime[i],self.id_vehicle[i],
                             self.id_card[i],self.id_acct[i],self.vehicle[i])

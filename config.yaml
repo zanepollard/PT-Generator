@@ -6,9 +6,9 @@
 
 file_name: # What will be included in the PT file name
   custom: # Allows for custom file name beginning if wanted
-    custom_beginning: True
+    custom_beginning: False
     text: "Example"
-  siteid: True
+  siteid: False
   date:
     include: True
     format: True # Date formatting. True = yymmdd False = mmddyy
@@ -20,9 +20,12 @@ file_name: # What will be included in the PT file name
 # YOU MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders:
-  - ".\\Example_d1c\\ex1"
-  - ".\\Example_d1c\\ex2"
-  - ".\\Example_d1c\\ex3"
+  - ".\\Example_d1c\\all"
+
+# Will create one single PT File from multiple sets of sales files
+# Make sure they are all from the same site as the program DOES NOT 
+# check for site id when creating PT files.
+multiDayPT: False
 
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
