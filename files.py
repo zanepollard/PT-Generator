@@ -87,7 +87,7 @@ def ptFilePath(output, config, pObj):
             movePumpTot(ptLoc, config, output)
     else:
         end = len(pObj) - 1
-        for i in pObj:
+        for __ in pObj:
             if(config.get('output_options')['site_folder'] == True):
                 ptLoc = ptLoc + "\\" + pObj[end].pList[0].siteid
             if(config.get('output_options')['date_folder'] == True):
