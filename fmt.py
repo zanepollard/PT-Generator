@@ -87,6 +87,21 @@ def cday():
         day = str(now.day)
     return month + day + str(now.year)[2:4]
 
+def tNumFMT(tran):
+    if len(tran) > 4:
+        return tran[(len(tran)-4):(len(tran))]
+    else:
+        temp = tran
+        for __ in range(4 - len(tran)):
+            temp = "0" + temp
+        return temp
+
+def pFormat(price):
+    temp = price.replace(".", "")
+    for __ in range(8 - len(temp)):
+        temp = temp + "0"
+    return temp
+
 def check(v, l, n):
     if len(v) != l:
         print(n + " is not formatted correctly! check your programming moron")

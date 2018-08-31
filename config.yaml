@@ -7,7 +7,7 @@
 file_name: # What will be included in the PT file name
   custom: # Allows for custom file name beginning if wanted
     custom_beginning: True
-    text: "Example"
+    text: "Dawson_"
   siteid: True
   date:
     include: True
@@ -20,8 +20,9 @@ file_name: # What will be included in the PT file name
 # YOU MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders:
-  - ".\\Example_d1c\\hr"
+  - ".\\Example_d1c\\dawson"
 
+multiDayPT: False
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
