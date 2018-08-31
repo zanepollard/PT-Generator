@@ -87,37 +87,38 @@ class parse:
                 VFile = file    
         with open(VFile, newline='') as csvfile: #opening the variable csv file
             vreader = csv.reader(csvfile, quotechar="\"") 
+            vPattern = "[0-9]" + self.tranNum[self.runCount] 
             for vrow in vreader:
-                if self.tranNum[self.runCount] == vrow[3][1:5]:
-                    if vrow[8] == "SEQUENCE#":
+                if re.search(vPattern, vrow[3]):
+                    if vrow[8].lower() == "SEQUENCE#".lower():
                         self.seqnum.append(fmt.format(vrow[9],4))
-                    elif vrow[8] == "ODOMETER":
+                    if vrow[8].lower() == "ODOMETER".lower():
                         self.odometer.append(fmt.format(vrow[9],7))
-                    elif vrow[8] == "pump":
+                    if vrow[8].lower() == "PUMP".lower():
                         self.pump.append(fmt.format(vrow[9],2))
-                    elif vrow[8] == "ID_VEHICLE":
+                    if vrow[8].lower() == "ID_VEHICLE".lower() or vrow[8].lower() == "ID_VEHCARD".lower():
                         self.id_vehicle.append(fmt.format(vrow[9],8))
-                    elif vrow[8] == "ID_CARD":
+                    if vrow[8].lower() == "ID_CARD".lower():
                         self.id_card.append(fmt.format(vrow[9],7))
-                    elif vrow[8] == "ID_ACCT":
+                    if vrow[8].lower() == "ID_ACCT".lower():
                         self.id_acct.append(fmt.format(vrow[9],6))
-                    elif vrow[8] == "VEHICLE":
+                    if vrow[8].lower() == "VEHICLE".lower() or vrow[8].lower() == "ID_VEHCARD".lower():
                         self.vehicle.append(fmt.format(vrow[9],4))
 
                     #checks for null values in the variables 
                     if len(self.odometer) < self.runCount:
                         self.odometer.append("0000000")
-                    elif len(self.seqnum) < self.runCount:
+                    if len(self.seqnum) < self.runCount:
                         self.seqnum.append("0000")
-                    elif len(self.pump) < self.runCount:
+                    if len(self.pump) < self.runCount:
                         self.pump.append("00")
-                    elif len(self.id_vehicle) < self.runCount:
+                    if len(self.id_vehicle) < self.runCount:
                         self.id_vehicle.append("00000000")
-                    elif len(self.id_card) < self.runCount:
+                    if len(self.id_card) < self.runCount:
                         self.id_card.append("0000000")
-                    elif len(self.id_acct) < self.runCount:
+                    if len(self.id_acct) < self.runCount:
                         self.id_acct.append("000000")
-                    elif len(self.vehicle) < self.runCount:
+                    if len(self.vehicle) < self.runCount:
                         self.vehicle.append("0000")
 
     def parse(self, folder):
@@ -131,3 +132,12 @@ class parse:
             self.pList.append(temp)
         return self
         
+    def fillWZero(self, v, length):
+        temp = ""
+        
+        for __ in range(length):
+            temp = temp + "0"
+        for __ in range(run):
+            v.append(temp)
+            
+
