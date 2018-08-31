@@ -16,7 +16,12 @@ for i in input_folders:
     for x in range(len(f[0])):
         temp = parse.parse()
         pt.append(temp.parse(folder, [f[0][x],f[1][x],f[2][x]]))
-    for q in pt:
+    if (config_data.get('multiDayPT') == False):
+        for q in pt:
+            os.chdir(cwd)
+            files.makePT(q, i,config_data,cwd)
+    else:
         os.chdir(cwd)
-        files.makePT(q, i,config_data,cwd)
+        files.makePT(pt, i,config_data,cwd)
+    
     os.chdir(cwd)
