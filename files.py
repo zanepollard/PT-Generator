@@ -24,25 +24,18 @@ def makePT(pObj, input, config_data,root):
         for i in range(len(pObj.pList)):
             
             f.write(pObj.pList[i].siteid + pObj.pList[i].seqnum + pObj.pList[i].STATCODE + pObj.pList[i].totAmt +
-                    pObj.pList[i].ACT + pObj.pList[i].TRANTYPE + pObj.pList[i].pCode + pObj.pList[i].PRICE + 
+                    pObj.pList[i].ACT + pObj.pList[i].TRANTYPE + pObj.pList[i].pCode + pObj.pList[i].price + 
                     pObj.pList[i].quantity + pObj.pList[i].odometer + pObj.pList[i].OID + pObj.pList[i].pump +
                     pObj.pList[i].tranNum + pObj.pList[i].tranDate + pObj.pList[i].tranTime + pObj.pList[i].FILL +
-                    pObj.pList[i].id_vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
-                    pObj.pList[i].vehicle + pObj.pList[i].END + "\n")
+                    pObj.pList[i].vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
+                    pObj.pList[i].id_vehicle + pObj.pList[i].END + "\n")
             '''
-            print(pObj.pList[i].siteid + " " + pObj.pList[i].seqnum + " " + pObj.pList[i].STATCODE + " " + pObj.pList[i].totAmt + " " +
-                    pObj.pList[i].ACT + " " + pObj.pList[i].TRANTYPE + " " + pObj.pList[i].pCode + " " + pObj.pList[i].PRICE + " " + 
-                    pObj.pList[i].quantity + " " + pObj.pList[i].odometer + " " + pObj.pList[i].OID + " " + pObj.pList[i].pump + " " +
-                    pObj.pList[i].tranNum + " " + pObj.pList[i].tranDate + " " + pObj.pList[i].tranTime + " " + pObj.pList[i].FILL + " " +
-                    pObj.pList[i].id_vehicle + " " + pObj.pList[i].id_card + " " + pObj.pList[i].PART_ID + " " + pObj.pList[i].id_acct + " " +
-                    pObj.pList[i].vehicle + " " + pObj.pList[i].END + "\n")
-            
             f.write(pObj.pList[i].siteid + " " + pObj.pList[i].seqnum + " " + pObj.pList[i].STATCODE + " " + pObj.pList[i].totAmt + " " +
-                    pObj.pList[i].ACT + " " + pObj.pList[i].TRANTYPE + " " + pObj.pList[i].pCode + " " + pObj.pList[i].PRICE + " " + 
+                    pObj.pList[i].ACT + " " + pObj.pList[i].TRANTYPE + " " + pObj.pList[i].pCode + " " + pObj.pList[i].price + " " + 
                     pObj.pList[i].quantity + " " + pObj.pList[i].odometer + " " + pObj.pList[i].OID + " " + pObj.pList[i].pump + " " +
                     pObj.pList[i].tranNum + " " + pObj.pList[i].tranDate + " " + pObj.pList[i].tranTime + " " + pObj.pList[i].FILL + " " +
-                    pObj.pList[i].id_vehicle + " " + pObj.pList[i].id_card + " " + pObj.pList[i].PART_ID + " " + pObj.pList[i].id_acct + " " +
-                    pObj.pList[i].vehicle + " " + pObj.pList[i].END + "\n")
+                    pObj.pList[i].vehicle + " " + pObj.pList[i].id_card + " " + pObj.pList[i].PART_ID + " " + pObj.pList[i].id_acct + " " +
+                    pObj.pList[i].id_vehicle + " " + pObj.pList[i].END + "\n")
             '''
         f.close()
     else:

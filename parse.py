@@ -23,10 +23,12 @@ class parse:
         self.id_card = []
         self.id_acct = []
         self.vehicle = []
+        self.price = []
         self.runCount = 0
         self.nDV = ""
         self.pList = []
         self.hLen = 0
+        self.rawTran = []
 
     def hParse(self, folder, f):
         firstRun = True
@@ -37,7 +39,9 @@ class parse:
             reader = csv.reader(csvfile, quotechar="\"")
             for row in reader:
                 rowdata = row
-                self.tranNum[self.runCount] = rowdata[3][1:8]
+
+                self.rawTran[self.runCount] = rowdata[3]
+                self.tranNum[self.runCount] = fmt.tNumFMT(rowdata[3]) 
                 if firstRun: #Pulls all the single use variables into memory from the csv
                     raw_id = rowdata[0]
                     raw_id = re.sub(r'[a-z_\s-]','', raw_id, flags=re.IGNORECASE)
@@ -57,9 +61,10 @@ class parse:
         os.chdir(folder)
         with open(dFile, newline='') as csvfile: #opening the data file csv
             dreader = csv.reader(csvfile, quotechar="\"")
-            dPattern = "[0-9]" + self.tranNum[self.runCount] #!TODO
+            dPattern = "[0-9]*" + self.rawTran[self.runCount] #!TODO
             for drow in dreader:
                 if re.search(dPattern, drow[3]):
+                    self.price[self.runCount] = fmt.pFormat(drow[16])
                     self.quantity[self.runCount] = fmt.decimalCheck(drow[10], True) #True = Quantity
                     self.totAmt[self.runCount] = fmt.decimalCheck(drow[48], False)
                     self.pCode[self.runCount] = drow[11]
@@ -70,7 +75,7 @@ class parse:
         os.chdir(folder)
         with open(vFile, newline='') as csvfile: #opening the variable csv file
             vreader = csv.reader(csvfile, quotechar="\"") 
-            vPattern = "[0-9]" + self.tranNum[self.runCount] 
+            vPattern = "[0-9]*" + self.rawTran[self.runCount] 
             for vrow in vreader:
                 if re.search(vPattern, vrow[3]):
                     if vrow[8].lower() == "SEQUENCE#".lower():
@@ -79,13 +84,13 @@ class parse:
                         self.odometer[self.runCount] = fmt.format(vrow[9],7)
                     if vrow[8].lower() == "PUMP".lower():
                         self.pump[self.runCount] = fmt.format(vrow[9],2)
-                    if vrow[8].lower() == "ID_VEHCARD".lower():
+                    if vrow[8].lower() == "VEHICLE".lower() or vrow[8].lower() == "ID_VEHICLE" or vrow[8].lower() == "ID_VEHCARD".lower():
                         self.id_vehicle[self.runCount] = fmt.format(vrow[9],8)
                     if vrow[8].lower() == "ID_CARD".lower():
                         self.id_card[self.runCount] = fmt.format(vrow[9],7)
                     if vrow[8].lower() == "ID_ACCT".lower():
                         self.id_acct[self.runCount] = fmt.format(vrow[9],6)
-                    if vrow[8].lower() == "VEHICLE".lower() or vrow[8].lower() == "ID_VEHCARD".lower():
+                    if vrow[8].lower() == "ID_VEHCARD".lower() or vrow[8].lower() == "ID_VEHICLE" or vrow[8].lower() == "VEHICLE".lower():
                         self.vehicle[self.runCount] = fmt.format(vrow[9],4)
 
                     #checks for null values in the variables 
@@ -95,14 +100,14 @@ class parse:
                         self.seqnum[self.runCount] = "0000"
                     if len(self.pump) < self.runCount:
                         self.pump[self.runCount] = "00"
-                    if len(self.id_vehicle) < self.runCount:
-                        self.id_vehicle[self.runCount] = "00000000"
+                    if len(self.vehicle) < self.runCount:
+                        self.vehicle[self.runCount] = "00000000"
                     if len(self.id_card) < self.runCount:
                         self.id_card[self.runCount] = "0000000"
                     if len(self.id_acct) < self.runCount:
                         self.id_acct[self.runCount] = "000000"
-                    if len(self.vehicle) < self.runCount:
-                        self.vehicle[self.runCount] = "0000"
+                    if len(self.id_vehicle) < self.runCount:
+                        self.id_vehicle[self.runCount] = "0000"
                 
                 
 
@@ -120,11 +125,14 @@ class parse:
         self.id_card = self.fillWZero(f, 7)
         self.id_acct = self.fillWZero(f, 6)
         self.vehicle = self.fillWZero(f, 4)
+        self.price = self.fillWZero(f, 8)
+        self.rawTran = self.fillWZero(f, 1)
+        
         self.hParse(folder, f)
         for i in range(self.runCount): 
-            temp = pt.ptLine(self.siteid,self.seqnum[i],self.totAmt[i],self.pCode[i],self.quantity[i],self.odometer[i],
+            temp = pt.ptLine(self.siteid,self.seqnum[i],self.totAmt[i],self.pCode[i],self.price[i],self.quantity[i],self.odometer[i],
                             self.pump[i],self.tranNum[i],self.tranDate,self.tranTime[i],self.id_vehicle[i],
-                            self.id_card[i],self.id_acct[i],self.vehicle[i])
+                            self.id_card[i],self.id_acct[i],self.vehicle[i]) 
             self.pList.append(temp)
         return self
         
