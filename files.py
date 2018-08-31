@@ -12,14 +12,14 @@ def makePT(pObj, input, config_data,root):
     opFolder = os.path.abspath(ptFilePath(output, config_data, pObj))
     if (config_data.get('backup_sales') == True):
         backupSales(opFolder, config_data, pObj)
-    
-    os.chdir(root)
-    os.chdir(opFolder)
+
 
     if (config_data.get('multiDayPT') == False):
         filename = fileName(pObj,config_data, root)
-
+        os.chdir(root)
+        os.chdir(opFolder)
         f= open(filename, "w+")
+        
         #Outputs the data line by line to the .dat file
         for i in range(len(pObj.pList)):
             
@@ -42,6 +42,8 @@ def makePT(pObj, input, config_data,root):
         print("why")
         end = len(pObj) - 1
         filename = fileName(pObj[end], config_data, root)
+        os.chdir(root)
+        os.chdir(opFolder)
         for i in pObj:
             f= open(filename, "w+")
             #Outputs the data line by line to the .dat file
@@ -59,8 +61,8 @@ def fileName(pObj,config_data, root):
     os.chdir(root)
     if (config_data.get('file_name')['custom']['custom_beginning'] == True):
         filename = filename + config_data.get('file_name')['custom']['text']
-    if (config_data.get('siteid') == True):
-        filename = filename + pObj.pList[0].siteid
+    if (config_data.get('file_name')['siteid'] == True):
+        filename = filename + pObj.pList[0].siteid +"_"
     #include date
     if (config_data.get('file_name')['date']['include'] == True):
         #True = yymmdd False = mmddyy
