@@ -71,6 +71,7 @@ def format(oD, num):
         temp = "0" + temp
     return temp
 
+
 #pulls today's date in the format requred of the naming covention
 def cday():
     now = datetime.datetime.now()

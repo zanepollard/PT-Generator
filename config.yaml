@@ -20,12 +20,7 @@ file_name: # What will be included in the PT file name
 # YOU MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders:
-  - ".\\Example_d1c\\all"
-
-# Will create one single PT File from multiple sets of sales files
-# Make sure they are all from the same site as the program DOES NOT 
-# check for site id when creating PT files.
-multiDayPT: False
+  - ".\\Example_d1c\\hr"
 
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
