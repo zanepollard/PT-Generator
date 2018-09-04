@@ -103,11 +103,13 @@ def ptFilePath(output, config, pObj):
 #moves pump total file if specified by YAML
 def movePumpTot(iput, config, output, pObj):
     #cwd = os.getcwd()
-    os.chdir(output)
+    start = os.path.abspath(config.get('input_folders')[0])
+    os.chdir(start)
     for file in os.listdir('.'):
         if fnmatch.fnmatch(file,"pump{0}.tot".format(pObj.nDV[0:2]+ pObj.nDV[3:5])):
+            
             pumptot = file
-            shutil.move(output + "\\" + pumptot, iput + "\\"+ pumptot)
+            shutil.move(start + "\\" + pumptot, iput + "\\"+ pumptot)
 
 #Backs up d1c files to folder specified by YAML config
 def backupSales(iput,config, pObj):
