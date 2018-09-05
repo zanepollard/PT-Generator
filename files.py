@@ -29,14 +29,6 @@ def makePT(pObj, input, config_data,root):
                     pObj.pList[i].tranNum + pObj.pList[i].tranDate + pObj.pList[i].tranTime + pObj.pList[i].FILL +
                     pObj.pList[i].vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
                     pObj.pList[i].id_vehicle + pObj.pList[i].END + "\n")
-            '''
-            f.write(pObj.pList[i].siteid + " " + pObj.pList[i].seqnum + " " + pObj.pList[i].STATCODE + " " + pObj.pList[i].totAmt + " " +
-                    pObj.pList[i].ACT + " " + pObj.pList[i].TRANTYPE + " " + pObj.pList[i].pCode + " " + pObj.pList[i].price + " " + 
-                    pObj.pList[i].quantity + " " + pObj.pList[i].odometer + " " + pObj.pList[i].OID + " " + pObj.pList[i].pump + " " +
-                    pObj.pList[i].tranNum + " " + pObj.pList[i].tranDate + " " + pObj.pList[i].tranTime + " " + pObj.pList[i].FILL + " " +
-                    pObj.pList[i].vehicle + " " + pObj.pList[i].id_card + " " + pObj.pList[i].PART_ID + " " + pObj.pList[i].id_acct + " " +
-                    pObj.pList[i].id_vehicle + " " + pObj.pList[i].END + "\n")
-            '''
         f.close()
     else:
         print("why")
@@ -44,8 +36,9 @@ def makePT(pObj, input, config_data,root):
         filename = fileName(pObj[end], config_data, root)
         os.chdir(root)
         os.chdir(opFolder)
+        f= open(filename, "w+")
         for i in pObj:
-            f= open(filename, "w+")
+            
             #Outputs the data line by line to the .dat file
             for j in pObj:
                 for k in j.pList:
@@ -86,7 +79,7 @@ def ptFilePath(output, config, pObj):
         if not os.path.exists(ptLoc):
             os.makedirs(ptLoc)
         if (config.get('pump_total') == True):
-            movePumpTot(ptLoc, config, output)
+            movePumpTot(ptLoc, config, output, pObj)
     else:
         end = len(pObj) - 1
         for __ in pObj:
@@ -97,17 +90,19 @@ def ptFilePath(output, config, pObj):
             if not os.path.exists(ptLoc):
                 os.makedirs(ptLoc)
             if (config.get('pump_total') == True):
-                movePumpTot(ptLoc, config, output)
+                movePumpTot(ptLoc, config, output, pObj)
     return ptLoc
 
 #moves pump total file if specified by YAML
-def movePumpTot(iput, config, output):
+def movePumpTot(iput, config, output, pObj):
     #cwd = os.getcwd()
-    os.chdir(output)
+    start = os.path.abspath(config.get('input_folders')[0])
+    os.chdir(start)
     for file in os.listdir('.'):
-        if fnmatch.fnmatch(file,'pump*.tot'):
+        if fnmatch.fnmatch(file,"pump{0}.tot".format(pObj.nDV[0:2]+ pObj.nDV[3:5])):
+            
             pumptot = file
-            shutil.move(output + "\\" + pumptot, iput + "\\"+ pumptot)
+            shutil.move(start + "\\" + pumptot, iput + "\\"+ pumptot)
 
 #Backs up d1c files to folder specified by YAML config
 def backupSales(iput,config, pObj):

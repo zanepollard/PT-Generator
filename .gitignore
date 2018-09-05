@@ -3,3 +3,4 @@
 ./output
 *.pyc
 *.txt
+/Example_d1c/all/*
