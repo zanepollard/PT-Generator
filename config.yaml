@@ -22,7 +22,7 @@ file_name: # What will be included in the PT file name
 input_folders:
   - ".\\Example_d1c\\all"
 
-multiDayPT: False
+multiDayPT: True
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
