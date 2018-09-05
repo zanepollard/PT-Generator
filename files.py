@@ -13,41 +13,20 @@ def makePT(pObj, input, config_data,root):
     if (config_data.get('backup_sales') == True):
         backupSales(opFolder, config_data, pObj)
 
-
-    if (config_data.get('multiDayPT') == False):
-        filename = fileName(pObj,config_data, root)
-        os.chdir(root)
-        os.chdir(opFolder)
-        f= open(filename, "w+")
-        
-        #Outputs the data line by line to the .dat file
-        for i in range(len(pObj.pList)):
-            
-            f.write(pObj.pList[i].siteid + pObj.pList[i].seqnum + pObj.pList[i].STATCODE + pObj.pList[i].totAmt +
-                    pObj.pList[i].ACT + pObj.pList[i].TRANTYPE + pObj.pList[i].pCode + pObj.pList[i].price + 
-                    pObj.pList[i].quantity + pObj.pList[i].odometer + pObj.pList[i].OID + pObj.pList[i].pump +
-                    pObj.pList[i].tranNum + pObj.pList[i].tranDate + pObj.pList[i].tranTime + pObj.pList[i].FILL +
-                    pObj.pList[i].vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
-                    pObj.pList[i].id_vehicle + pObj.pList[i].END + "\n")
-        f.close()
-    else:
-        print("why")
-        end = len(pObj) - 1
-        filename = fileName(pObj[end], config_data, root)
-        os.chdir(root)
-        os.chdir(opFolder)
-        f= open(filename, "w+")
-        for i in pObj:
-            
-            #Outputs the data line by line to the .dat file
-            for j in pObj:
-                for k in j.pList:
-                    f.write(k.siteid + k.seqnum + k.STATCODE + k.totAmt +
-                            k.ACT + k.TRANTYPE + k.pCode + k.PRICE + 
-                            k.quantity + k.odometer + k.OID + k.pump +
-                            k.tranNum + k.tranDate + k.tranTime + k.FILL +
-                            k.id_vehicle + k.id_card + k.PART_ID + k.id_acct +
-                            k.vehicle + k.END + "\n")
+    filename = fileName(pObj,config_data, root)
+    os.chdir(root)
+    os.chdir(opFolder)
+    f= open(filename, "w+")
+    
+    #Outputs the data line by line to the .dat file
+    for i in range(len(pObj.pList)):   
+        f.write(pObj.pList[i].siteid + pObj.pList[i].seqnum + pObj.pList[i].STATCODE + pObj.pList[i].totAmt +
+                pObj.pList[i].ACT + pObj.pList[i].TRANTYPE + pObj.pList[i].pCode + pObj.pList[i].price + 
+                pObj.pList[i].quantity + pObj.pList[i].odometer + pObj.pList[i].OID + pObj.pList[i].pump +
+                pObj.pList[i].tranNum + pObj.pList[i].tranDate + pObj.pList[i].tranTime + pObj.pList[i].FILL +
+                pObj.pList[i].vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
+                pObj.pList[i].id_vehicle + pObj.pList[i].END + "\n")
+    f.close()
 
 def fileName(pObj,config_data, root):
     filename = ''
@@ -71,26 +50,14 @@ def fileName(pObj,config_data, root):
 #Generates path PT file will be generated to according to options seet in config
 def ptFilePath(output, config, pObj):
     ptLoc = output
-    if(config.get('multiDayPT') == False):
-        if(config.get('output_options')['site_folder'] == True):
-            ptLoc = ptLoc + "\\" + pObj.pList[0].siteid
-        if(config.get('output_options')['date_folder'] == True):
-            ptLoc = ptLoc + "\\" + pObj.pList[0].tranDate
-        if not os.path.exists(ptLoc):
-            os.makedirs(ptLoc)
-        if (config.get('pump_total') == True):
-            movePumpTot(ptLoc, config, output, pObj)
-    else:
-        end = len(pObj) - 1
-        for __ in pObj:
-            if(config.get('output_options')['site_folder'] == True):
-                ptLoc = ptLoc + "\\" + pObj[end].pList[0].siteid
-            if(config.get('output_options')['date_folder'] == True):
-                ptLoc = ptLoc + "\\" + pObj[end].pList[0].tranDate
-            if not os.path.exists(ptLoc):
-                os.makedirs(ptLoc)
-            if (config.get('pump_total') == True):
-                movePumpTot(ptLoc, config, output, pObj)
+    if(config.get('output_options')['site_folder'] == True):
+        ptLoc = ptLoc + "\\" + pObj.pList[0].siteid
+    if(config.get('output_options')['date_folder'] == True):
+        ptLoc = ptLoc + "\\" + pObj.pList[0].tranDate
+    if not os.path.exists(ptLoc):
+        os.makedirs(ptLoc)
+    if (config.get('pump_total') == True):
+        movePumpTot(ptLoc, config, output, pObj)
     return ptLoc
 
 #moves pump total file if specified by YAML
