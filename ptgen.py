@@ -26,7 +26,7 @@ for i in input_folders:
         pt.append(temp.parse(folder, f, config_data))
     for q in pt:
         os.chdir(cwd)
-        files.makePT(q, i,config_data,cwd)
+        files.makePT(q, config_data,cwd) 
         del q #??
     
     os.chdir(cwd)

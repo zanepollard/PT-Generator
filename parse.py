@@ -42,12 +42,12 @@ class parse:
         os.chdir(folder)
         with open(dFile, newline='') as csvfile:
             dreader = csv.reader(csvfile, quotechar="\"")
-            for drow in dreader:
-                    self.transactions[drow[3]]['price'] = fmt.pFormat(drow[16])
-                    self.transactions[drow[3]]['quantity'] = fmt.decimalCheck(drow[10], True) #True = Quantity
-                    self.transactions[drow[3]]['totAmt'] = fmt.decimalCheck(drow[48], False)
-                    self.transactions[drow[3]]['pCode'] = drow[11]
-                    self.transactions[drow[3]]['tranTime'] = fmt.tFormat(drow[2])
+            for dRow in dreader:
+                    self.transactions[dRow[3]]['price'] = fmt.pFormat(dRow[16])
+                    self.transactions[dRow[3]]['quantity'] = fmt.decimalCheck(dRow[10], True) #True = Quantity
+                    self.transactions[dRow[3]]['totAmt'] = fmt.decimalCheck(dRow[48], False)
+                    self.transactions[dRow[3]]['pCode'] = dRow[11]
+                    self.transactions[dRow[3]]['tranTime'] = fmt.tFormat(dRow[2])
                     
     def vParse(self, folder, vFile):
         os.chdir(folder)
@@ -69,19 +69,20 @@ class parse:
                 if vrow[8].lower() == "ID_VEHCARD".lower() or vrow[8].lower() == "ID_VEHICLE" or vrow[8].lower() == "VEHICLE".lower():
                     self.transactions[vrow[3]]['id_vehicle'] = fmt.format(vrow[9],4)
 
-    def parse(self, folder, f, config_data):
-        os.chdir(folder)
+    def parse(self, input_folder, f, config_data):
+        os.chdir(input_folder)
 
         if config_data.get('multiDayPT') == False: 
-            self.hParse(folder, f[0])
-            self.dParse(folder, f[1])
-            self.vParse(folder, f[2])
+            self.hParse(input_folder, f[0])
+            self.dParse(input_folder, f[1])
+            self.vParse(input_folder, f[2])
             
         else:
             for i in range(len(f[0])):
-                self.hParse(folder, f[0][i])
-                self.dParse(folder, f[1][i])
-                self.vParse(folder, f[2][i])
+                #f in this case is a list of filesets as opposed to just a fileset
+                self.hParse(input_folder, f[0][i])
+                self.dParse(input_folder, f[1][i])
+                self.vParse(input_folder, f[2][i])
 
         for i in self.transactions:
                 temp = pt.ptLine(self.siteid,self.transactions[i]['seqnum'],self.transactions[i]['totAmt'],self.transactions[i]['pCode'],self.transactions[i]['price'],self.transactions[i]['quantity'],self.transactions[i]['odometer'],

@@ -6,7 +6,7 @@ import parse
 import fmt
 
 #generates the file name in standard set in config file, outputs to file
-def makePT(pObj, input, config_data,root):
+def makePT(pObj, config_data,root):
     
     output = os.path.abspath(config_data.get('output_folder'))
     opFolder = os.path.abspath(ptFilePath(output, config_data, pObj))
@@ -48,42 +48,42 @@ def fileName(pObj,config_data, root):
     return filename + config_data.get('file_name')['extension']
 
 #Generates path PT file will be generated to according to options seet in config
-def ptFilePath(output, config, pObj):
+def ptFilePath(output, config_data, pObj):
     ptLoc = output
-    if(config.get('output_options')['site_folder'] == True):
+    if(config_data.get('output_options')['site_folder'] == True):
         ptLoc = ptLoc + "\\" + pObj.pList[0].siteid
-    if(config.get('output_options')['date_folder'] == True):
+    if(config_data.get('output_options')['date_folder'] == True):
         ptLoc = ptLoc + "\\" + pObj.pList[0].tranDate
     if not os.path.exists(ptLoc):
         os.makedirs(ptLoc)
-    if (config.get('pump_total') == True):
-        movePumpTot(ptLoc, config, output, pObj)
+    if (config_data.get('pump_total') == True):
+        movePumpTot(ptLoc, config_data, pObj)
     return ptLoc
 
 #moves pump total file if specified by YAML
-def movePumpTot(iput, config, output, pObj):
+def movePumpTot(ptLoc, config_data, pObj):
     #cwd = os.getcwd()
-    start = os.path.abspath(config.get('input_folders')[0])
+    start = os.path.abspath(config_data.get('input_folders')[0])
     os.chdir(start)
     for file in os.listdir('.'):
         if fnmatch.fnmatch(file,"pump{0}.tot".format(pObj.nDV[0:2]+ pObj.nDV[3:5])):
             
             pumptot = file
-            shutil.move(start + "\\" + pumptot, iput + "\\"+ pumptot)
+            shutil.move(start + "\\" + pumptot, ptLoc + "\\"+ pumptot)
 
 #Backs up d1c files to folder specified by YAML config
-def backupSales(iput,config, pObj):
+def backupSales(opFolder,config_data, pObj):
     cwd = os.getcwd()
     h = "\\}}h{0}.d1c".format(pObj.pList[0].tranDate)
     d = "\\}}d{0}.d1c".format(pObj.pList[0].tranDate)
     v = "\\}}v{0}.d1c".format(pObj.pList[0].tranDate)
-    if(config.get('backup_options')['backup_location']['output_override'] == False):
-        bkFold = iput
+    if(config_data.get('backup_options')['backup_location']['output_override'] == False):
+        bkFold = opFolder
     else:
-        bkFold = config.get('backup_options')['backup_loaction']['backup_folder']
-        if(config.get('backup_options')['site_folder'] == True):
+        bkFold = config_data.get('backup_options')['backup_loaction']['backup_folder']
+        if(config_data.get('backup_options')['site_folder'] == True):
             bkFold = bkFold + pObj.pList[0].siteid
-        if(config.get('backup_options')['data_folder'] == True):
+        if(config_data.get('backup_options')['data_folder'] == True):
             bkFold = bkFold + pObj.pList[0].tranDate
     bkFold = os.path.abspath(bkFold + "\\d1c files")
     if not os.path.exists(bkFold):

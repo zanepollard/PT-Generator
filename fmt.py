@@ -71,22 +71,6 @@ def format(oD, num):
         temp = "0" + temp
     return temp
 
-
-#pulls today's date in the format requred of the naming covention
-def cday():
-    now = datetime.datetime.now()
-    day = ""
-    month = ""
-    if len(str(now.month))<2:
-        month = "0" + str(now.month)
-    else:
-        month = str(now.month)
-    if len(str(now.day))<2:
-        day = "0" + str(now.month)
-    else:
-        day = str(now.day)
-    return month + day + str(now.year)[2:4]
-
 def tNumFMT(tran):
     if len(tran) > 4:
         return tran[(len(tran)-4):(len(tran))]
@@ -101,11 +85,3 @@ def pFormat(price):
     for __ in range(8 - len(temp)):
         temp = temp + "0"
     return temp
-
-def check(v, l, n):
-    if len(v) != l:
-        print(n + " is not formatted correctly! check your programming moron")
-        input()
-        exit()
-    else:
-        return v
