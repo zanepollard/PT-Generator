@@ -68,7 +68,7 @@ def decimalCheck(number, x):
 def format(oD, num):
     temp = oD
     if len(temp)>num:
-        temp = temp[len(oD) - 7:len(oD)]   
+        temp = temp[len(oD) - num:len(oD)]   
     for __ in range(num - len(oD)):
         temp = "0" + temp
     return temp

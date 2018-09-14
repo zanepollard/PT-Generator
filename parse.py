@@ -48,7 +48,8 @@ class parse:
                     self.transactions[dRow[3]]['totAmt'] = fmt.decimalCheck(dRow[48], False)
                     self.transactions[dRow[3]]['pCode'] = dRow[11]
                     self.transactions[dRow[3]]['tranTime'] = fmt.tFormat(dRow[2])
-                    
+
+    # parses }v8*.d1c file once and places variables into the hash table using the transaction number as the key                 
     def vParse(self, folder, vFile):
         os.chdir(folder)
         with open(vFile, newline='') as csvfile:
@@ -75,11 +76,10 @@ class parse:
         if config_data.get('multiDayPT') == False: 
             self.hParse(input_folder, f[0])
             self.dParse(input_folder, f[1])
-            self.vParse(input_folder, f[2])
-            
+            self.vParse(input_folder, f[2]) 
         else:
             for i in range(len(f[0])):
-                #f in this case is a list of filesets as opposed to just a fileset
+                #f in this case is a list of filesets as opposed to just a singular fileset
                 self.hParse(input_folder, f[0][i])
                 self.dParse(input_folder, f[1][i])
                 self.vParse(input_folder, f[2][i])
