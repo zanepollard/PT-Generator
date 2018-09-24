@@ -1,8 +1,16 @@
 import re
 import datetime
 
-def tFormat(time):
-    return (time[0:2] + time[3:5])
+def tFormat(time,gasboy):
+    nTime = time[0:5]
+    if not gasboy:
+        return (nTime[0:2] + nTime[3:5])
+    else:
+        temp = nTime.split(":")
+        if temp[0][0] == "0":
+            temp[0] = " " + temp[0][1]
+        return temp[0] + ":" + temp[1] + " "
+
 
 def dFormat(date):
     fDate = date[8:10] + date[0:2] + date[3:5]
@@ -65,12 +73,17 @@ def decimalCheck(number, x):
         return decimalSplit(number, x, False)
 
 #Ensures the value that was put into it has the proper amount of zeros
-def format(oD, num):
+def format(oD, num, gasboy):
     temp = oD
     if len(temp)>num:
         temp = temp[len(oD) - num:len(oD)]   
     for __ in range(num - len(oD)):
-        temp = "0" + temp
+        if not gasboy:
+            temp = "0" + temp
+        else:
+            temp = " " + temp
+    if gasboy:
+        temp = temp + " "
     return temp
 
 def tNumFMT(tran):
@@ -82,8 +95,35 @@ def tNumFMT(tran):
             temp = "0" + temp
         return temp
 
-def pFormat(price):
-    temp = price.replace(".", "")
-    for __ in range(8 - len(temp)):
-        temp = temp + "0"
-    return temp
+def pFormat(price, gasboy):
+    if not gasboy:
+        temp = price.replace(".", "")
+        for __ in range(8 - len(temp)):
+            temp = temp + "0"
+        return temp    
+    else:
+        pRe = re.compile(r'\d*\.\d*')
+        if pRe.match(price):
+            pr = price.split('.')
+            for _ in range(4 - len(pr[0])-len(pr[1])):
+                pr[1] += "0"
+            return pr[0] + "." + pr[1] + " "
+        else:
+            z = ""
+            for __ in range(4-len(price)):
+                z = z + "0"
+            return price + "." + z + " "
+
+def gBoyFormat(v, l1, l2):
+    temp = v.split(".")
+    for _ in range(l1 - len(temp[0])):
+        temp[0] = " " + temp[0]
+    if(len(temp) == 2):
+        for _ in range(l2 - len(temp[1])):
+            temp[1] = temp[1] + "0"        
+    else:
+        temp.append("0")
+        for _ in range(l2-1):
+            temp[1] = temp[1] + "0"
+    return temp[0] + "." + temp[1] + " "
+    

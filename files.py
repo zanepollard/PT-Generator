@@ -4,11 +4,13 @@ import fnmatch
 import yaml
 import parse
 import fmt
+from pathlib import Path
 
 #generates the file name in standard set in config file, outputs to file
 def makePT(pObj, config_data,root):
     
     output = os.path.abspath(config_data.get('output_folder'))
+    gasboy = config_data.get('gasboyOutput')
     opFolder = os.path.abspath(ptFilePath(output, config_data, pObj))
     if (config_data.get('backup_sales') == True):
         backupSales(opFolder, config_data, pObj)
@@ -16,16 +18,25 @@ def makePT(pObj, config_data,root):
     filename = fileName(pObj,config_data, root)
     os.chdir(root)
     os.chdir(opFolder)
-    f= open(filename, "w+")
+    f= open(filename, "a")
     
     #Outputs the data line by line to the .dat file
-    for i in range(len(pObj.pList)):   
-        f.write(pObj.pList[i].siteid + pObj.pList[i].seqnum + pObj.pList[i].STATCODE + pObj.pList[i].totAmt +
-                pObj.pList[i].ACT + pObj.pList[i].TRANTYPE + pObj.pList[i].pCode + pObj.pList[i].price + 
-                pObj.pList[i].quantity + pObj.pList[i].odometer + pObj.pList[i].OID + pObj.pList[i].pump +
-                pObj.pList[i].tranNum + pObj.pList[i].tranDate + pObj.pList[i].tranTime + pObj.pList[i].FILL +
-                pObj.pList[i].vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
-                pObj.pList[i].id_vehicle + pObj.pList[i].END + "\n")
+    if not gasboy:
+        for i in range(len(pObj.pList)):   
+            f.write(pObj.pList[i].siteid + pObj.pList[i].seqnum + pObj.pList[i].STATCODE + pObj.pList[i].totAmt +
+                    pObj.pList[i].ACT + pObj.pList[i].TRANTYPE + pObj.pList[i].pCode + pObj.pList[i].price + 
+                    pObj.pList[i].quantity + pObj.pList[i].odometer + pObj.pList[i].OID + pObj.pList[i].pump +
+                    pObj.pList[i].tranNum + pObj.pList[i].tranDate + pObj.pList[i].tranTime + pObj.pList[i].FILL +
+                    pObj.pList[i].vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
+                    pObj.pList[i].id_vehicle + pObj.pList[i].END + "\n")
+    else:
+        for i in range(len(pObj.pList)):   
+            f.write(pObj.pList[i].siteid + pObj.pList[i].tranNum + " " + pObj.pList[i].id_card + 
+                    pObj.pList[i].id_acct + "000 " + "          " + pObj.pList[i].tranDate +
+                    pObj.pList[i].tranTime + pObj.pList[i].pump + pObj.pList[i].pCode +
+                    pObj.pList[i].quantity + pObj.pList[i].price + pObj.pList[i].totAmt +
+                    pObj.pList[i].odometer + "\n")
+
     f.close()
 
 def fileName(pObj,config_data, root):
