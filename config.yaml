@@ -27,13 +27,13 @@ input_folders:
   - "X:\\Dawson\\Rocklin"
   - "X:\\Dawson\\Yuba City"
 
-multiDayPT: False
+multiDayPT: True
 gasboyOutput: True
 
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
-output_folder: ".\\Output" #".\\Output"
+output_folder: ".\\dawson" #".\\Output"
 output_options:
   site_folder: False
   date_folder: False

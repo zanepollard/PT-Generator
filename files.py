@@ -8,7 +8,6 @@ from pathlib import Path
 
 #generates the file name in standard set in config file, outputs to file
 def makePT(pObj, config_data,root):
-    
     output = os.path.abspath(config_data.get('output_folder'))
     gasboy = config_data.get('gasboyOutput')
     opFolder = os.path.abspath(ptFilePath(output, config_data, pObj))
@@ -18,9 +17,10 @@ def makePT(pObj, config_data,root):
     filename = fileName(pObj,config_data, root)
     os.chdir(root)
     os.chdir(opFolder)
-    f= open(filename, "a")
-    
-    #Outputs the data line by line to the .dat file
+    if not gasboy:
+        f = open(filename, "w+")
+    else:
+        f = open(filename, "a+")
     if not gasboy:
         for i in range(len(pObj.pList)):   
             f.write(pObj.pList[i].siteid + pObj.pList[i].seqnum + pObj.pList[i].STATCODE + pObj.pList[i].totAmt +
@@ -36,8 +36,9 @@ def makePT(pObj, config_data,root):
                     pObj.pList[i].tranTime + pObj.pList[i].pump + pObj.pList[i].pCode +
                     pObj.pList[i].quantity + pObj.pList[i].price + pObj.pList[i].totAmt +
                     pObj.pList[i].odometer + "\n")
-
+    print("end of one file")
     f.close()
+        #os.system("pause")
 
 def fileName(pObj,config_data, root):
     filename = ''
