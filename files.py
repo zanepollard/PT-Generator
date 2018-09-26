@@ -30,12 +30,16 @@ def makePT(pObj, config_data,root):
                     pObj.pList[i].id_vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
                     pObj.pList[i].vehicle + pObj.pList[i].END + "\n")
     else:
-        for i in range(len(pObj.pList)):   
+        for i in range(len(pObj.pList)):
+            carwash =""
+            for x in ("07 ","08 ","09 "):
+                if pObj.pList[i].pCode == x:
+                    carwash = "CARWASH "
             f.write(pObj.pList[i].siteid + pObj.pList[i].tranNum + " " + pObj.pList[i].id_card + 
                     pObj.pList[i].id_acct + "000 " + pObj.pList[i].vehicle + pObj.pList[i].tranDate +
                     pObj.pList[i].tranTime + pObj.pList[i].pump + pObj.pList[i].pCode +
                     pObj.pList[i].quantity + pObj.pList[i].price + pObj.pList[i].totAmt +
-                    pObj.pList[i].odometer + "\n")
+                    pObj.pList[i].odometer + carwash+"\n")
     print("end of one file")
     f.close()
         #os.system("pause")

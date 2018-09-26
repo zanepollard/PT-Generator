@@ -32,7 +32,7 @@ class parse:
                     if rowdata[3] not in self.transactions:
                         self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "000000", 'pCode': "00", 'quantity': "00000000", 
                                                     'odometer': "       ", 'pump': "00 ",'tranNum': "0000",'tranTime': "0000",
-                                                    'id_vehicle': "          ", 'id_card': "       ",'id_acct': "      ", 'vehicle': "0000", 'price': "00000000"}
+                                                    'id_vehicle': "          ", 'id_card': "       ",'id_acct': "      ", 'vehicle': "          ", 'price': "00000000"}
                 self.transactions[rowdata[3]]['tranNum'] = fmt.tNumFMT(rowdata[3])
                 if firstRun:
                     raw_id = re.sub(r'[a-z_\s-]','', rowdata[0], flags=re.IGNORECASE)
@@ -109,13 +109,13 @@ class parse:
                     if vrow[8].lower() == "PUMP".lower():
                         self.transactions[vrow[3]]['pump'] = fmt.format(vrow[9],2,gasboy)
                     if vrow[8].lower() == "VEHICLE".lower() or vrow[8].lower() == "ID_VEHICLE" or vrow[8].lower() == "ID_VEHCARD".lower():
-                        self.transactions[vrow[3]]['vehicle'] = fmt.format(vrow[9],10,gasboy) + " "
+                        self.transactions[vrow[3]]['vehicle'] = fmt.format(vrow[9],9,gasboy)
                     if vrow[8].lower() == "ID_CARD".lower():
                         self.transactions[vrow[3]]['id_card'] = fmt.format(vrow[9],6,gasboy)
                     if vrow[8].lower() == "ID_ACCT".lower():
                         self.transactions[vrow[3]]['id_acct'] = fmt.format(vrow[9],5,gasboy)
                     if vrow[8].lower() == "ID_VEHCARD".lower() or vrow[8].lower() == "ID_VEHICLE" or vrow[8].lower() == "VEHICLE".lower():
-                        self.transactions[vrow[3]]['id_vehicle'] = fmt.format(vrow[9],4,gasboy)
+                        self.transactions[vrow[3]]['id_vehicle'] = fmt.format(vrow[9],9,gasboy)
 
     def parse(self, input_folder, f, config_data):
         os.chdir(input_folder)
