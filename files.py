@@ -27,8 +27,8 @@ def makePT(pObj, config_data,root):
                     pObj.pList[i].ACT + pObj.pList[i].TRANTYPE + pObj.pList[i].pCode + pObj.pList[i].price + 
                     pObj.pList[i].quantity + pObj.pList[i].odometer + pObj.pList[i].OID + pObj.pList[i].pump +
                     pObj.pList[i].tranNum + pObj.pList[i].tranDate + pObj.pList[i].tranTime + pObj.pList[i].FILL +
-                    pObj.pList[i].vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
-                    pObj.pList[i].id_vehicle + pObj.pList[i].END + "\n")
+                    pObj.pList[i].id_vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
+                    pObj.pList[i].vehicle + pObj.pList[i].END + "\n")
     else:
         for i in range(len(pObj.pList)):   
             f.write(pObj.pList[i].siteid + pObj.pList[i].tranNum + " " + pObj.pList[i].id_card + 

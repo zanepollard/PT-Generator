@@ -27,7 +27,7 @@ class parse:
                     if rowdata[3] not in self.transactions:
                         self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "000000", 'pCode': "00", 'quantity': "00000000", 
                                                     'odometer': "0000000", 'pump': "00",'tranNum': "0000",'tranTime': "0000",
-                                                    'id_vehicle': "00000000", 'id_card': "0000000",'id_acct': "000000", 'vehicle': "0000", 'price': "0.000"} 
+                                                    'id_vehicle': "00000000", 'id_card': "0000000",'id_acct': "000000", 'vehicle': "0000", 'price': "00000000"} 
                 else:
                     if rowdata[3] not in self.transactions:
                         self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "000000", 'pCode': "00", 'quantity': "00000000", 
