@@ -4,6 +4,7 @@ import fnmatch
 import yaml
 import parse
 import fmt
+from datetime import datetime
 from pathlib import Path
 
 #generates the file name in standard set in config file, outputs to file
@@ -27,8 +28,8 @@ def makePT(pObj, config_data,root):
                     pObj.pList[i].ACT + pObj.pList[i].TRANTYPE + pObj.pList[i].pCode + pObj.pList[i].price + 
                     pObj.pList[i].quantity + pObj.pList[i].odometer + pObj.pList[i].OID + pObj.pList[i].pump +
                     pObj.pList[i].tranNum + pObj.pList[i].tranDate + pObj.pList[i].tranTime + pObj.pList[i].FILL +
-                    pObj.pList[i].id_vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
-                    pObj.pList[i].vehicle + pObj.pList[i].END + "\n")
+                    pObj.pList[i].vehicle + pObj.pList[i].id_card + pObj.pList[i].PART_ID + pObj.pList[i].id_acct +
+                    pObj.pList[i].id_vehicle + pObj.pList[i].END + "\n")
     else:
         for i in range(len(pObj.pList)):
             carwash =""
@@ -123,7 +124,9 @@ def fileFind(folder):
     d.sort()        
     v.sort()
     if((len(h) == len(d) == len(v)) != True):
-        print("some sales files missing!")
+        eName = folder + "\\{0}.log".format(datetime.date(datetime.now()))
+        log = open(eName, 'a+')
+        log.write("Not enough files in " + folder + " to make a pt file. check to see if all h,d, and v files are in the folder")
         exit()
     return [h,d,v]
 

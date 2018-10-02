@@ -48,8 +48,6 @@ class parse:
                         dTemp = dTemp.split("-") 
                         if dTemp[0][0] == "0":
                             dTemp[0] = " " + dTemp[0][1]
-                        if dTemp[1][0] == "0":
-                            dTemp[1] = " " + dTemp[1][1]
                         dTemp[2] = dTemp[2][2:4]
                         self.tranDate = dTemp[0] + "/" +  dTemp[1] + "/" + dTemp[2] + " "
                     siteid = raw_id
