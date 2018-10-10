@@ -7,7 +7,7 @@
 file_name: # What will be included in the PT file name
   custom: # Allows for custom file name beginning if wanted
     custom_beginning: True
-    text: "Dawson"
+    text: "Test"
   siteid: False
   date:
     include: True
@@ -20,23 +20,18 @@ file_name: # What will be included in the PT file name
 # YOU MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders:
-  - "X:\\Dawson\\Bowman"
-  - "X:\\Dawson\\Nevada St"
-  - "X:\\Dawson\\Oroville"
-  - "X:\\Dawson\\Placerville"
-  - "X:\\Dawson\\Rocklin"
-  - "X:\\Dawson\\Yuba City"
+  - "C:\\Your\\Directory\\Here"
 
-multiDayPT: True
-gasboyOutput: True
+multiDayPT: True #condenses multiple sales file days into a single file for easy import 
+gasboyOutput: True #outputs gasboy style. Must also have multidaypt on for this to work
 
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
-output_folder: ".\\dawson" #".\\Output"
+output_folder: ".\\" #".\\Output"
 output_options:
-  site_folder: False
-  date_folder: False
+  site_folder: False #Creates a folder for the site listed in the sales file
+  date_folder: False #Creates a date folder within either the root or the site folder depending on the options set
 
 # value that dictates whether a pump total file will 
 # need to be moved along with the PT file.
