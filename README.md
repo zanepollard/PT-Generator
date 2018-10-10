@@ -8,7 +8,3 @@ ___
 
 ## Configuration
 Configuration of the program can be done through the config.yaml file. 
-#### Value Explanation
-1. **file_name:** list that includes values for the file name output 
-   * **custom:** Allows for a custom string at the beginning of the file name, like a company name.
-    * **custom_beginning** *bool*, Sets whether or not the custom beginning is on or not.
