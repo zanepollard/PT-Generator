@@ -1,5 +1,5 @@
 # PT-Generator
-Generates standard CFN PT Files ([Spec Here](http://www.cfnnet.com/OpManual/appendix/ptlayout112.html)) from TSC sales file logs.
+Generates standard CFN PT Files ([Spec Here](http://www.cfnnet.com/OpManual/appendix/ptlayout112.html)) from TSC sales file logs. The program can also output files the same way gasboy controllers output transactions.
 
 ## Requirements
 1. Python 3.6 and up.
