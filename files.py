@@ -36,7 +36,7 @@ def makePT(pObj, config_data,root):
             for x in ("07 ","08 ","09 "):
                 if pObj.pList[i].pCode == x:
                     carwash = "CARWASH "
-            f.write(pObj.pList[i].siteid + pObj.pList[i].tranNum + " " + pObj.pList[i].id_card + 
+            f.write(pObj.pList[i].siteid + pObj.pList[i].seqnum + " " + pObj.pList[i].id_card + 
                     pObj.pList[i].id_acct + "000 " + pObj.pList[i].vehicle + pObj.pList[i].tranDate +
                     pObj.pList[i].tranTime + pObj.pList[i].pump + pObj.pList[i].pCode +
                     pObj.pList[i].quantity + pObj.pList[i].price + pObj.pList[i].totAmt +
