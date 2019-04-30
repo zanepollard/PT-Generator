@@ -14,6 +14,7 @@ class parse:
         self.pList = []
         self.transactions = {}
 
+    #Parses header sales file
     def hParse(self, folder, hFile, gasboy):
         firstRun = True
         raw_id = ""
@@ -21,19 +22,26 @@ class parse:
         os.chdir(folder)
         with open(hFile, newline='') as csvfile: 
             reader = csv.reader(csvfile, quotechar="\"")
+            #Goes through each row in current header file
             for row in reader:
                 rowdata = row
                 if not gasboy:
                     if rowdata[3] not in self.transactions:
+                        #Default values for standard PT file, needed to ensure every line outputs properly
+                        #This is needed because the VB6 code sometimes has variables missing from the sales files.
+                        # Missing variables will break back office PT import, better to have filler zeros than a file that can't be imported, or has missing transactions. 
                         self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "000000", 'pCode': "00", 'quantity': "00000000", 
                                                     'odometer': "0000000", 'pump': "00",'tranNum': "0000",'tranTime': "0000",
                                                     'id_vehicle': "00000000", 'id_card': "0000000",'id_acct': "000000", 'vehicle': "0000", 'price': "00000000"} 
                 else:
                     if rowdata[3] not in self.transactions:
+                        #Default gasboy variable values. Same reasoon as above.
                         self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "000000", 'pCode': "00", 'quantity': "00000000", 
                                                     'odometer': "       ", 'pump': "00 ",'tranNum': "0000",'tranTime': "0000",
                                                     'id_vehicle': "          ", 'id_card': "       ",'id_acct': "      ", 'vehicle': "          ", 'price': "00000000"}
                 self.transactions[rowdata[3]]['tranNum'] = fmt.tNumFMT(rowdata[3])
+                #This statement is here for processes that only have to be done once per file set. Pulls the siteid and date, processing them 
+                #Based on if it is the standard PT output or the gasboy output
                 if firstRun:
                     raw_id = re.sub(r'[a-z_\s-]','', rowdata[0], flags=re.IGNORECASE)
                     #length check for gasboy output
@@ -58,8 +66,11 @@ class parse:
                         siteid = siteid + " "
                     self.siteid = siteid       
 
+    #Parses data sales file
     def dParse(self, folder, dFile, gasboy): 
         os.chdir(folder)
+        #Sets variables in dictionary based on the key value of the transaction number. (dRow[3])
+        #Depending on the output style the variables will be formatted differently
         with open(dFile, newline='') as csvfile:
             dreader = csv.reader(csvfile, quotechar="\"")
             if not gasboy:
@@ -77,7 +88,7 @@ class parse:
                     self.transactions[dRow[3]]['pCode'] = dRow[11] + " "
                     self.transactions[dRow[3]]['tranTime'] = fmt.tFormat(dRow[2],gasboy)
 
-    # parses }v8*.d1c file once and places variables into the hash table using the transaction number as the key                 
+    # parses }v8*.d1c file once and places variables into the dictionary using the transaction number as the key                 
     def vParse(self, folder, vFile, gasboy):
         os.chdir(folder)
         with open(vFile, newline='') as csvfile:
@@ -130,6 +141,7 @@ class parse:
                 self.dParse(input_folder, f[1][i], gasboy)
                 self.vParse(input_folder, f[2][i], gasboy)
 
+        #creates PT line objects for each transaction 
         for i in self.transactions:
                 temp = pt.ptLine(self.siteid,self.transactions[i]['seqnum'],self.transactions[i]['totAmt'],self.transactions[i]['pCode'],self.transactions[i]['price'],self.transactions[i]['quantity'],self.transactions[i]['odometer'],
                                 self.transactions[i]['pump'],self.transactions[i]['tranNum'],self.tranDate,self.transactions[i]['tranTime'],self.transactions[i]['vehicle'],

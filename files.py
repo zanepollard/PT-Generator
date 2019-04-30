@@ -43,15 +43,15 @@ def makePT(pObj, config_data,root):
                     pObj.pList[i].odometer + carwash+"\n")
     print("end of one file")
     f.close()
-        #os.system("pause")
 
+#Sets file name based on config.yaml options
 def fileName(pObj,config_data, root):
     filename = ''
     os.chdir(root)
     if (config_data.get('file_name')['custom']['custom_beginning'] == True):
         filename = filename + config_data.get('file_name')['custom']['text']
     if (config_data.get('file_name')['siteid'] == True):
-        filename = filename + pObj.pList[0].siteid +"_"
+        filename = filename + pObj.pList[0].siteid + "_"
     #include date
     if (config_data.get('file_name')['date']['include'] == True):
         #True = yymmdd False = mmddyy
@@ -61,7 +61,7 @@ def fileName(pObj,config_data, root):
             if (config_data.get('file_name')['date']['add_day'] == True):
                 filename = filename + fmt.nextDay(pObj.nDV)
             else:
-                filename = filename  + pObj.nDV[0:2]+ pObj.nDV[3:5]+ pObj.nDV[8:10] 
+                filename = filename + pObj.nDV[0:2]+ pObj.nDV[3:5]+ pObj.nDV[8:10] 
     return filename + config_data.get('file_name')['extension']
 
 #Generates path PT file will be generated to according to options seet in config
@@ -109,6 +109,7 @@ def backupSales(opFolder,config_data, pObj):
     shutil.move(cwd + d, bkFold + d)
     shutil.move(cwd + v, bkFold + v)
 
+#Checks folder for sales files and sorts the list
 def fileFind(folder):
     h = []
     d = []
