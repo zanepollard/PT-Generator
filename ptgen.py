@@ -14,17 +14,14 @@ pt = []
 temp = parse.parse()
 
 for i in input_folders:
-    print(i)
     fCount = 0
     folder = os.path.abspath(i)
-    print(os.listdir(i))
     for file in os.listdir(i):
         if len(file)>4:
             if file[len(file)-4:len(file)] != ".log":
                 fCount += 1
     if fCount>=3:
         f = files.fileFind(folder)
-        print(f)
         if config_data.get('multiDayPT') == False: 
             for x in range(len(f[0])):
                 temp = None
@@ -46,4 +43,3 @@ for i in input_folders:
         eName = i + "\\{0}.log".format(datetime.date(datetime.now()))
         log = open(eName, 'a+')
         log.write("Not enough files in " + i + " to make a pt file")
-print(datetime.now() - startTime)

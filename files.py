@@ -41,7 +41,6 @@ def makePT(pObj, config_data,root):
                     pObj.pList[i].tranTime + pObj.pList[i].pump + pObj.pList[i].pCode +
                     pObj.pList[i].quantity + pObj.pList[i].price + pObj.pList[i].totAmt +
                     pObj.pList[i].odometer + carwash+"\n")
-    print("end of one file")
     f.close()
 
 #Sets file name based on config.yaml options
