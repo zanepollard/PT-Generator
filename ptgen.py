@@ -12,7 +12,6 @@ input_folders = config_data.get('input_folders')
 cwd = os.getcwd()
 pt = []
 temp = parse.parse()
-#temp.vTwo() 
 
 for i in input_folders:
     print(i)
