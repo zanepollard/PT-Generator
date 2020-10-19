@@ -78,7 +78,6 @@ class parse:
                     siteid = rowdata[0]
                     
                     self.transactions[rowdata[3]]['tranDate'] = rowdata[1]
-                    print(self.transactions[rowdata[3]]['tranDate'])
 
                 self.siteid = siteid       
 
