@@ -4,7 +4,8 @@ class ptLine:
     def __init__(self,siteid,seqnum,totAmt,
                 pCode, price,quantity,odometer,pump,
                 tranNum,tranDate,tranTime,vehicle,
-                id_card,id_acct,id_vehicle):
+                id_card,id_acct,id_vehicle, authNum, 
+                pName,cardType):
         self.siteid = siteid
         self.seqnum = seqnum
         self.STATCODE = "00"
@@ -32,6 +33,15 @@ class ptLine:
                     "00000000000000000000000000000"
                     "000000000000DCF00000000000000"
                     "0000000000")
+        self.pName = pName
+        self.authNum = authNum
+        self.cardType = cardType
     
+    def csvPrint(self):
+        tranDateTime = self.tranDate + " " + self.tranTime
+        return [tranDateTime, self.siteid, self.tranNum, self.seqnum, self.authNum, self.id_acct,
+                self.pName, self.pCode, self.pump, self.quantity, self.price, self.totAmt,
+                self.tranDate, self.tranTime, self.cardType]
+
         
     

@@ -2,8 +2,10 @@ import os
 import shutil
 import fnmatch
 import yaml
-import parse
+import parse 
 import fmt
+import re
+import csv
 from datetime import datetime
 from pathlib import Path
 
@@ -41,7 +43,24 @@ def makePT(pObj, config_data,root):
                     pObj.pList[i].tranTime + pObj.pList[i].pump + pObj.pList[i].pCode +
                     pObj.pList[i].quantity + pObj.pList[i].price + pObj.pList[i].totAmt +
                     pObj.pList[i].odometer + carwash+"\n")
-    f.close()
+
+def makeCSV(pObj, config_data, root):
+    output = os.path.abspath(config_data.get('output_folder'))
+    opFolder = os.path.abspath(ptFilePath(output, config_data, pObj))
+    header = ['Transaction Date', 'Site', 'Trans #', 'Seq #', 'Auth #', 'Card #', 'Product', 'Prod ID', 
+              'Pump', 'Quantity', 'PPG', 'Total','Day', 'Time', 'Card Type']
+
+    filename = 'Raw_Data_'+ pObj.nDV + '.csv'
+
+    os.chdir(root)
+    os.chdir(opFolder)
+
+    with open(filename,'w', newline='') as csvfile:
+        tranWriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
+        tranWriter.writerow(header)
+        for i in range(len(pObj.pList)):
+            tranWriter.writerow(pObj.pList[i].csvPrint())
+    csvfile.close()
 
 #Sets file name based on config.yaml options
 def fileName(pObj,config_data, root):
@@ -114,11 +133,11 @@ def fileFind(folder):
     d = []
     v = []
     for file in os.listdir(folder):
-        if fnmatch.fnmatch(file,'}h*.d1c'):
+        if re.match(r'[}]h\d{6}[.][bd4]1c',file):
             h.append(file)
-        if fnmatch.fnmatch(file,'}d*.d1c'):
+        if re.match(r'[}]d\d{6}[.][bd4]1c',file):
             d.append(file)   
-        if fnmatch.fnmatch(file,'}v*.d1c'):
+        if re.match(r'[}]v\d{6}[.][bd4]1c',file):
             v.append(file)
     h.sort()        
     d.sort()        
