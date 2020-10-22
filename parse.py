@@ -15,7 +15,7 @@ class parse:
         self.transactions = {}
 
     #Parses header sales file
-    def hParse(self, folder, hFile, gasboy, csvO):
+    def hParse(self, folder, hFile, gasboy, CSVOutput):
         firstRun = True
         raw_id = ""
         rowdata = []
@@ -32,7 +32,7 @@ class parse:
                         self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "000000", 'pCode': "00", 'quantity': "00000000", 
                                                     'odometer': "       ", 'pump': "00 ",'tranNum': "0000",'tranTime': "0000",
                                                     'id_vehicle': "          ", 'id_card': "       ",'id_acct': "      ", 'vehicle': "          ", 'price': "00000000"}
-                if not gasboy and not csvO:
+                if not gasboy and not CSVOutput:
                     if rowdata[3] not in self.transactions:
                         #Default values for standard PT file, needed to ensure every line outputs properly
                         #This is needed because the VB6 code sometimes has variables missing from the sales files.
@@ -41,11 +41,11 @@ class parse:
                                                     'odometer': "0000000", 'pump': "00",'tranNum': "0000",'tranTime': "0000",
                                                     'id_vehicle': "00000000", 'id_card': "0000000",'id_acct': "000000", 'vehicle': "0000", 'price': "00000000"}
                 
-                if csvO:
+                if CSVOutput:
                     if rowdata[3] not in self.transactions:
                         self.transactions[rowdata[3]] = {'seqnum': 0,'totAmt': 0, 'pCode': "N/A", 'quantity': 0, 'odometer': 0, 'pump': 0,'tranNum': 0,'tranTime': "N/A", 'tranDate': "N/A",
                                                     'id_vehicle': 0, 'id_card': "",'id_acct': "", 'vehicle': "N/A", 'price': 0, 'authNum': 0, 'pName': "N/A", 'id_card_type': "N/A"}
-                if not csvO:
+                if not CSVOutput:
                     self.transactions[rowdata[3]]['tranNum'] = fmt.tNumFMT(rowdata[3])
                 else:
                     self.transactions[rowdata[3]]['tranNum'] = rowdata[3]
@@ -58,9 +58,9 @@ class parse:
                         raw_id = raw_id[len(raw_id)-2:len(raw_id)]
                     firstRun = False
                     self.nDV = rowdata[1]
-                    if not gasboy and not csvO:
+                    if not gasboy and not CSVOutput:
                         self.tranDate = fmt.dFormat(rowdata[1])
-                    if gasboy and not csvO:
+                    if gasboy and not CSVOutput:
                         dTemp = rowdata[1]
                         dTemp = dTemp.split("-") 
                         if dTemp[0][0] == "0":
@@ -68,13 +68,13 @@ class parse:
                         dTemp[2] = dTemp[2][2:4]
                         self.tranDate = dTemp[0] + "/" +  dTemp[1] + "/" + dTemp[2] + " "
                     siteid = raw_id
-                    if not gasboy and not csvO:
+                    if not gasboy and not CSVOutput:
                         for __ in range((6 - len(raw_id))):
                             siteid = '0' + siteid
                     elif gasboy:
                         siteid = siteid + " "
                     
-                if csvO:
+                if CSVOutput:
                     siteid = rowdata[0]
                     
                     self.transactions[rowdata[3]]['tranDate'] = rowdata[1]
@@ -187,7 +187,7 @@ class parse:
                         self.transactions[vrow[3]]['id_acct'] = vrow[9]
                     if vrow[8].lower() == "ID_VEHCARD".lower() or vrow[8].lower() == "ID_VEHICLE" or vrow[8].lower() == "VEHICLE".lower():
                         self.transactions[vrow[3]]['id_vehicle'] = vrow[9]  
-                    if vrow[8].lower() == "APPROVAL#".lower():
+                    if vrow[8].lower() == "R_APPROVAL".lower():
                         self.transactions[vrow[3]]['authNum'] = vrow[9]
                     if vrow[8].lower() == "ID_CARD_TYPE".lower():
                         self.transactions[vrow[3]]['id_card_type'] = vrow[9]
@@ -210,7 +210,7 @@ class parse:
                         self.transactions[vrow[3]]['id_acct'] = vrow[9]
                     if vrow[8].lower() == "ID_VEHCARD".lower() or vrow[8].lower() == "ID_VEHICLE" or vrow[8].lower() == "VEHICLE".lower():
                         self.transactions[vrow[3]]['id_vehicle'] = vrow[9]  
-                    if vrow[8].lower() == "APPROVAL#".lower():
+                    if vrow[8].lower() == "R_CODE".lower():
                         self.transactions[vrow[3]]['authNum'] = vrow[9]
                     if vrow[8].lower() == "ID_VALID_ID".lower():
                         self.transactions[vrow[3]]['id_card_type'] = vrow[9]
@@ -219,22 +219,22 @@ class parse:
     def parse(self, input_folder, f, config_data):
         os.chdir(input_folder)
         gasboy = config_data.get('gasboyOutput')
-        csvO = config_data.get('csvOutput')
+        CSVOutput = config_data.get('csvOutput')
 
         if config_data.get('multiDayPT') == False: 
-            self.hParse(input_folder, f[0], gasboy, csvO)
+            self.hParse(input_folder, f[0], gasboy, CSVOutput)
             self.dParse(input_folder, f[1], gasboy)
             self.vParse(input_folder, f[2], gasboy) 
         else:
             for i in range(len(f[0])):
                 #f in this case is a list of filesets as opposed to just a singular fileset
-                self.hParse(input_folder, f[0][i], gasboy, csvO)
+                self.hParse(input_folder, f[0][i], gasboy, CSVOutput)
                 self.dParse(input_folder, f[1][i], gasboy)
                 self.vParse(input_folder, f[2][i], gasboy)
 
         #creates PT line objects for each transaction 
         for i in self.transactions:
-            if not csvO:
+            if not CSVOutput:
                 temp = pt.ptLine(self.siteid,self.transactions[i]['seqnum'],self.transactions[i]['totAmt'],self.transactions[i]['pCode'],self.transactions[i]['price'],self.transactions[i]['quantity'],self.transactions[i]['odometer'],
                                 self.transactions[i]['pump'],self.transactions[i]['tranNum'],self.tranDate,self.transactions[i]['tranTime'],self.transactions[i]['vehicle'],
                                 self.transactions[i]['id_card'],self.transactions[i]['id_acct'],self.transactions[i]['id_vehicle'],0,0,0) 
