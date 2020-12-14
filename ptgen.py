@@ -12,9 +12,6 @@ with open('config.yaml') as cfg:
     config_data = yaml.load(cfg, Loader=yaml.FullLoader)
 
 
-
-gasboy = bool(config_data['gasboyOutput'])
-csvOutput = bool(config_data['csvOutput'])
 input_folders = list(config_data['input_folders'])
 cwd = os.getcwd()
 pt = []
@@ -27,7 +24,7 @@ for i in input_folders:
         if len(file)>4:
             if file[len(file)-4:len(file)] != ".log":
                 fCount += 1
-    if fCount>=3:
+    if((fCount%3)==0):
         f = files.fileFind(folder)
         if config_data.get('multiDayPT') == False:  
             for x in range(len(f[0])):
@@ -38,16 +35,9 @@ for i in input_folders:
             temp = parse.parse()
             pt.append(temp.parse(folder, f, config_data))
 
-        lTemp = None
         for q in pt:
             os.chdir(cwd)
-            if not gasboy and not csvOutput:
-                files.makePT(q, config_data,cwd)
-            lTemp = q
-        if gasboy:
-            files.makePT(lTemp, config_data,cwd)
-        if csvOutput:
-            files.makeCSV(q, config_data, cwd)
+            files.salesOutput(q, config_data,cwd)
         os.chdir(cwd)
     else:
         eName = i + "\\{0}.log".format(datetime.date(datetime.now()))

@@ -44,23 +44,55 @@ def makePT(pObj, config_data,root):
                     pObj.pList[i].quantity + pObj.pList[i].price + pObj.pList[i].totAmt +
                     pObj.pList[i].odometer + carwash+"\n")
 
-def makeCSV(pObj, config_data, root):
+
+def salesOutput(pObj, config_data, root):
+    ptOutput = bool(config_data['ptOutput'])
+    gasboy = bool(config_data['gasboyOutput'])
+    csvOutput = bool(config_data['csvOutput'])
+    merchantAg = bool(config_data['merchantAg'])
+
     output = os.path.abspath(config_data.get('output_folder'))
     opFolder = os.path.abspath(ptFilePath(output, config_data, pObj))
-    header = ['Transaction Date', 'Site', 'Trans #', 'Seq #', 'Auth #', 'Card #', 'Product', 'Prod ID', 
-              'Pump', 'Quantity', 'PPG', 'Total','Day', 'Time', 'Card Type']
 
-    filename = 'Raw_Data_'+ pObj.nDV + '.csv'
+    if (config_data.get('backup_sales') == True):
+        backupSales(opFolder, config_data, pObj)
+
+    filename = fileName(pObj, config_data, root)
 
     os.chdir(root)
     os.chdir(opFolder)
 
-    with open(filename,'w', newline='') as csvfile:
-        tranWriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
-        tranWriter.writerow(header)
+    
+    if ptOutput:
+        f = open(filename, "w+")
         for i in range(len(pObj.pList)):
-            tranWriter.writerow(pObj.pList[i].csvPrint())
-    csvfile.close()
+            f.write(pObj.pList[i].ptPrint())
+
+    elif gasboy:
+        f = open(filename, "w+")
+        for i in range(len(pObj.pList)):
+            f.write(pObj.pList[i].gasboyPrint())
+
+    elif csvOutput:
+        header = ['Transaction Date', 'Site', 'Trans #', 'Seq #', 'Auth #', 'Card #', 'Product', 'Prod ID', 
+              'Pump', 'Quantity', 'PPG', 'Total','Day', 'Time', 'Card Type']
+
+        filename = 'Raw_Data_'+ pObj.nDV + '.csv'
+
+        os.chdir(root)
+        os.chdir(opFolder)
+
+        with open(filename,'w', newline='') as csvfile:
+            tranWriter = csv.writer(csvfile, delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
+            tranWriter.writerow(header)
+            for i in range(len(pObj.pList)):
+                tranWriter.writerow(pObj.pList[i].csvPrint())
+        csvfile.close()
+
+    elif merchantAg:
+        f = open(filename, "w+")
+        for i in range(len(pObj.pList)):
+            f.write(pObj.pList[i].merchantAgPrint())
 
 #Sets file name based on config.yaml options
 def fileName(pObj,config_data, root):
@@ -109,9 +141,16 @@ def movePumpTot(ptLoc, config_data, pObj):
 #Backs up d1c files to folder specified by YAML config
 def backupSales(opFolder,config_data, pObj):
     cwd = os.getcwd()
-    h = "\\}}h{0}.d1c".format(pObj.pList[0].tranDate)
-    d = "\\}}d{0}.d1c".format(pObj.pList[0].tranDate)
-    v = "\\}}v{0}.d1c".format(pObj.pList[0].tranDate)
+    fileLists = [[],[],[]]
+
+    for file in os.listdir(cwd):
+        if re.match(r'[}]h\d{6}[.].1c',file):
+            fileLists[0].append(file)
+        if re.match(r'[}]d\d{6}[.].1c',file):
+            fileLists[1].append(file)   
+        if re.match(r'[}]v\d{6}[.].1c',file):
+            fileLists[2].append(file)
+
     if(config_data.get('backup_options')['backup_location']['output_override'] == False):
         bkFold = opFolder
     else:
@@ -123,9 +162,12 @@ def backupSales(opFolder,config_data, pObj):
     bkFold = os.path.abspath(bkFold + "\\d1c files")
     if not os.path.exists(bkFold):
         os.makedirs(bkFold)
-    shutil.move(cwd + h, bkFold + h)
-    shutil.move(cwd + d, bkFold + d)
-    shutil.move(cwd + v, bkFold + v)
+
+    for fList in fileLists:
+        for item in fList:
+            shutil.move(cwd + item, bkFold + item)
+
+
 
 #Checks folder for sales files and sorts the list
 def fileFind(folder):
@@ -133,11 +175,11 @@ def fileFind(folder):
     d = []
     v = []
     for file in os.listdir(folder):
-        if re.match(r'[}]h\d{6}[.][bd4]1c',file):
+        if re.match(r'[}]h\d{6}[.].1c',file):
             h.append(file)
-        if re.match(r'[}]d\d{6}[.][bd4]1c',file):
+        if re.match(r'[}]d\d{6}[.].1c',file):
             d.append(file)   
-        if re.match(r'[}]v\d{6}[.][bd4]1c',file):
+        if re.match(r'[}]v\d{6}[.].1c',file):
             v.append(file)
     h.sort()        
     d.sort()        

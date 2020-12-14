@@ -17,6 +17,13 @@ def dFormat(date):
     fDate = date[8:10] + date[0:2] + date[3:5]
     return fDate
 
+def dGasboyFormat(date):
+    dTemp = date.split("-") 
+    if dTemp[0][0] == "0":
+        dTemp[0] = " " + dTemp[0][1]
+    dTemp[2] = dTemp[2][2:4]
+    return dTemp[0] + "/" +  dTemp[1] + "/" + dTemp[2] + " "
+
 #Pulls date from sales file, converts it to a date object, and adds a day to the date object 
 #(Only used at Anaheim Truck Depot sites, only used for the file name)
 def nextDay(d):
@@ -138,4 +145,29 @@ def gBoyFormat(v, l1, l2):
         for _ in range(l2-1):
             temp[1] = temp[1] + "0"
     return temp[0] + "." + temp[1] + " "
+
+
+#MERCHANT AG FORMATTING
+
+# l is section length, bE is beginning or end bool (T/F), padChar is character to pad with
+def mAgPadding(l, i, bE, padChar):
+    i = re.sub(r'[.]','', i, flags=re.IGNORECASE)
+    padding = ""
+    if(len(i) <= l):
+        for __ in range(l-len(i)):
+            padding = padding + padChar
+        if bE:
+            return(padding + i)
+        else:
+            return(i + padding)
+    else:
+        if bE:
+            limit = len(i)
+            return(i[(limit-l):(limit)])
+        else:
+            return(i[0:l])
+
+def mAgDateTimeFormat(i):
+    i = re.sub(r'[-:]','', i, flags=re.IGNORECASE)
+    return i
     

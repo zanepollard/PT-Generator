@@ -7,24 +7,27 @@
 file_name: # What will be included in the PT file name
   custom: # Allows for custom file name beginning if wanted
     custom_beginning: True
-    text: "Test"
-  siteid: False
+    text: "Hello_merchAg"
+  siteid: True
   date:
     include: True
     format: True # Date formatting. True = yymmdd False = mmddyy
     add_day: False # Adds day to date. Only used on Anaheim Truck Depot sites
-  extension: ""
+  extension: ".csv"
   
 # Folders to look in for .d1c files. Add more underneath with
 # -"Path goes here"
 # YOU MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders: 
-  - C:\\Users\\zane.pollard\\Documents\\PT-Generator\\Example_d1c\\mixed
+  - C:\\Users\\zane.pollard\\Documents\\PT-Generator\\Example_d1c\\CGS
 
 multiDayPT: True #condenses multiple sales file days into a single file for easy import 
+
+ptOutput: False
 gasboyOutput: False #outputs gasboy style. Must also have multidaypt on for this to work
 csvOutput: True
+merchantAg: False
 
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
