@@ -36,9 +36,10 @@ class parse:
                         #Default values for standard PT file, needed to ensure every line outputs properly
                         #This is needed because the VB6 code sometimes has variables missing from the sales files.
                         # Missing variables will break back office PT import, better to have filler zeros than a file that can't be imported, or has missing transactions. 
-                        self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "000000", 'pCode': "00", 'quantity': "00000000", 
-                                                    'odometer': "0000000", 'pump': "00",'tranNum': "0000",'tranTime': "0000", 'tranDate': "00000000",
-                                                    'id_vehicle': "00000000", 'id_card': "0000000",'id_acct': "000000", 'vehicle': "0000", 'price': "00000000"}
+                        self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "0.00", 'pCode': "00", 'quantity': "0.0", 
+                                                    'odometer': "0", 'pump': "0",'tranNum': "00000",'tranTime': "00:00:00", 'tranDate': "01-01-2000",
+                                                    'id_vehicle': "0", 'id_card': "0",'id_acct': "0", 'vehicle': "0", 'price': "0.000",
+                                                    'authNum': '', 'pName': '', 'id_card_type': ''}
                         self.transactions[rowdata[3]]['tranNum'] = fmt.tNumFMT(rowdata[3])
                         if firstRun:
                             firstRun = False
@@ -54,9 +55,10 @@ class parse:
                     rowdata = row
                     if rowdata[3] not in self.transactions:
                         #Default gasboy variable values. Same reasoon as above.
-                        self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "000000", 'pCode': "00", 'quantity': "00000000", 
-                                                    'odometer': "       ", 'pump': "00 ",'tranNum': "0000",'tranTime': "0000",
-                                                    'id_vehicle': "          ", 'id_card': "       ",'id_acct': "      ", 'vehicle': "          ", 'price': "00000000"}
+                        self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "0.0", 'pCode': "00", 'quantity': "0.0", 
+                                                    'odometer': "000000", 'pump': "0",'tranNum': "00000",'tranTime': "00:00:00", 'tranDate': '01-01-2000',
+                                                    'id_vehicle': "          ", 'id_card': "000000",'id_acct': "00000", 'vehicle': "          ", 'price': "0.000",
+                                                    'authNum': '', 'pName': '', 'id_card_type': ''}
                     self.transactions[rowdata[3]]['tranNum'] = fmt.tNumFMT(rowdata[3])
                     if firstRun:
                         firstRun = False
@@ -96,7 +98,8 @@ class parse:
                     if rowdata[3] not in self.transactions:
                         self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "000000000", 'pCode': "00", 'quantity': "000000000", 'description': "                          ",
                                                     'odometer': "000000000", 'pump': "00",'tranNum': "000000000",'tranTime': "0000", 'tranDate': "00000000",
-                                                    'id_vehicle': "00000000", 'id_card': "              ",'id_acct': "000000000", 'vehicle': "000000000", 'price': "00000000"}
+                                                    'id_vehicle': "00000000", 'id_card': "              ",'id_acct': "000000000", 'vehicle': "000000000", 'price': "00000000",
+                                                    'pName': '                          ', 'id_card_type': '     ', 'authNum': ''}
                         self.transactions[rowdata[3]]['tranNum'] = fmt.mAgPadding(9,rowdata[3],True,"0")
                         if firstRun:
                             firstRun = False
@@ -115,14 +118,15 @@ class parse:
         with open(dFile, newline='') as csvfile:
             dreader = csv.reader(csvfile, quotechar="\"")
             for dRow in dreader:
-                self.transactions[dRow[3]]['price'] = dRow[16]
-                self.transactions[dRow[3]]['quantity'] = dRow[10]
-                self.transactions[dRow[3]]['tranTime'] = dRow[2][0:5]
-                self.transactions[dRow[3]]['tranDate'] = dRow[1]
-                self.transactions[dRow[3]]['pCode'] = dRow[11]
-                self.transactions[dRow[3]]['quantity'] = dRow[10]
-                self.transactions[dRow[3]]['totAmt'] = dRow[48]
-                self.transactions[dRow[3]]['pName'] = dRow[14]
+                if dRow[9] == "P":
+                    self.transactions[dRow[3]]['price'] = dRow[16]
+                    self.transactions[dRow[3]]['quantity'] = dRow[10]
+                    self.transactions[dRow[3]]['tranTime'] = dRow[2][0:5]
+                    self.transactions[dRow[3]]['tranDate'] = dRow[1]
+                    self.transactions[dRow[3]]['pCode'] = dRow[11]
+                    self.transactions[dRow[3]]['totAmt'] = dRow[48]
+                    self.transactions[dRow[3]]['pName'] = dRow[14]
+                    
 
 
     def vParse(self, folder, vFile):
@@ -186,6 +190,7 @@ class parse:
                     self.pList.append(temp)
 
             elif self.merchantAg:
+                print(self.transactions[i]['pName'] + "\n")
                 temp = pt.ptLine(fmt.mAgPadding(8,self.siteid, True, "0"), 0, fmt.mAgPadding(9,self.transactions[i]['totAmt'], True, "0"),
                                  fmt.mAgPadding(20, self.transactions[i]['pCode'], False, " "), fmt.mAgPadding(9, self.transactions[i]['price'], True, "0"),
                                  fmt.mAgPadding(9, self.transactions[i]['quantity'], True, "0"), fmt.mAgPadding(9, self.transactions[i]['odometer'], True, "0"),

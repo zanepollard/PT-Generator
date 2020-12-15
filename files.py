@@ -41,8 +41,6 @@ def salesOutput(pObj, config_data, root):
         header = ['Transaction Date', 'Site', 'Trans #', 'Seq #', 'Auth #', 'Card #', 'Product', 'Prod ID', 
               'Pump', 'Quantity', 'PPG', 'Total','Day', 'Time', 'Card Type']
 
-        filename = 'Raw_Data_'+ pObj.nDV + '.csv'
-
         os.chdir(root)
         os.chdir(opFolder)
 
@@ -75,7 +73,7 @@ def fileName(pObj,config_data, root):
             if (config_data.get('file_name')['date']['add_day'] == True):
                 filename = filename + fmt.nextDay(pObj.nDV)
             else:
-                filename = filename + pObj.nDV[0:2]+ pObj.nDV[3:5]+ pObj.nDV[8:10] 
+                filename = filename + pObj.nDV[0:2]+ pObj.nDV[3:5]+ pObj.nDV[8:10]
     return filename + config_data.get('file_name')['extension']
 
 #Generates path PT file will be generated to according to options seet in config

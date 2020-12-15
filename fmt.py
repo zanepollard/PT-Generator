@@ -18,11 +18,14 @@ def dFormat(date):
     return fDate
 
 def dGasboyFormat(date):
-    dTemp = date.split("-") 
-    if dTemp[0][0] == "0":
-        dTemp[0] = " " + dTemp[0][1]
-    dTemp[2] = dTemp[2][2:4]
-    return dTemp[0] + "/" +  dTemp[1] + "/" + dTemp[2] + " "
+    if(len(date)==10):
+        dTemp = date.split("-") 
+        if dTemp[0][0] == "0":
+            dTemp[0] = " " + dTemp[0][1]
+        dTemp[2] = dTemp[2][2:4]
+        return dTemp[0] + "/" +  dTemp[1] + "/" + dTemp[2] + " "
+    else:
+        return "01/01/01"
 
 #Pulls date from sales file, converts it to a date object, and adds a day to the date object 
 #(Only used at Anaheim Truck Depot sites, only used for the file name)
