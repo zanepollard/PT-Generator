@@ -190,7 +190,6 @@ class parse:
                     self.pList.append(temp)
 
             elif self.merchantAg:
-                print(self.transactions[i]['pName'] + "\n")
                 temp = pt.ptLine(fmt.mAgPadding(8,self.siteid, True, "0"), 0, fmt.mAgPadding(9,self.transactions[i]['totAmt'], True, "0"),
                                  fmt.mAgPadding(20, self.transactions[i]['pCode'], False, " "), fmt.mAgPadding(9, self.transactions[i]['price'], True, "0"),
                                  fmt.mAgPadding(9, self.transactions[i]['quantity'], True, "0"), fmt.mAgPadding(9, self.transactions[i]['odometer'], True, "0"),
