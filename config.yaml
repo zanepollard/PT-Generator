@@ -20,13 +20,13 @@ file_name: # What will be included in the PT file name
 # YOU MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders: 
-  - C:\\Users\\zane.pollard\\Documents\\PT-Generator\\Example_d1c\\mixed
+  - C:\\Users\\zane.pollard\\Documents\\PT-Generator\\Example Sales\\anaheim pt
 
 multiDayPT: True #condenses multiple sales file days into a single file for easy import 
 
-ptOutput: False #CFN PT output
+ptOutput: True #CFN PT output
 gasboyOutput: False #Gasboy log printer output
-csvOutput: True #CSV output
+csvOutput: False #CSV output
 merchantAg: False #Merchant Agriculture output (EFC)
 
 # Path where PT file will get output
@@ -47,7 +47,7 @@ pump_total: False
 # This folder will be the root, and .d1c files will be in 
 # ./SITENUMBER/YYMMDD 
 # ex: ./001488/180822
-backup_sales: False # True/False if you want to back up sales/.d1c files
+backup_sales: True # True/False if you want to back up sales/.d1c files
 backup_options: #If all are false the sales files will be placed just in the backup_folder
   backup_location:
     # Default is False. True will make sales backup at location specified by backup_folder
