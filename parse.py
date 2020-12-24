@@ -98,8 +98,8 @@ class parse:
                     if rowdata[3] not in self.transactions:
                         self.transactions[rowdata[3]] = {'seqnum': "0000",'totAmt': "000000000", 'pCode': "00", 'quantity': "000000000", 'description': "                          ",
                                                     'odometer': "000000000", 'pump': "00",'tranNum': "000000000",'tranTime': "0000", 'tranDate': "00000000",
-                                                    'id_vehicle': "00000000", 'id_card': "              ",'id_acct': "000000000", 'vehicle': "000000000", 'price': "00000000",
-                                                    'pName': '                          ', 'id_card_type': '     ', 'authNum': ''}
+                                                    'id_vehicle': "00000000", 'id_card': "000000000",'id_acct': "000000000", 'vehicle': "000000000", 'price': "00000000",
+                                                    'pName': '                          ', 'id_card_type': 'UNK  ', 'authNum': ''}
                         self.transactions[rowdata[3]]['tranNum'] = fmt.mAgPadding(9,rowdata[3],True,"0")
                         if firstRun:
                             firstRun = False
@@ -185,7 +185,7 @@ class parse:
             elif self.csvOutput:
                 if(int(i) != 0):
                     temp = pt.ptLine(self.siteid,self.transactions[i]['seqnum'],self.transactions[i]['totAmt'],self.transactions[i]['pCode'],self.transactions[i]['price'],self.transactions[i]['quantity'],self.transactions[i]['odometer'],
-                                self.transactions[i]['pump'],self.transactions[i]['tranNum'],self.tranDate,self.transactions[i]['tranTime'],self.transactions[i]['vehicle'],
+                                self.transactions[i]['pump'],self.transactions[i]['tranNum'],self.transactions[i]['tranDate'],self.transactions[i]['tranTime'],self.transactions[i]['vehicle'],
                                 self.transactions[i]['id_card'],self.transactions[i]['id_acct'],self.transactions[i]['id_vehicle'],self.transactions[i]['authNum'], self.transactions[i]['pName'], self.transactions[i]['id_card_type']) 
                     self.pList.append(temp)
 
