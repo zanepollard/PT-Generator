@@ -1,8 +1,9 @@
 *.dat
 *.spec
-./output
+/output
 *.pyc
 *.txt
 /Example_d1c/*
 *.txt
 *.csv
+/build

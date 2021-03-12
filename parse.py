@@ -8,7 +8,7 @@ import yaml
 
 class parse:
     def __init__(self):
-        self.siteid = []
+        self.siteid = ""
         self.tranDate = ""
         self.nDV = ""
         self.pList = []
@@ -27,7 +27,7 @@ class parse:
         raw_id = ""
         rowdata = []
         os.chdir(folder)
-        with open(hFile, newline='') as csvfile: 
+        with open(hFile, newline='', errors="ignore") as csvfile: 
             reader = csv.reader(csvfile, quotechar="\"")
             if self.ptOutput:
                 for row in reader:
@@ -115,7 +115,7 @@ class parse:
     #Parses data sales file
     def dParse(self, folder, dFile): 
         os.chdir(folder)
-        with open(dFile, newline='') as csvfile:
+        with open(dFile, newline='', errors="ignore") as csvfile:
             dreader = csv.reader(csvfile, quotechar="\"")
             for dRow in dreader:
                 if dRow[9] == "P":
@@ -131,7 +131,7 @@ class parse:
 
     def vParse(self, folder, vFile):
         os.chdir(folder)
-        with open(vFile, newline='') as csvfile:
+        with open(vFile, newline='', errors="ignore") as csvfile:
             vreader = csv.reader(csvfile, quotechar="\"")
             for vrow in vreader:
                 if vrow[8].lower() == "SEQUENCE#".lower():
@@ -191,13 +191,13 @@ class parse:
 
             elif self.merchantAg:
                 temp = pt.ptLine(fmt.mAgPadding(8,self.siteid, True, "0"), 0, fmt.mAgPadding(9,self.transactions[i]['totAmt'], True, "0"),
-                                 fmt.mAgPadding(20, self.transactions[i]['pCode'], False, " "), fmt.mAgPadding(9, self.transactions[i]['price'], True, "0"),
-                                 fmt.mAgPadding(9, self.transactions[i]['quantity'], True, "0"), fmt.mAgPadding(9, self.transactions[i]['odometer'], True, "0"),
+                                 fmt.mAgPadding(20, fmt.mAgPadding(3,self.transactions[i]['pCode'], True, "0"), False, " "), fmt.mAgPadding(9, self.transactions[i]['price'], True, "0"),
+                                 fmt.mAgPadding(9, fmt.mAgDecimalLength(self.transactions[i]['quantity'],3), True, "0"), fmt.mAgPadding(9, self.transactions[i]['odometer'], True, "0"),
                                  fmt.mAgPadding(2, self.transactions[i]['pump'], True, "0"), fmt.mAgPadding(9, self.transactions[i]['tranNum'], True, "0"),
                                  fmt.mAgDateTimeFormat(self.transactions[i]['tranDate']),fmt.mAgDateTimeFormat(self.transactions[i]['tranTime']),
                                  fmt.mAgPadding(9, self.transactions[i]['vehicle'], True, "0"), fmt.mAgPadding(9, self.transactions[i]['id_card'], True, "0"),
                                  fmt.mAgPadding(9, self.transactions[i]['id_acct'], True, " "), fmt.mAgPadding(9, self.transactions[i]['id_vehicle'], True, "0"), 0,
-                                 fmt.mAgPadding(26, self.transactions[i]['pName'], False, " "), fmt.mAgPadding(5, self.transactions[i]['id_card_type'], False, " "))
+                                 fmt.mAgPadding(26, self.transactions[i]['pName'], False, " "), fmt.mAgCardName(self.transactions[i]['id_card_type']))
                 self.pList.append(temp)
 
         self.pList = sorted(self.pList,key=lambda ptOBJ: ptOBJ.tranDate + ptOBJ.tranTime)

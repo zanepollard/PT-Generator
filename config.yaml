@@ -7,7 +7,7 @@
 file_name: # What will be included in the PT file name
   custom: # Allows for custom file name beginning if wanted
     custom_beginning: True
-    text: "PT_Test_41c_b1c_"
+    text: "CGS_"
   siteid: True
   date:
     include: True
@@ -20,21 +20,25 @@ file_name: # What will be included in the PT file name
 # YOU MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders: 
-  - C:\\Users\\zane.pollard\\Documents\\PT-Generator\\Example Sales\\anaheim pt
+  - C:\Users\zane.pollard\Desktop\Cooperative Grain\Input\CGS001
+  - C:\Users\zane.pollard\Desktop\Cooperative Grain\Input\CGS002
+  - C:\Users\zane.pollard\Desktop\Cooperative Grain\Input\CGS003
 
 multiDayPT: True #condenses multiple sales file days into a single file for easy import 
 
-ptOutput: True #CFN PT output
+ptOutput: False #CFN PT output
 gasboyOutput: False #Gasboy log printer output
 csvOutput: False #CSV output
-merchantAg: False #Merchant Agriculture output (EFC)
+merchantAg: True #Merchant Agriculture output (EFC)
+
+pullMode: "DAILY"
 
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
-output_folder: ".\\"
+output_folder: C:\Users\zane.pollard\Desktop\Cooperative Grain\Output
 output_options:
-  site_folder: False #Creates a folder for the site listed in the sales file
+  site_folder: True #Creates a folder for the site listed in the sales file
   date_folder: False #Creates a date folder within either the root or the site folder depending on the options set
 
 # value that dictates whether a pump total file will 
@@ -47,7 +51,7 @@ pump_total: False
 # This folder will be the root, and .d1c files will be in 
 # ./SITENUMBER/YYMMDD 
 # ex: ./001488/180822
-backup_sales: True # True/False if you want to back up sales/.d1c files
+backup_sales: False # True/False if you want to back up sales/.d1c files
 backup_options: #If all are false the sales files will be placed just in the backup_folder
   backup_location:
     # Default is False. True will make sales backup at location specified by backup_folder

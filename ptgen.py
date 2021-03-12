@@ -13,6 +13,7 @@ with open('config.yaml') as cfg:
 
 
 input_folders = list(config_data['input_folders'])
+pullMode = config_data.get('pullMode')
 cwd = os.getcwd()
 pt = []
 temp = parse.parse()
@@ -25,7 +26,7 @@ for i in input_folders:
             if file[len(file)-4:len(file)] != ".log":
                 fCount += 1
     if((fCount%3)==0):
-        f = files.fileFind(folder)
+        f = files.fileFind(folder, pullMode)
         if config_data.get('multiDayPT') == False:  
             for x in range(len(f[0])):
                 temp = None

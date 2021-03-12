@@ -174,3 +174,34 @@ def mAgDateTimeFormat(i):
     i = re.sub(r'[-:]','', i, flags=re.IGNORECASE)
     return i
     
+
+def mAgCardName(name):
+    if(name == "VS"):
+        return "VISA "
+    elif(name == "MC"):
+        return "MCRD "
+    elif(name == "DS"):
+        return "DISC "
+    elif(name == "AX"):
+        return "AEXP "
+    elif(name == "VF"):
+        return "VOYG "
+    else:
+        return "UNKNO"
+
+def mAgDecimalLength(i, l):
+    n = i.split(".")
+    print(n)
+    if(len(n) == 1):
+        return n[0] + ".000"
+    else:
+        for __ in range(l - len(n[1])):
+            n[1] = n[1] + "0"
+        return n[0] + "." + n[1]
+
+def datePadder(i):
+    temp = str(i)
+    if(len(temp) < 2):
+        return "0" + temp
+    else:
+        return temp

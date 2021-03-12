@@ -6,7 +6,7 @@ import parse
 import fmt
 import re
 import csv
-from datetime import datetime
+import datetime
 from pathlib import Path
 
 def salesOutput(pObj, config_data, root):
@@ -63,7 +63,8 @@ def fileName(pObj,config_data, root):
     if (config_data.get('file_name')['custom']['custom_beginning'] == True):
         filename = filename + config_data.get('file_name')['custom']['text']
     if (config_data.get('file_name')['siteid'] == True):
-        filename = filename + pObj.pList[0].siteid + "_"
+        if( pObj.pList != []):
+            filename = filename + pObj.pList[0].siteid + "_"
     #include date
     if (config_data.get('file_name')['date']['include'] == True):
         #True = yymmdd False = mmddyy
@@ -80,9 +81,13 @@ def fileName(pObj,config_data, root):
 def ptFilePath(output, config_data, pObj):
     ptLoc = output
     if(config_data.get('output_options')['site_folder'] == True):
-        ptLoc = ptLoc + "\\" + pObj.pList[0].siteid
+        for __ in pObj.pList:
+            if( pObj.pList != []):
+                ptLoc = ptLoc + "\\" + pObj.pList[0].siteid
+                break
     if(config_data.get('output_options')['date_folder'] == True):
-        ptLoc = ptLoc + "\\" + pObj.pList[0].tranDate
+        if( pObj.pList != []):
+            ptLoc = ptLoc + "\\" + pObj.pList[0].tranDate
     if not os.path.exists(ptLoc):
         os.makedirs(ptLoc)
     if (config_data.get('pump_total') == True):
@@ -132,17 +137,43 @@ def backupSales(opFolder,config_data, pObj):
 
 
 #Checks folder for sales files and sorts the list
-def fileFind(folder):
+def fileFind(folder, pullMode):
     h = []
     d = []
     v = []
-    for file in os.listdir(folder):
-        if re.match(r'[}]h\d{6}[.].1c',file):
-            h.append(file)
-        if re.match(r'[}]d\d{6}[.].1c',file):
-            d.append(file)   
-        if re.match(r'[}]v\d{6}[.].1c',file):
-            v.append(file)
+    dateRun = datetime.datetime.today()
+    year = str(dateRun.year)[2:4]
+    
+
+    if(pullMode == "MONTHLY"):
+        month = fmt.datePadder(dateRun.month)
+        
+        for file in os.listdir(folder):
+            if re.match(rf'[}}]h{year}{month}\d{{2}}[.].1c', file):
+                h.append(file)
+            if re.match(rf'[}}]d{year}{month}\d{{2}}[.].1c', file):
+                d.append(file)
+            if re.match(rf'[}}]v{year}{month}\d{{2}}[.].1c', file):
+                v.append(file)
+    elif(pullMode == "DAILY"):
+        prevDate = dateRun - datetime.timedelta(days=1)
+        day = fmt.datePadder(prevDate.day)
+        month = fmt.datePadder(prevDate.month)
+        for file in os.listdir(folder):
+            if re.match(rf'[}}]h{year}{month}{day}[.].1c', file):
+                h.append(file)
+            if re.match(rf'[}}]d{year}{month}{day}[.].1c', file):
+                d.append(file)
+            if re.match(rf'[}}]v{year}{month}{day}[.].1c', file):
+                v.append(file)
+    elif(pullMode == "ALL"):
+        for file in os.listdir(folder):
+            if re.match(r'[}]h\d{6}[.].1c',file):
+                h.append(file)
+            if re.match(r'[}]d\d{6}[.].1c',file):
+                d.append(file)   
+            if re.match(r'[}]v\d{6}[.].1c',file):
+                v.append(file)
     h.sort()        
     d.sort()        
     v.sort()
