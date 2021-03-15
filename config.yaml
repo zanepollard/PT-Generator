@@ -31,6 +31,7 @@ gasboyOutput: False #Gasboy log printer output
 csvOutput: False #CSV output
 merchantAg: True #Merchant Agriculture output (EFC)
 
+#DAILY, MONTHLY, and ALL options are available for pullMode
 pullMode: "DAILY"
 
 # Path where PT file will get output
