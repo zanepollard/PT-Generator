@@ -13,7 +13,7 @@ file_name: # What will be included in the PT file name
     include: True
     format: False # Date formatting. True = yymmdd False = mmddyy
     add_day: False # Adds day to date. Only used on Anaheim Truck Depot sites
-  extension: ".txt"
+  extension: ".ignore"
   
 # Folders to look in for .d1c files. Add more underneath with
 # -"Path goes here"
@@ -32,7 +32,7 @@ csvOutput: False #CSV output
 merchantAg: True #Merchant Agriculture output (EFC)
 
 #DAILY, MONTHLY, and ALL options are available for pullMode
-pullMode: "DAILY"
+pullMode: "MONTHLY"
 
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
@@ -60,4 +60,12 @@ backup_options: #If all are false the sales files will be placed just in the bac
     backup_folder: "./"
   site_folder: True
   date_folder: True
+
+USE_SFTP: True
+SFTP_Settings:
+  Username: 
+  Password: 
+  HostName: 
+  KeyData: 
+
 

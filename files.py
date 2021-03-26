@@ -7,6 +7,9 @@ import fmt
 import re
 import csv
 import datetime
+import pysftp
+import paramiko
+from base64 import decodebytes
 from pathlib import Path
 
 def salesOutput(pObj, config_data, root):
@@ -55,6 +58,14 @@ def salesOutput(pObj, config_data, root):
         f = open(filename, "w+")
         for i in range(len(pObj.pList)):
             f.write(pObj.pList[i].merchantAgPrint())
+
+    f.close()
+
+    sftpFolder = root + '\\sftpQueue'
+    if(config_data.get('USE_SFTP') == True):
+        if not os.path.exists(sftpFolder):
+            os.makedirs(sftpFolder)
+        shutil.copyfile((opFolder + '\\' + filename), (sftpFolder + '\\' + filename))
 
 #Sets file name based on config.yaml options
 def fileName(pObj,config_data, root):
@@ -178,10 +189,9 @@ def fileFind(folder, pullMode):
     d.sort()        
     v.sort()
     if((len(h) == len(d) == len(v)) != True):
-        eName = folder + "\\{0}.log".format(datetime.date(datetime.now()))
+        eName = folder + "\\{0}.log".format(datetime.datetime.today())
         log = open(eName, 'a+')
         log.write("Not enough files in " + folder + " to make a pt file. check to see if all h,d, and v files are in the folder")
-        exit()
     return [h,d,v]
 
 
@@ -191,3 +201,10 @@ def yaml_loader(filepath):
         data = yaml.load(file_descriptor)
     return data
 
+def transfer_SFTP(salesFile, username, password, hostname, keydata):
+    key = paramiko.RSAKey(data=decodebytes(bytes(keydata, encoding="ascii")))
+    cnopts = pysftp.CnOpts()
+    cnopts.hostkeys.add(hostname, 'ssh-rsa', key)
+
+    with pysftp.Connection(hostname, username=username, password=password, cnopts=cnopts) as sftp:
+        sftp.put(salesFile ,preserve_mtime=True)

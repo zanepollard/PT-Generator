@@ -191,7 +191,6 @@ def mAgCardName(name):
 
 def mAgDecimalLength(i, l):
     n = i.split(".")
-    print(n)
     if(len(n) == 1):
         return n[0] + ".000"
     else:
