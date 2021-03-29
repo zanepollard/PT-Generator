@@ -160,30 +160,30 @@ def fileFind(folder, pullMode):
         month = fmt.datePadder(dateRun.month)
         
         for file in os.listdir(folder):
-            if re.match(rf'[}}]h{year}{month}\d{{2}}[.].1c', file):
+            if re.match(rf'[}}]h{year}{month}\d{{2}}[.][^S]1c', file):
                 h.append(file)
-            if re.match(rf'[}}]d{year}{month}\d{{2}}[.].1c', file):
+            if re.match(rf'[}}]d{year}{month}\d{{2}}[.][^S]1c', file):
                 d.append(file)
-            if re.match(rf'[}}]v{year}{month}\d{{2}}[.].1c', file):
+            if re.match(rf'[}}]v{year}{month}\d{{2}}[.][^S]1c', file):
                 v.append(file)
     elif(pullMode == "DAILY"):
         prevDate = dateRun - datetime.timedelta(days=1)
         day = fmt.datePadder(prevDate.day)
         month = fmt.datePadder(prevDate.month)
         for file in os.listdir(folder):
-            if re.match(rf'[}}]h{year}{month}{day}[.].1c', file):
+            if re.match(rf'[}}]h{year}{month}{day}[.][^S]1c', file):
                 h.append(file)
-            if re.match(rf'[}}]d{year}{month}{day}[.].1c', file):
+            if re.match(rf'[}}]d{year}{month}{day}[.][^S]1c', file):
                 d.append(file)
-            if re.match(rf'[}}]v{year}{month}{day}[.].1c', file):
+            if re.match(rf'[}}]v{year}{month}{day}[.][^S]1c', file):
                 v.append(file)
     elif(pullMode == "ALL"):
         for file in os.listdir(folder):
-            if re.match(r'[}]h\d{6}[.].1c',file):
+            if re.match(r'[}]h\d{6}[.][^S]1c',file):
                 h.append(file)
-            if re.match(r'[}]d\d{6}[.].1c',file):
+            if re.match(r'[}]d\d{6}[.][^S]1c',file):
                 d.append(file)   
-            if re.match(r'[}]v\d{6}[.].1c',file):
+            if re.match(r'[}]v\d{6}[.][^S]1c',file):
                 v.append(file)
     h.sort()        
     d.sort()        
@@ -207,4 +207,15 @@ def transfer_SFTP(salesFile, username, password, hostname, keydata):
     cnopts.hostkeys.add(hostname, 'ssh-rsa', key)
 
     with pysftp.Connection(hostname, username=username, password=password, cnopts=cnopts) as sftp:
-        sftp.put(salesFile ,preserve_mtime=True)
+        try:
+            sftp.put(salesFile ,preserve_mtime=True) 
+            #Transfer to SFTP server. If this fails we do not delete the local file. This allows us to still make a sales file locally even if upload fails.
+            #We will attempt another transfer during the next file generation.
+        except IOError:
+            #'Failure'
+            print("IOError")
+        except OSError:
+            #'Failure'
+            print("OSError")
+        else:
+            os.remove(salesFile) #and now we delete the local file since we succeeded. 
