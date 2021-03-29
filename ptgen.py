@@ -23,34 +23,23 @@ temp = parse.parse()
 for folderPath in input_folders:
     fCount = 0
     folder = os.path.abspath(folderPath)
-    for file in os.listdir(Path(folderPath)):
-        if len(file)>4:
-            if file[len(file)-4:len(file)] != ".log":
-                fCount += 1
-    if((fCount%3)==0):
-        f = files.fileFind(folder, pullMode)
-        fileList.append(f)
-        if config_data.get('multiDayPT') == False:  
-            for x in range(len(f[0])):
-                temp = None
-                temp = parse.parse()
-                pt.append(temp.parse(folder, [f[0][x],f[1][x],f[2][x]], config_data))
-        else:
-            os.chdir(root)
+    f = files.fileFind(folder, pullMode)
+    fileList.append(f)
+    if config_data.get('multiDayPT') == False:  
+        for x in range(len(f[0])):
+            temp = None
             temp = parse.parse()
-            pt.append(temp.parse(folder, f, config_data))
-
-        for q in pt:
-            os.chdir(cwd)
-            files.salesOutput(q, config_data,cwd)
-        os.chdir(cwd)
-
-        
-
+            pt.append(temp.parse(folder, [f[0][x],f[1][x],f[2][x]], config_data))
     else:
-        eName = folderPath + "\\{0}.log".format(datetime.date(datetime.now()))
-        log = open(eName, 'a+')
-        log.write("Not enough files in " + folderPath + " to make a pt file")
+        os.chdir(root)
+        temp = parse.parse()
+        pt.append(temp.parse(folder, f, config_data))
+
+    for q in pt:
+        os.chdir(cwd)
+        files.salesOutput(q, config_data,cwd)
+    os.chdir(cwd)
+
 
 if(config_data.get('USE_SFTP') == True):
     os.chdir(root)
@@ -61,7 +50,6 @@ if(config_data.get('USE_SFTP') == True):
     if not os.path.exists(root + '\\sftpQueue'):
         os.makedirs(root + '\\sftpQueue')
     os.chdir('sftpQueue')
-    print(os.listdir())
-    for salesFile in os.listdir(os.getcwd()):
-        print(salesFile)
+    for salesFile in os.listdir(".\\"):
+        print("Transferring " + salesFile + " to SFTP server")
         files.transfer_SFTP(salesFile, SFTPusername, SFTPpassword, SFTPhostname, KeyData)
