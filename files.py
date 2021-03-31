@@ -160,30 +160,30 @@ def fileFind(folder, pullMode):
         month = fmt.datePadder(dateRun.month)
         
         for file in os.listdir(folder):
-            if re.match(rf'[}}]h{year}{month}\d{{2}}[.][^S]1c', file):
+            if re.match(rf'[}}]h{year}{month}\d{{2}}[.][^s]1c', file):
                 h.append(file)
-            if re.match(rf'[}}]d{year}{month}\d{{2}}[.][^S]1c', file):
+            if re.match(rf'[}}]d{year}{month}\d{{2}}[.][^s]1c', file):
                 d.append(file)
-            if re.match(rf'[}}]v{year}{month}\d{{2}}[.][^S]1c', file):
+            if re.match(rf'[}}]v{year}{month}\d{{2}}[.][^s]1c', file):
                 v.append(file)
     elif(pullMode == "DAILY"):
         prevDate = dateRun - datetime.timedelta(days=1)
         day = fmt.datePadder(prevDate.day)
         month = fmt.datePadder(prevDate.month)
         for file in os.listdir(folder):
-            if re.match(rf'[}}]h{year}{month}{day}[.][^S]1c', file):
+            if re.match(rf'[}}]h{year}{month}{day}[.][^s]1c', file):
                 h.append(file)
-            if re.match(rf'[}}]d{year}{month}{day}[.][^S]1c', file):
+            if re.match(rf'[}}]d{year}{month}{day}[.][^s]1c', file):
                 d.append(file)
-            if re.match(rf'[}}]v{year}{month}{day}[.][^S]1c', file):
+            if re.match(rf'[}}]v{year}{month}{day}[.][^s]1c', file):
                 v.append(file)
     elif(pullMode == "ALL"):
         for file in os.listdir(folder):
-            if re.match(r'[}]h\d{6}[.][^S]1c',file):
+            if re.match(r'[}]h\d{6}[.][^s]1c',file):
                 h.append(file)
-            if re.match(r'[}]d\d{6}[.][^S]1c',file):
+            if re.match(r'[}]d\d{6}[.][^s]1c',file):
                 d.append(file)   
-            if re.match(r'[}]v\d{6}[.][^S]1c',file):
+            if re.match(r'[}]v\d{6}[.][^s]1c',file):
                 v.append(file)
     h.sort()        
     d.sort()        
