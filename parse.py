@@ -14,7 +14,7 @@ class parse:
         self.pList = []
         self.transactions = {}
         config_data = None
-        with open('config.yaml') as cfg:
+        with open('c:\\ICS\\salesgen\\config.yaml') as cfg:
             config_data = yaml.load(cfg, Loader=yaml.FullLoader)
         self.ptOutput = bool(config_data['ptOutput'])
         self.gasboy = bool(config_data['gasboyOutput'])

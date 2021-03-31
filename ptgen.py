@@ -9,7 +9,7 @@ from datetime import datetime
 
 startTime = datetime.now()
 config_data = None
-with open('config.yaml') as cfg:
+with open('c:\\ICS\\salesgen\\config.yaml') as cfg:
     config_data = yaml.load(cfg, Loader=yaml.FullLoader)
 
 fileList = []
