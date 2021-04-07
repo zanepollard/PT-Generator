@@ -9,6 +9,7 @@ import csv
 import datetime
 import pysftp
 import paramiko
+from sys import exit
 from base64 import decodebytes
 from pathlib import Path
 
@@ -188,10 +189,10 @@ def fileFind(folder, pullMode):
     h.sort()        
     d.sort()        
     v.sort()
-    if((len(h) == len(d) == len(v)) != True):
-        eName = folder + "\\{0}.log".format(datetime.datetime.today())
-        log = open(eName, 'a+')
-        log.write("Not enough files in " + folder + " to make a pt file. check to see if all h,d, and v files are in the folder")
+    if(len(h) == 0):
+        exit()
+    if(((len(h) == len(d) == len(v)) != True)):
+        exit()
     return [h,d,v]
 
 
