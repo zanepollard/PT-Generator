@@ -1,0 +1,35 @@
+
+
+
+
+def padAdd(lR, fill, length, input):
+    output = str(input)
+    padding = ""
+    for __ in range(length - len(str(input))):
+        padding = fill + padding
+    if lR == "left":
+        output = padding + output
+    elif lR == "right":
+        output = output + padding 
+    return output
+
+
+def cutLength(lR, length, input):
+    output = str(input)
+    if length < len(input):
+        if lR == "left":
+            output = output[0:length]
+        else:
+            output = output[(len(output)-length):(len(output))]
+    return output
+
+
+def decimalFormat(sigFig, input):
+    output = input.split(".")
+    temp = ""
+    if len(output) == 1:
+        for __ in range(sigFig):
+            temp = temp + "0"
+        output.append(temp)
+    
+    return str(output[0]) + padAdd("right", "0", sigFig, str(output[1]))

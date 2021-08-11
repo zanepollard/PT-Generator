@@ -1,0 +1,74 @@
+                  ##########
+                  ##README##
+                  ##########
+# True and False values MUST be capitalized
+# File paths must not have \\ at the end
+
+file_name: # What will be included in the PT file name
+  custom: # Allows for custom file name beginning if wanted
+    custom_beginning: True
+    text: "CGS_"
+  siteid: True
+  date:
+    include: True
+    format: False # Date formatting. True = yymmdd False = mmddyy
+    add_day: False # Adds day to date. Only used on Anaheim Truck Depot sites
+  extension: ".txt"
+  
+# Folders to look in for .d1c files. Add more underneath with
+# -"Path goes here"
+# YOU MUST USE DOUBLE BACKSLASHES
+# EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
+input_folders: 
+  - C:\Users\zane.pollard\Desktop\VDP Transaction data\Transactions
+  #- C:\Users\zane.pollard\Desktop\UnitedAg\Transaction data
+
+multiDayPT: True #condenses multiple sales file days into a single file for easy import 
+
+ptOutput: False #CFN PT output
+gasboyOutput: False #Gasboy log printer output
+csvOutput: False #CSV output
+merchantAg: False #Merchant Agriculture output (EFC)
+VDPOutput: True
+AGTRAX: False
+
+#DAILY, MONTHLY, and ALL options are available for pullMode
+pullMode: "ALL"
+
+# Path where PT file will get output
+# MUST USE DOUBLE BACKSLASHES
+# EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
+#output_folder: C:\Users\zane.pollard\Desktop\UnitedAg\output
+output_folder: C:\Users\zane.pollard\Desktop\VDP Transaction data\output
+output_options:
+  site_folder: True #Creates a folder for the site listed in the sales file
+  date_folder: False #Creates a date folder within either the root or the site folder depending on the options set
+
+# value that dictates whether a pump total file will 
+# need to be moved along with the PT file.
+# Used when processing Anaheim sites
+# Placed in the same location as PT files
+pump_total: False
+
+# If backup_sales is set to True, this is where the .d1c files will be saved
+# This folder will be the root, and .d1c files will be in 
+# ./SITENUMBER/YYMMDD 
+# ex: ./001488/180822
+backup_sales: False # True/False if you want to back up sales/.d1c files
+backup_options: #If all are false the sales files will be placed just in the backup_folder
+  backup_location:
+    # Default is False. True will make sales backup at location specified by backup_folder
+    output_override: False 
+    backup_folder: "./"
+  site_folder: True
+  date_folder: True
+
+USE_SFTP: False
+SFTP_Settings:
+  Username:
+  Password:
+  HostName:
+  KeyData:
+
+
+
