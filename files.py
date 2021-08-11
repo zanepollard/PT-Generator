@@ -18,6 +18,7 @@ def salesOutput(pObj, config_data, root):
     gasboy = bool(config_data['gasboyOutput'])
     csvOutput = bool(config_data['csvOutput'])
     merchantAg = bool(config_data['merchantAg'])
+    CFNcsv = bool(config_data['CFNcsv'])
 
     output = os.path.abspath(config_data.get('output_folder'))
     opFolder = os.path.abspath(ptFilePath(output, config_data, pObj))
@@ -35,11 +36,13 @@ def salesOutput(pObj, config_data, root):
         f = open(filename, "w+")
         for i in range(len(pObj.pList)):
             f.write(pObj.pList[i].ptPrint())
+        f.close()
 
     elif gasboy:
         f = open(filename, "w+")
         for i in range(len(pObj.pList)):
             f.write(pObj.pList[i].gasboyPrint())
+        f.close()
 
     elif csvOutput:
         header = ['Transaction Date', 'Site', 'Trans #', 'Seq #', 'Auth #', 'Card #', 'Product', 'Prod ID', 
@@ -59,8 +62,19 @@ def salesOutput(pObj, config_data, root):
         f = open(filename, "w+")
         for i in range(len(pObj.pList)):
             f.write(pObj.pList[i].merchantAgPrint())
+        f.close()
 
-    f.close()
+    elif CFNcsv:
+        os.chdir(root)
+        os.chdir(opFolder)
+
+        with open(filename,'w', newline='') as csvfile:
+            tranWriter = csv.writer(csvfile, delimiter=',')
+            for i in range(len(pObj.pList)):
+                tranWriter.writerow(pObj.pList[i].CFNcsvPrint())
+        csvfile.close()
+
+
 
     sftpFolder = root + '\\sftpQueue'
     if(config_data.get('USE_SFTP') == True):
@@ -86,7 +100,11 @@ def fileName(pObj,config_data, root):
             if (config_data.get('file_name')['date']['add_day'] == True):
                 filename = filename + fmt.nextDay(pObj.nDV)
             else:
-                filename = filename + pObj.nDV[0:2]+ pObj.nDV[3:5]+ pObj.nDV[8:10]
+                print(config_data.get('file_name')['date']['fullyear'])
+                if(config_data.get('file_name')['date']['fullyear'] == True):
+                    filename = filename + pObj.nDV[0:2]+ pObj.nDV[3:5]+ pObj.nDV[6:10]
+                else:
+                    filename = filename + pObj.nDV[0:2]+ pObj.nDV[3:5]+ pObj.nDV[8:10]
     return filename + config_data.get('file_name')['extension']
 
 #Generates path PT file will be generated to according to options seet in config
@@ -155,7 +173,6 @@ def fileFind(folder, pullMode):
     v = []
     dateRun = datetime.datetime.today()
     year = str(dateRun.year)[2:4]
-    
 
     if(pullMode == "MONTHLY"):
         month = fmt.datePadder(dateRun.month)
@@ -179,6 +196,7 @@ def fileFind(folder, pullMode):
             if re.match(rf'[}}]v{year}{month}{day}[.][^s]1c', file):
                 v.append(file)
     elif(pullMode == "ALL"):
+        print("ALL")
         for file in os.listdir(folder):
             if re.match(r'[}]h\d{6}[.][^s]1c',file):
                 h.append(file)
