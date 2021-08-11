@@ -7,12 +7,13 @@
 file_name: # What will be included in the PT file name
   custom: # Allows for custom file name beginning if wanted
     custom_beginning: True
-    text: "CGS_"
-  siteid: True
+    text: "PTa"
+  siteid: False
   date:
     include: True
     format: False # Date formatting. True = yymmdd False = mmddyy
     add_day: False # Adds day to date. Only used on Anaheim Truck Depot sites
+    fullyear: True
   extension: ".txt"
   
 # Folders to look in for .d1c files. Add more underneath with
@@ -20,24 +21,25 @@ file_name: # What will be included in the PT file name
 # YOU MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders: 
-  - C:\ICS\sales
+  - C:\SalesGen\VB6\Busch Atlas\input
 
 multiDayPT: True #condenses multiple sales file days into a single file for easy import 
 
 ptOutput: False #CFN PT output
 gasboyOutput: False #Gasboy log printer output
 csvOutput: False #CSV output
-merchantAg: True #Merchant Agriculture output (EFC)
+CFNcsv:    True
+merchantAg: False #Merchant Agriculture output (EFC)
 
 #DAILY, MONTHLY, and ALL options are available for pullMode
-pullMode: "MONTHLY"
+pullMode: "ALL"
 
 # Path where PT file will get output
 # MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
-output_folder: C:\ICS\salesgen\Output
+output_folder: C:\SalesGen\VB6\Busch Atlas\output
 output_options:
-  site_folder: True #Creates a folder for the site listed in the sales file
+  site_folder: False #Creates a folder for the site listed in the sales file
   date_folder: False #Creates a date folder within either the root or the site folder depending on the options set
 
 # value that dictates whether a pump total file will 
