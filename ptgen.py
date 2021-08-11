@@ -9,14 +9,15 @@ from datetime import datetime
 
 startTime = datetime.now()
 config_data = None
-with open('c:\\ICS\\salesgen\\config.yaml') as cfg:
+cwd = os.getcwd()
+root = os.getcwd()
+with open(os.path.abspath(root + "\\config.yaml"))  as cfg:
     config_data = yaml.load(cfg, Loader=yaml.FullLoader)
 
 fileList = []
 input_folders = list(config_data['input_folders'])
 pullMode = config_data.get('pullMode')
-cwd = os.getcwd()
-root = os.getcwd()
+
 pt = []
 temp = parse.parse()
 
