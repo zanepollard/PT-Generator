@@ -20,6 +20,7 @@ class parse:
         self.gasboy = bool(config_data['gasboyOutput'])
         self.csvOutput = bool(config_data['csvOutput'])
         self.merchantAg = bool(config_data['merchantAg'])
+        self.CFNcsv = bool(config_data['CFNcsv'])
 
     #Parses header sales file
     def hParse(self, folder, hFile):
@@ -107,6 +108,21 @@ class parse:
                             siteid = raw_id
                             for __ in range(8-len(raw_id)):
                                 siteid = '0' + siteid
+                            self.siteid = siteid
+                            self.nDV = rowdata[1]
+            elif self.CFNcsv:
+                for row in reader:
+                    rowdata = row
+                    if rowdata[3] not in self.transactions:
+                        self.transactions[rowdata[3]] = {'seqnum': 0,'totAmt': 0, 'pCode': "N/A", 'quantity': 0, 'odometer': 0, 'pump': 0,'tranNum': 0,'tranTime': "N/A", 'tranDate': "N/A",
+                                                    'id_vehicle': 0, 'id_card': "",'id_acct': "", 'vehicle': "N/A", 'price': 0, 'authNum': 0, 'pName': "N/A", 'id_card_type': "N/A"}
+                        self.transactions[rowdata[3]]['tranNum'] = rowdata[3]
+                        if firstRun:
+                            firstRun = False
+                            raw_id = re.sub(r'[a-z_\s-]','', rowdata[0], flags=re.IGNORECASE)
+                            siteid = raw_id
+                            siteid = rowdata[0]
+                            self.transactions[rowdata[3]]['tranDate'] = rowdata[1]
                             self.siteid = siteid
                             self.nDV = rowdata[1]
                 
@@ -199,6 +215,12 @@ class parse:
                                  fmt.mAgPadding(9, self.transactions[i]['id_acct'], True, " "), fmt.mAgPadding(9, self.transactions[i]['id_vehicle'], True, "0"), 0,
                                  fmt.mAgPadding(26, self.transactions[i]['pName'], False, " "), fmt.mAgCardName(self.transactions[i]['id_card_type']))
                 self.pList.append(temp)
+            elif self.CFNcsv:
+                if(int(i) != 0):
+                    temp = pt.ptLine(self.siteid,self.transactions[i]['seqnum'],self.transactions[i]['totAmt'],self.transactions[i]['pCode'],self.transactions[i]['price'],self.transactions[i]['quantity'],self.transactions[i]['odometer'],
+                                self.transactions[i]['pump'],self.transactions[i]['tranNum'],self.transactions[i]['tranDate'],self.transactions[i]['tranTime'],self.transactions[i]['vehicle'],
+                                self.transactions[i]['id_card'],self.transactions[i]['id_acct'],self.transactions[i]['id_vehicle'],self.transactions[i]['authNum'], self.transactions[i]['pName'], self.transactions[i]['id_card_type']) 
+                    self.pList.append(temp)
 
         self.pList = sorted(self.pList,key=lambda ptOBJ: ptOBJ.tranDate + ptOBJ.tranTime)
         return self
