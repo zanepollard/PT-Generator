@@ -186,8 +186,7 @@ class transaction:
         self.set_quantity(format.padAdd("left","0",8,format.decimalFormat(3,str(self.quantity))))
         self.set_odometer(format.padAdd("left","0",7,str(format.cutLength("right",8,str(self.odometer)))))
         self.set_pump(format.padAdd("left","0",2,format.cutLength("right",2,str(self.pump))))
-        self.set_tranDate(str(format.dFormat(self.tranDate)))
-        self.set_tranTime(str(format.tFormat(self.tranTime, False)))
+        self.set_tranDate(self.tranDate[2:8])
         self.set_vehicle(format.padAdd("left","0",8,format.cutLength("right",8,str(self.vehicle))))
         self.set_card(format.padAdd("left","0",7,format.cutLength("right",7,str(self.card))))
         self.set_account(format.padAdd("left","0",6,format.cutLength("right",6,str(self.account))))
@@ -277,21 +276,25 @@ class transaction:
         blank1 = "                                                     "
         blank2 = "                                                    "
         
-        self.set_siteID(re.sub(r'[a-z_\s-]','', self.siteID, flags=re.IGNORECASE))
-        for __ in range(8-len(self.siteID)):
-            self.set_siteID('0' + self.siteID)
-        self.set_siteID(format.mAgPadding(8, self.siteID, True, "0"))
-        self.set_totalAmount(format.mAgPadding(9, self.totalAmount, True, "0"))
-        self.set_pCode(format.mAgPadding(20, format.mAgPadding(3,self.pCode, True, "0"), False, " "))
-        self.set_price(format.mAgPadding(9, self.price, True, "0"))
-        self.set_pump(format.mAgPadding(2, self.pump, True, "0"))
-        self.set_tranNum(format.mAgPadding(9, self.tranNum, True, "0"))
+        if(config_data['site_number'] == ""):
+            self.set_siteID(re.sub(r'[a-z_\s-]','', self.siteID, flags=re.IGNORECASE))
+        else:
+            self.set_siteID(config_data['site_number'])
+        
+        self.set_siteID(format.padAdd("left","0",8,self.siteID))
+        self.set_totalAmount(format.padAdd("left","0",9,re.sub(r'[.]','', format.decimalPad(3,self.totalAmount), flags=re.IGNORECASE)))
+        self.set_pCode(format.padAdd("right"," ",20,format.padAdd("left","0",3,self.pCode)))
+        self.set_quantity(format.padAdd("left","0",9,re.sub(r'[.]','', format.decimalPad(3,self.quantity), flags=re.IGNORECASE)))
+        self.set_price(format.padAdd("left","0",9,re.sub(r'[.]','', format.decimalPad(3,self.price), flags=re.IGNORECASE)))
+        self.set_pump(format.padAdd("left","0",2,self.pump))
+        self.set_tranNum(format.padAdd("left","0",9,self.tranNum))
         self.set_tranDate(self.tranDate[6:8] + self.tranDate[4:6] + self.tranDate[0:4])
-        self.set_vehicle(format.mAgPadding(9, self.vehicle, True, "0"))
-        self.set_card(format.mAgPadding(9, self.card, True, "0"))
-        self.set_account(format.mAgPadding(9, self.account, True, " "))
-        self.set_vehicleID(format.mAgPadding(9, self.vehicleID, True, "0"))
+        self.set_vehicle(format.padAdd("left","0",9,self.vehicle))
+        self.set_card(format.padAdd("left","0",9,self.card))
+        self.set_account(format.padAdd("left"," ",9,self.account))
+        self.set_vehicleID(format.padAdd("left","0",9,self.vehicleID))
         self.set_pName(format.mAgPadding(26, self.pName, False, " "))
+        self.set_pName(format.padAdd("right"," ",26,self.pName))
         self.set_cardType(format.mAgCardName(self.cardType))
 
         driver = self.card
