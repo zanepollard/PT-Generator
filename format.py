@@ -3,27 +3,20 @@ import datetime
 
 #Formats time in sales files
 def tFormat(time,gasboy):
-    nTime = time[0:5]
     if not gasboy:
-        return (nTime[0:2] + nTime[3:5])
+        return time
     else:
-        temp = nTime.split(":")
-        if temp[0][0] == "0":
-            temp[0] = " " + temp[0][1]
-        return temp[0] + ":" + temp[1] + " "
+        if time[0] == "0":
+            time[0] = " "
+        return str(time[0:2] + ":" + time[2:4] + " ")
 
 #Formats date object to pt output
 def dFormat(date):
-    fDate = date[8:10] + date[0:2] + date[3:5]
-    return fDate
+    return str(date[2:8])
 
 def dGasboyFormat(date):
-    if(len(date)==10):
-        dTemp = date.split("-") 
-        if dTemp[0][0] == "0":
-            dTemp[0] = " " + dTemp[0][1]
-        dTemp[2] = dTemp[2][2:4]
-        return dTemp[0] + "/" +  dTemp[1] + "/" + dTemp[2] + " "
+    if(len(date)==8):
+        return date[4:6] + "/" + date[6:8] + "/" + date[2:4]
     else:
         return "01/01/01"
 
@@ -89,9 +82,9 @@ def decimalCheck(number, x):
 
 #Ensures the value that was put into it has the proper amount of zeros
 def format(oD, num, gasboy):
-    temp = oD
+    temp = str(oD)
     if len(temp)>num:
-        temp = temp[len(oD) - num:len(oD)]   
+        temp = temp[len(oD) - num:len(oD)] 
     for __ in range(num - len(oD)):
         if not gasboy:
             temp = "0" + temp
@@ -204,3 +197,48 @@ def datePadder(i):
         return "0" + temp
     else:
         return temp
+
+def padAdd(lR, fill, length, input):
+    output = str(input)
+    padding = ""
+    
+    for __ in range(length - len(str(input))):
+        padding = fill + padding
+    if lR == "left":
+        output = padding + output
+    elif lR == "right":
+        output = output + padding 
+    return str(output)
+
+
+def cutLength(lR, length, input):
+    output = str(input)
+    if length < len(input):
+        if lR == "left":
+            output = output[0:length]
+        else:
+            output = output[(len(output)-length):(len(output))]
+    return str(output)
+
+
+def decimalFormat(sigFig, input):
+    output = input.split(".")
+    temp = ""
+    if len(output) == 1:
+        for __ in range(sigFig):
+            temp = temp + "0"
+        output.append(temp)
+    output[1] = padAdd("right", "0", sigFig, str(output[1]))
+    return (str(output[0]) + str(output[1]))
+
+def decimalPad(sigFig, input):
+    output = input.split(".")
+    temp = ""
+    if len(output) == 1:
+        for __ in range(sigFig):
+            temp = temp + "0"
+        output.append(temp)
+    else:
+        if (len(output[1])>sigFig):
+            output[1] = output[1][0:sigFig]
+    return str(output[0]) + "." + padAdd("right", "0", sigFig, str(output[1]))
