@@ -1,3 +1,4 @@
+import shutil
 import NETparse
 import files
 import VBparse
@@ -54,3 +55,15 @@ for folderPath in input_folders:
 
     files.salesOutput(parseObj, config_data, root, output_folder)
     files.set_lastRun_Date(dateRun, root)
+
+    if(config_data.get('USE_EMAIL')):
+        os.chdir(output_folder)
+        backupFolder = os.path.abspath(output_folder + "/backup")
+        if not (os.path.isdir(backupFolder)):
+            os.mkdir(backupFolder)
+        for file in os.listdir(output_folder):
+            shutil.copyfile(os.path.abspath(output_folder + "/" + file), os.path.abspath(backupFolder + "/" + file))
+        
+
+    if(config_data.get('USE_SFTP')):
+        pass
