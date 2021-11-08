@@ -13,6 +13,7 @@ def mAgCardName(name):
     else:
         return "UNKNO"
 
+#lR is what part the padding gets added to. Left is before the input string and right is after the input string.
 def padAdd(lR, fill, length, input):
     output = str(input)
     padding = ""
@@ -25,7 +26,7 @@ def padAdd(lR, fill, length, input):
         output = output + padding 
     return str(output)
 
-
+#lR is justification. Left justified or right justified for the length cut.
 def cutLength(lR, length, input):
     output = str(input)
     if length < len(input):
