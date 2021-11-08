@@ -180,6 +180,9 @@ def salesOutput(parseObj, config_data, root, outputFolder):
             tranWriter = csv.writer(outputFile, delimiter=',')
             for key in parseObj.transactions:
                 tranWriter.writerow(parseObj.transactions[key].CFNcsvPrint(config_data))
+        elif bool(config_data['FuelMaster']):
+            for key in parseObj.transactions:
+                outputFile.write(parseObj.transactions[key].FuelMasterPrint(config_data))  
     os.chdir(root)
 
 

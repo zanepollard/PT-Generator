@@ -11,7 +11,7 @@ class transaction:
         self.pCode = "0"
         self.quantity = "0.000"
         self.price = "0.00"
-        self.odometer = ""
+        self.odometer = "0"
         self.pump = "00"
         self.tranTime = "1200"
         self.tranDate = "20000101"
@@ -19,8 +19,8 @@ class transaction:
         self.pName = "NONE"
         self.pDesc = "NONE"
         self.cardType = "UNK"
-        self.vehicle = ""
-        self.vehicleID = ""
+        self.vehicle = "0"
+        self.vehicleID = "0"
         self.card = "0"
         self.account = "0"
         self.rawTranTime = "00000000000000000"
@@ -261,13 +261,14 @@ class transaction:
                 self.set_siteID(re.sub(r'[a-z_\s-]','', self.siteID, flags=re.IGNORECASE))
             tranType = "N"  
         elif(config_data['Atlas']):
-            p19 = self.card + "196" + "001454" + "0000"
-            #p19 = "5550123" + "321" + "001234" + "0000"         
             self.set_cardType("PV")
             self.set_siteID(config_data.get('site_number'))
+            self.set_card(format.padAdd("left","0",6, self.siteID) + self.card[6:len(self.card)])
+            p19 = self.card + "196" + "001454" + "0000"
+            #p19 = "5550123" + "321" + "001234" + "0000"         
             tranType = "P"
 
-        return [self.siteID, self.seqNum, "0", self.totalAmount, "0", self.pCode, "FUEL", self.pName,self.price,self.quantity,self.odometer,self.pump,self.tranNum,self.tranDate,self.tranTime,
+        return [self.siteID, self.seqNum, "0", self.totalAmount, "0", self.pCode, "FUEL", self.pName,self.price,self.quantity,self.odometer,self.pump,self.tranNum,self.tranDate[2:8],self.tranTime,
                     0,9,'',p19,'','','','','','','','','','','','','','','','','','','','','','',tranType,self.cardType,0,self.price,0,0,'','','','','','','','','']
 
     def merchantAgPrint(self, config_data):
@@ -293,7 +294,6 @@ class transaction:
         self.set_card(format.padAdd("left","0",9,self.card))
         self.set_account(format.padAdd("left"," ",9,self.account))
         self.set_vehicleID(format.padAdd("left","0",9,self.vehicleID))
-        self.set_pName(format.mAgPadding(26, self.pName, False, " "))
         self.set_pName(format.padAdd("right"," ",26,self.pName))
         self.set_cardType(format.mAgCardName(self.cardType))
 
@@ -302,5 +302,35 @@ class transaction:
                 driver = "000000000"
         return (self.tranNum + self.tranDate + self.tranTime + self.account + self.pCode + catCode + self.pName +
                 self.quantity + self.odometer + self.vehicle + self.price + self.totalAmount + self.totalAmount + cusCode +
-                self.siteID + self.pump + driver + blank1 + self.cardType + self.account + self.totalAmount + blank2 + "\n")
+                self.siteID + self.pump + driver + blank1 + self.cardType + self.account + self.totalAmount + blank2 + "\n")\
+    
+    def FuelMasterPrint(self, config_data):
+        if(config_data['site_number'] == ""):
+            self.set_siteID(re.sub(r'[a-z_\s-]','', self.siteID, flags=re.IGNORECASE))
+        else:
+            self.set_siteID(config_data['site_number'])
+        self.set_siteID(format.padAdd("left","0",4,format.cutLength("right",4,self.siteID)))
+        self.set_tranDate(self.tranDate[4:6] + self.tranDate[6:8] + self.tranDate[2:4])
+        self.set_account(format.padAdd("left","0",5,format.cutLength("right",5,self.account)))
+        self.set_card(format.padAdd("left","0",4,format.cutLength("right",4,self.card)))
+        self.set_odometer(format.padAdd("left"," ",6,format.cutLength("right",6,self.odometer)))
+        if len(self.pCode) == 2:
+            self.set_pCode(re.sub(r'0','',self.pCode[0]) + self.pCode[1])
+        self.set_pCode(format.padAdd("left"," ",2,self.pCode))
+        self.set_pump(format.padAdd("left"," ",2,self.pump))
+        self.set_quantity(format.padAdd("left","0",9,format.decimalPad(2, self.quantity)))
+        self.set_price(format.padAdd("left","0",7,format.decimalPad(4,self.price)))
+        self.set_totalAmount(format.padAdd("left","0",11,format.decimalPad(2,self.totalAmount)))
+
+        return ("00" + self.siteID + self.tranDate + self.tranTime + "0000" + self.account + "0000" +
+               self.card + self.odometer + "     " + self.pCode + self.pump + self.quantity + self.price + 
+               self.totalAmount + "\n")
+
+    def HuntBreshersPrint(self, config_data):
+        if(config_data['site_number'] == ""):
+            self.set_siteID(re.sub(r'[a-z_\s-]','', self.siteID, flags=re.IGNORECASE))
+        else:
+            self.set_siteID(config_data['site_number'])
+        #self.set_siteID()
+
 
