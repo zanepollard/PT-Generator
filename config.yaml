@@ -5,23 +5,25 @@
 # File paths must not have \\ at the end
 
 #SOFTWARE_VERSION CAN BE EITHER "VB6" OR ".NET"
-SOFTWARE_VERSION: "VB6"
+SOFTWARE_VERSION: ".NET"
 
 site_number: ""
 
 ptOutput: False #CFN PT output
-gasboyOutput: True #Gasboy log printer output
+gasboyOutput: False #Gasboy log printer output
 csvOutput: False #CSV output
 CFNcsv:    False
 merchantAg: False #Merchant Agriculture output (EFC)
 VDPOutput: False #Van De Pol specific output
 AGTRAX: False
 JCDoyle: False
+FuelMaster: False
+HuntBreshers: False
 
 #COMPANY LIST. ENABLE THESE FOR COMPANY SPECIFIC OUTPUT MODIFICATIONS
 Downs: False
 Busch: False
-Atlas: True
+Atlas: False
 Dawson: False
 
 #DAILY and ALL options are available for pullMode
@@ -31,19 +33,19 @@ pullMode: "ALL"
 # MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders: 
-  - C:\SalesGen\VB6\Generic\input
-output_folder: C:\SalesGen\VB6\Generic\output
+  - C:\SalesGen\.Net\AGTRAX\input
+output_folder: C:\SalesGen\.Net\AGTRAX\output
 
 file_name: # What will be included in the PT file name
   custom: # Allows for custom file name beginning if wanted
     custom_beginning: True
-    text: "GASBOY_NEW"
+    text: "AGTRAX_NEWSOFTWARE"
   siteid: False
   date:
     include: False
     format: False # Date formatting. True = yymmdd False = mmddyy
     add_day: False # Adds day to date. Only used on Anaheim Truck Depot sites
-  extension: ".DAT"
+  extension: ".DDF"
 
 USE_SFTP: False
 SFTP_Settings:
