@@ -15,4 +15,5 @@ Supports the following back office formats:
 1. Python 3.6 and up.
 2. pyYaml
 3. pySFTP
-4. A windows machine. OS and file operations are exclusively written for windows.
+
+The use of this software is generally through a compiled binary done with pyinstaller. This prevents us from having to install python on the controller PC.
