@@ -8,10 +8,7 @@ import os
 from datetime import datetime, timedelta
 
 def main():
-    config_data = None
-    cwd = os.getcwd()
     root = os.getcwd()
-    startTime = datetime.now()
     dateRun = datetime.today()
     lastRunDate = files.get_lastRun_Date(root)
 
@@ -24,7 +21,6 @@ def main():
     pullMode = config_data.get('pullMode')
     SOFTWARE_VERSION = config_data.get('SOFTWARE_VERSION')
 
-    transactionSets = []
 
     for folderPath in input_folders:
         currentFolder = os.path.abspath(folderPath)
