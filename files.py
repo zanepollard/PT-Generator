@@ -1,5 +1,5 @@
 from email.message import EmailMessage
-from genericpath import isdir
+from genericpath import isdir, isfile
 import os
 import shutil
 import re
@@ -189,11 +189,12 @@ def salesOutput(parseObj, config_data, root, outputFolder):
 
 def backupFiles(folder):
     os.chdir(folder)
-    backupFolder = folder + '\\backup'
+    backupFolder = f"{folder}\\backup"
     if not os.path.exists(backupFolder):
         os.makedirs(backupFolder)
     for file in os.listdir(folder):
-        shutil.copyfile(os.path.abspath(f"{folder}/{file}"), os.path.abspath(f"{backupFolder}/{file}"))
+        if os.path.isfile(file):
+            shutil.copyfile(os.path.abspath(f"{folder}\\{file}"), os.path.abspath(f"{backupFolder}\\{file}"))
 
 def emailTransfer(outputFolder, mailServer, port, mailUser, mailPassword, messageSubject, messageBody, recipients):
     backupFiles(outputFolder)
