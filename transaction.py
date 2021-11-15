@@ -243,6 +243,7 @@ class transaction:
             
 
     def CFNcsvPrint(self, config_data):
+        p19 = "NONE"
         if(len(self.pName) > 20):
             self.set_pName(self.pName[0:20])
         if(len(str(self.seqNum))>4):
