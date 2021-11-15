@@ -11,18 +11,17 @@ import pysftp
 import paramiko
 from sys import exit
 from base64 import decodebytes
-from rich import print
 
 
 
-def get_lastRun_Date(root, console):
+def get_lastRun_Date(root):
     os.chdir(root)
     if(os.path.exists('lastRun')):
         with open('lastRun', 'r') as lastRun:
             reader = csv.reader(lastRun)
             row1 = next(reader)
             lastRunDate = datetime(int(row1[0]), int(row1[1]), int(row1[2]))
-        console.print(f"[red]Software last run at {lastRunDate}[red]")
+            print(f"Software last run at {lastRunDate}")
     else:
         lastRunDate = datetime.today()
     return lastRunDate
