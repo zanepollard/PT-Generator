@@ -11,16 +11,18 @@ import pysftp
 import paramiko
 from sys import exit
 from base64 import decodebytes
+from rich import print
 
 
-def get_lastRun_Date(root):
+
+def get_lastRun_Date(root, console):
     os.chdir(root)
     if(os.path.exists('lastRun')):
         with open('lastRun', 'r') as lastRun:
             reader = csv.reader(lastRun)
             row1 = next(reader)
             lastRunDate = datetime(int(row1[0]), int(row1[1]), int(row1[2]))
-        print(f"Software last run at {lastRunDate}")
+        console.print(f"[red]Software last run at {lastRunDate}[red]")
     else:
         lastRunDate = datetime.today()
     return lastRunDate
@@ -33,9 +35,11 @@ def set_lastRun_Date(dateRun, root):
         writer.writerow([dateRun.year, dateRun.month, dateRun.day])
     
 
-def fileFind(folder, SOFTWARE_VERSION, pullMode, recentDate = None, pastDate = None):
+def fileFind(folder, config_data, SOFTWARE_VERSION, pullMode, recentDate = None, pastDate = None):
     files = []
     if(SOFTWARE_VERSION == "VB6"):
+        extension = f"{'^s' if config_data['processors_VB6']=='' else config_data['processors_VB6']}"
+
         h = []
         d = []
         v = []
@@ -45,19 +49,19 @@ def fileFind(folder, SOFTWARE_VERSION, pullMode, recentDate = None, pastDate = N
             day = str(recentDate.day)
             month = str(recentDate.month)
             for file in os.listdir(folder):
-                if re.match(rf'[}}]h{year}0?{month}0?{day}[.][^s]1c', file):
+                if re.match(rf'[}}]h{year}0?{month}0?{day}[.][{extension}]1c', file):
                     h.append(file)
-                if re.match(rf'[}}]d{year}0?{month}0?{day}[.][^s]1c', file):
+                if re.match(rf'[}}]d{year}0?{month}0?{day}[.][{extension}]1c', file):
                     d.append(file)
-                if re.match(rf'[}}]v{year}0?{month}0?{day}[.][^s]1c', file):
+                if re.match(rf'[}}]v{year}0?{month}0?{day}[.][{extension}]1c', file):
                     v.append(file)
         elif(pullMode == "ALL"):
             for file in os.listdir(folder):
-                if re.match(r'[}]h\d{6}[.][^s]1c',file):
+                if re.match(rf'[}}]h\d{{6}}[.][{extension}]1c',file):
                     h.append(file)
-                if re.match(r'[}]d\d{6}[.][^s]1c',file):
+                if re.match(rf'[}}]d\d{{6}}[.][{extension}]1c',file):
                     d.append(file)   
-                if re.match(r'[}]v\d{6}[.][^s]1c',file):
+                if re.match(rf'[}}]v\d{{6}}[.][{extension}]1c',file):
                     v.append(file)
         elif(pullMode == "RANGE"):
             date_list = [recentDate - datetime.timedelta(days=x) for x in range(1, (recentDate-pastDate).days + 1)]
@@ -87,51 +91,49 @@ def fileFind(folder, SOFTWARE_VERSION, pullMode, recentDate = None, pastDate = N
                 if re.match(rf'TransactionTable[\d]{{6}}[.csv]', file):
                     files.append(file)
         elif(pullMode == "DAILY"):
-            year = str(recentDate.year)[2:4]
-            month = str(recentDate.month)
-            day = str(recentDate.day)
             for file in os.listdir(folder):
-                if re.match(rf'TransactionTable{year}0?{month}0?{day}[.csv]', file):
+                if re.match(rf'TransactionTable{str(recentDate.year)[2:4]}0?{str(recentDate.month)}0?{str(recentDate.day)}[.csv]', file):
                     files.append(file)
         elif(pullMode == "RANGE"):
             date_list = [recentDate - timedelta(days=x) for x in range(1, ((recentDate-pastDate).days + 1))]
             for date in date_list:
-                year = str(date.year)[2:4]
-                month = str(date.month)
-                day = str(date.day)
                 for file in os.listdir(folder):
-                    if re.match(rf'TransactionTable{year}0?{month}0?{day}[.csv]', file):
+                    if re.match(rf'TransactionTable{str(date.year)[2:4]}0?{str(date.month)}0?{str(date.day)}[.csv]', file):
                         files.append(file)
             files = sorted(files)
         return files
 
 
 def fileName(inputDate, config_data):
-    fileName = ''
+    fileName = ""
+    dateString = ""
     fileDate = inputDate
 
-    if (config_data.get('file_name')['siteid'] == True):
-        fileName = fileName + config_data.get('site_number') + "_"
-    if (config_data.get('file_name')['custom']['custom_beginning'] == True):
-        fileName = fileName + config_data.get('file_name')['custom']['text']
     if (config_data.get('file_name')['date']['include'] == True):
         if (config_data.get('file_name')['date']['add_day'] == False):
-            fileDate = fileDate - timedelta(days=1)
-        if(len(str(fileDate.day))<2):
-            day = '0' + str(fileDate.day)
-        else:
-            day = (str(fileDate.day))
-        if(len(str(fileDate.month))<2):
-            month = '0' + str(fileDate.month)
-        else:
-            month = str(fileDate.month)
+            inputDate = inputDate - timedelta(days=1)
+        day = f"{'0'+str(fileDate.day) if (len(str(inputDate.day))<2) else str(inputDate.day)}"
+        month = f"{'0'+str(fileDate.month) if (len(str(inputDate.month))<2) else str(inputDate.month)}"
         year = str(fileDate.year)[2:4]
-        if(config_data.get('file_name')['date']['format'] == True):
-            fileName = fileName + year + month + day
-        else:
-            fileName = str(fileName) + str(month) + str(day) + str(year)
+
+        dateString = f"{str(year)+str(month)+str(day) if config_data.get('file_name')['date']['format']==True else str(month)+str(day)+str(year)}"
+
+    fileName = (f"{config_data.get('file_name')['custom']['text']+'_' if config_data.get('file_name')['custom']['custom_beginning'] == True else ''}"
+                f"{config_data.get('site_number')+'_' if config_data.get('file_name')['siteid'] == True else ''}"
+                f"{dateString}"
+                f"{config_data.get('file_name')['extension']}")
     
-    return fileName + config_data.get('file_name')['extension']
+    return fileName
+
+def salesOutput_ind(parseObj, config_data, root, outputFolder):
+    os.chdir(outputFolder)
+    for key in parseObj.transactions:
+        filename = fileName(datetime(int(parseObj.transactions[key].tranDate[0:4]), int(parseObj.transactions[key].tranDate[4:6]), int(parseObj.transactions[key].tranDate[6:8])), config_data)
+        with open(filename, "a",newline='') as outputFile:
+            if bool(config_data['CFNcsv']):
+                tranWriter = csv.writer(outputFile, delimiter=',')
+                tranWriter.writerow(parseObj.transactions[key].CFNcsvPrint(config_data))
+    os.chdir(root)
 
 
 def salesOutput(parseObj, config_data, root, outputFolder):
@@ -192,7 +194,7 @@ def backupFiles(folder):
     if not os.path.exists(backupFolder):
         os.makedirs(backupFolder)
     for file in os.listdir(folder):
-        shutil.copyfile((folder + '\\' + file), (backupFolder + '\\' + file))
+        shutil.copyfile(os.path.abspath(f"{folder}/{file}"), os.path.abspath(f"{backupFolder}/{file}"))
 
 def emailTransfer(outputFolder, mailServer, port, mailUser, mailPassword, messageSubject, messageBody, recipients):
     backupFiles(outputFolder)
@@ -205,7 +207,7 @@ def emailTransfer(outputFolder, mailServer, port, mailUser, mailPassword, messag
         server.ehlo()
         server.starttls()
         server.login(mailUser, mailPassword)
-    except:
+    except Exception:
         print("Could not connect to SMTP server. Check connection or login info.\n")
 
     msg = EmailMessage()
@@ -221,7 +223,7 @@ def emailTransfer(outputFolder, mailServer, port, mailUser, mailPassword, messag
     for message in messages:
         try:
             server.send_message(message)   
-        except:
+        except Exception:
             print("Message failed to send\n")
             return
     for file in os.listdir(outputFolder):
