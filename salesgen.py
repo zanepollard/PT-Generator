@@ -49,42 +49,48 @@ def main():
 
 
     for folderPath in input_folders:
-        currentFolder = os.path.abspath(folderPath)
-        if(pullMode == "ALL"):
-            fileList = files.fileFind(currentFolder,config_data,SOFTWARE_VERSION,pullMode)
-        elif(pullMode == "DAILY"):
-            timeDelta = (dateRun-(lastRunDate)).days
-            if((timeDelta <= 1)):
-                fileList = files.fileFind(currentFolder,config_data,SOFTWARE_VERSION,pullMode,(dateRun-timedelta(days=1)))
-            elif(timeDelta > 1):
-                #Case when program hasn't been run in a while. Looking for any files during that time.
-                fileList = files.fileFind(currentFolder,config_data,SOFTWARE_VERSION,"RANGE",(dateRun-timedelta(days=1)),lastRunDate)
-        elif(pullMode == "RANGE"):
-            #implement later alongside command line interface.
-            pass
-        os.chdir(root)
-        if(len(fileList) == 0):
-            print("No files found to parse matching date parameters. Exiting...")
-            exit()
-        if(SOFTWARE_VERSION == "VB6"):
-            parseObj = VBparse.parse()
-            for x in range(len(fileList[0])):
-                parseObj.parse(currentFolder, [fileList[0][x],fileList[1][x],fileList[2][x]], config_data)
-        elif(SOFTWARE_VERSION == ".NET"):
-            parseObj = NETparse.parse()
-            for file in fileList:
-                parseObj.parse(currentFolder, file, config_data)
-        #files.salesOutput_ind(parseObj, config_data, root, output_folder)
-        files.salesOutput(parseObj, config_data, root, output_folder)
-        files.set_lastRun_Date(dateRun, root)
+        if(SOFTWARE_VERSION == "VB6" or SOFTWARE_VERSION == ".NET"):
+            print(f"Software Version: {SOFTWARE_VERSION}")
+            currentFolder = os.path.abspath(folderPath)
+            if(pullMode == "ALL"):
+                fileList = files.fileFind(currentFolder,config_data,SOFTWARE_VERSION,pullMode)
+            elif(pullMode == "DAILY"):
+                timeDelta = (dateRun-(lastRunDate)).days
+                if((timeDelta <= 1)):
+                    fileList = files.fileFind(currentFolder,config_data,SOFTWARE_VERSION,pullMode,(dateRun-timedelta(days=1)))
+                elif(timeDelta > 1):
+                    #Case when program hasn't been run in a while. Looking for any files during that time.
+                    fileList = files.fileFind(currentFolder,config_data,SOFTWARE_VERSION,"RANGE",(dateRun-timedelta(days=1)),lastRunDate)
+            elif(pullMode == "RANGE"):
+                #implement later alongside command line interface.
+                pass
+            os.chdir(root)
+            if(len(fileList) == 0):
+                print("No files found to parse matching date parameters. Exiting...")
+                exit()
+            if(SOFTWARE_VERSION == "VB6"):
+                parseObj = VBparse.parse()
+                for x in range(len(fileList[0])):
+                    parseObj.parse(currentFolder, [fileList[0][x],fileList[1][x],fileList[2][x]], config_data)
+            elif(SOFTWARE_VERSION == ".NET"):
+                parseObj = NETparse.parse()
+                for file in fileList:
+                    parseObj.parse(currentFolder, file, config_data)
+            #files.salesOutput_ind(parseObj, config_data, root, output_folder)
+            files.salesOutput(parseObj, config_data, root, output_folder)
+            files.set_lastRun_Date(dateRun, root)
 
-        if(config_data.get('USE_EMAIL')):
-            files.backupFiles(output_folder)
-            #TODO!             
+            if(config_data.get('USE_EMAIL')):
+                files.backupFiles(output_folder)
+                #TODO!             
 
-        if(config_data.get('USE_SFTP')):
-            files.backupFiles(output_folder)
-            #TODO!
+            if(config_data.get('USE_SFTP')):
+                files.backupFiles(output_folder)
+                #TODO!
+        else:
+            print(f"Please check config. Software version set to {SOFTWARE_VERSION}. Should be either '.NET' or 'VB6'")
+            Prompt.ask("Press any key to continue",console=console)
+            exit(1)
 
 
 def userControl():
