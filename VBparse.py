@@ -69,6 +69,7 @@ class parse:
 
     def parse(self, input_folder, fileList, config_data):
         os.chdir(input_folder)
+        print(f"Parsing {fileList[0]}, {fileList[1]}, {fileList[2]}")
         self.hParse(input_folder, fileList[0])
         self.dParse(input_folder, fileList[1])
         self.vParse(input_folder, fileList[2])
