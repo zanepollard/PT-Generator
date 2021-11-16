@@ -122,11 +122,22 @@ def generateSales(config_data, SOFTWARE_VERSION, fileList, root, output_folder, 
 def transfer(config_data, output_folder):
     if(config_data.get('USE_EMAIL')):
         files.backupFiles(output_folder)
-        #TODO!             
+        files.transfer_email(output_folder,
+                             config_data.get('EMAIL_Settings')['mailServer'],
+                             config_data.get('EMAIL_Settings')['port'],
+                             config_data.get('EMAIL_Settings')['mailUser'],
+                             config_data.get('EMAIL_Settings')['mailPassword'],
+                             config_data.get('EMAIL_Settings')['messageSubject'],
+                             config_data.get('EMAIL_Settings')['messageBody'],
+                             config_data.get('EMAIL_Settings')['to'])            
 
     if(config_data.get('USE_SFTP')):
         files.backupFiles(output_folder)
-        #TODO!
+        files.transfer_SFTP(output_folder,
+                            config_data.get('SFTP_Settings')['Username'],
+                            config_data.get('SFTP_Settings')['Password'],
+                            config_data.get('SFTP_Settings')['HostName'],
+                            config_data.get('SFTP_Settings')['KeyData'])
 
 
 if __name__ == "__main__":

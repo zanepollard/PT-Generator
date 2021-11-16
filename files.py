@@ -195,7 +195,7 @@ def log_events(logfile, message):
     with open(logfile, "a") as log_output:
         log_output.write(message)
 
-def emailTransfer(outputFolder, mailServer, port, mailUser, mailPassword, messageSubject, messageBody, recipients):
+def transfer_email(outputFolder, mailServer, port, mailUser, mailPassword, messageSubject, messageBody, recipients):
     backupFiles(outputFolder)
     os.chdir(outputFolder)
 
@@ -228,24 +228,26 @@ def emailTransfer(outputFolder, mailServer, port, mailUser, mailPassword, messag
     for file in os.listdir(outputFolder):
         os.remove(file)
 
-def transfer_SFTP(salesFile, username, password, hostname, keydata):
+def transfer_SFTP(output_folder, username, password, hostname, keydata):
     key = paramiko.RSAKey(data=decodebytes(bytes(keydata, encoding="ascii")))
     cnopts = pysftp.CnOpts()
     cnopts.hostkeys.add(hostname, 'ssh-rsa', key)
 
     with pysftp.Connection(hostname, username=username, password=password, cnopts=cnopts) as sftp:
-        try:
-            sftp.put(salesFile ,preserve_mtime=True) 
-            #Transfer to SFTP server. If this fails we do not delete the local file. This allows us to still make a sales file locally even if upload fails.
-            #We will attempt another transfer during the next file generation.
-        except IOError:
-            #'Failure'
-            print("IOError")
-        except OSError:
-            #'Failure'
-            print("OSError")
-        else:
-            os.remove(salesFile) #and now we delete the local file since we succeeded. 
+        for file in os.listdir(output_folder):
+            if os.path.isfile(file):
+                try:
+                    sftp.put(file ,preserve_mtime=True) 
+                    #Transfer to SFTP server. If this fails we do not delete the local file. This allows us to still make a sales file locally even if upload fails.
+                    #We will attempt another transfer during the next file generation.
+                except IOError:
+                    #'Failure'
+                    print("IOError")
+                except OSError:
+                    #'Failure'
+                    print("OSError")
+                else:
+                    os.remove(file) #and now we delete the local file since we succeeded. 
     
     
     
