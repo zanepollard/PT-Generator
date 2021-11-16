@@ -1,6 +1,3 @@
-import shutil
-
-from rich.padding import Padding
 import NETparse
 import files
 import VBparse
@@ -15,7 +12,6 @@ from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
 from rich.box import Box, MINIMAL_DOUBLE_HEAD
-from rich.style import Style
 
 console = Console(color_system=None, style=None)
 arguments = len(sys.argv) - 1
@@ -30,6 +26,8 @@ except getopt.error as err:
     print(str(err))
     sys.exit(2)
 
+headless = True
+
 
 def main():
     root = os.getcwd()
@@ -39,58 +37,30 @@ def main():
     with open(os.path.abspath(f"{root}\\config.yaml"))  as cfg:
         config_data = yaml.load(cfg, Loader=yaml.FullLoader)
 
-    fileList = []
     input_folders = list(config_data['input_folders'])
     output_folder = config_data.get('output_folder')
     pullMode = config_data.get('pullMode')
     SOFTWARE_VERSION = config_data.get('SOFTWARE_VERSION')
 
+    if(SOFTWARE_VERSION == "VB6" or SOFTWARE_VERSION == ".NET"):
+        print(f"Software Version: {SOFTWARE_VERSION}")
 
-
-
-    for folderPath in input_folders:
-        if(SOFTWARE_VERSION == "VB6" or SOFTWARE_VERSION == ".NET"):
-            print(f"Software Version: {SOFTWARE_VERSION}")
-            currentFolder = os.path.abspath(folderPath)
-            if(pullMode == "ALL"):
-                fileList = files.fileFind(currentFolder,config_data,SOFTWARE_VERSION,pullMode)
-            elif(pullMode == "DAILY"):
-                timeDelta = (dateRun-(lastRunDate)).days
-                if((timeDelta <= 1)):
-                    fileList = files.fileFind(currentFolder,config_data,SOFTWARE_VERSION,pullMode,(dateRun-timedelta(days=1)))
-                elif(timeDelta > 1):
-                    #Case when program hasn't been run in a while. Looking for any files during that time.
-                    fileList = files.fileFind(currentFolder,config_data,SOFTWARE_VERSION,"RANGE",(dateRun-timedelta(days=1)),lastRunDate)
-            elif(pullMode == "RANGE"):
-                #implement later alongside command line interface.
-                pass
-            os.chdir(root)
-            if(len(fileList) == 0):
-                print("No files found to parse matching date parameters. Exiting...")
-                exit()
-            if(SOFTWARE_VERSION == "VB6"):
-                parseObj = VBparse.parse()
-                for x in range(len(fileList[0])):
-                    parseObj.parse(currentFolder, [fileList[0][x],fileList[1][x],fileList[2][x]], config_data)
-            elif(SOFTWARE_VERSION == ".NET"):
-                parseObj = NETparse.parse()
-                for file in fileList:
-                    parseObj.parse(currentFolder, file, config_data)
-            #files.salesOutput_ind(parseObj, config_data, root, output_folder)
-            files.salesOutput(parseObj, config_data, root, output_folder)
-            files.set_lastRun_Date(dateRun, root)
-
-            if(config_data.get('USE_EMAIL')):
-                files.backupFiles(output_folder)
-                #TODO!             
-
-            if(config_data.get('USE_SFTP')):
-                files.backupFiles(output_folder)
-                #TODO!
+        if headless:
+            generateSales(config_data,
+                          SOFTWARE_VERSION,
+                          pullFiles(config_data,pullMode,input_folders,SOFTWARE_VERSION,dateRun,lastRunDate),
+                          root,
+                          output_folder)
         else:
-            print(f"Please check config. Software version set to {SOFTWARE_VERSION}. Should be either '.NET' or 'VB6'")
-            Prompt.ask("Press any key to continue",console=console)
-            exit(1)
+            #TODO for CLI
+            pass
+        
+        transfer(config_data, output_folder)
+        files.set_lastRun_Date(dateRun, root)    
+    else:
+        print(f"Please check config. Software version set to {SOFTWARE_VERSION}, should be either '.NET' or 'VB6'")
+        input("Press 'Enter' to exit...")
+        exit(1)
 
 
 def userControl():
@@ -100,10 +70,62 @@ def userControl():
         table.add_column("Choice", justify="center")
         table.add_row("1", "Export specific date to sales file")
         table.add_row("2", "Export a range of dates to sales file")
+        table.add_row("3", "Export all data to sales file")
 
         console.print(table)
         selection = Prompt.ask("Enter your selection", choices=["1","2"],show_choices=None, console=console)
         break
+
+
+def pullFiles(config_data, pullMode, input_Folders, SOFTWARE_VERSION, dateRun, lastRunDate, userRange=None):
+    fileList = []
+    for folderPath in input_Folders:
+        input_folder = os.path.abspath(folderPath)
+        if(pullMode == "ALL"):
+            fileList = fileList + files.fileFind(input_folder,config_data,SOFTWARE_VERSION,pullMode)
+        elif(pullMode == "DAILY"):
+            timeDelta = (dateRun-(lastRunDate)).days
+            if((timeDelta <= 1)):
+                fileList = fileList + files.fileFind(input_folder,config_data,SOFTWARE_VERSION,pullMode,(dateRun-timedelta(days=1)))
+            elif(timeDelta > 1):
+                #Case when program hasn't been run in a while. Looking for any files during that time.
+                fileList = fileList + files.fileFind(input_folder,config_data,SOFTWARE_VERSION,"RANGE",(dateRun-timedelta(days=1)),lastRunDate)
+        elif(pullMode == "RANGE"):
+            #implement later alongside command line interface.
+            pass
+    if(len(fileList) == 0):
+        print("No files found to parse matching date parameters.\n"
+                "Please check config and ensure the proper software version is set.")
+        input("Press 'Enter' to exit...")
+        exit(1)
+    else:
+        return fileList
+    
+
+def generateSales(config_data, SOFTWARE_VERSION, fileList, root, output_folder):
+    if(SOFTWARE_VERSION == "VB6"):
+        parseObj = VBparse.parse()
+        for x in range(len(fileList[0])):
+            parseObj.parse([fileList[0][x],fileList[1][x],fileList[2][x]])
+    elif(SOFTWARE_VERSION == ".NET"):
+        parseObj = NETparse.parse()
+        for file in fileList:
+            parseObj.parse(file)
+    
+    if(config_data.get('singleFile')):
+        files.salesOutput_ind(parseObj, config_data, root, output_folder)
+    else:
+        files.salesOutput(parseObj, config_data, root, output_folder)
+
+
+def transfer(config_data, output_folder):
+    if(config_data.get('USE_EMAIL')):
+        files.backupFiles(output_folder)
+        #TODO!             
+
+    if(config_data.get('USE_SFTP')):
+        files.backupFiles(output_folder)
+        #TODO!
 
 
 if __name__ == "__main__":
