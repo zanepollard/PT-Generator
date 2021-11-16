@@ -49,19 +49,19 @@ def fileFind(folder, config_data, SOFTWARE_VERSION, pullMode, recentDate = None,
             month = str(recentDate.month)
             for file in os.listdir(folder):
                 if re.match(rf'[}}]h{year}0?{month}0?{day}[.][{extension}]1c', file):
-                    h.append(file)
+                    h.append(f"{folder}/{file}")
                 if re.match(rf'[}}]d{year}0?{month}0?{day}[.][{extension}]1c', file):
-                    d.append(file)
+                    d.append(f"{folder}/{file}")
                 if re.match(rf'[}}]v{year}0?{month}0?{day}[.][{extension}]1c', file):
-                    v.append(file)
+                    v.append(f"{folder}/{file}")
         elif(pullMode == "ALL"):
             for file in os.listdir(folder):
                 if re.match(rf'[}}]h\d{{6}}[.][{extension}]1c',file):
-                    h.append(file)
+                    h.append(f"{folder}/{file}")
                 if re.match(rf'[}}]d\d{{6}}[.][{extension}]1c',file):
-                    d.append(file)   
+                    d.append(f"{folder}/{file}")   
                 if re.match(rf'[}}]v\d{{6}}[.][{extension}]1c',file):
-                    v.append(file)
+                    v.append(f"{folder}/{file}")
         elif(pullMode == "RANGE"):
             date_list = [recentDate - datetime.timedelta(days=x) for x in range(1, (recentDate-pastDate).days + 1)]
             for date in date_list:
@@ -70,37 +70,32 @@ def fileFind(folder, config_data, SOFTWARE_VERSION, pullMode, recentDate = None,
                 month = str(date.month)
                 for file in os.listdir(folder):
                     if re.match(rf'[}}]h{year}0?{month}0?{day}[.][^s]1c', file):
-                        h.append(file)
+                        h.append(f"{folder}/{file}")
                     if re.match(rf'[}}]d{year}0?{month}0?{day}[.][^s]1c', file):
-                        d.append(file)
+                        d.append(f"{folder}/{file}")
                     if re.match(rf'[}}]v{year}0?{month}0?{day}[.][^s]1c', file):
-                        v.append(file)
-        
-        h.sort()        
-        d.sort()        
-        v.sort()
+                        v.append(f"{folder}/{file}")
         if(len(h) == 0):
             exit()
         if(((len(h) == len(d) == len(v)) != True)):
             exit()
-        return [h,d,v]
+        return [sorted(h),sorted(d),sorted(v)]
     else:
         if(pullMode == "ALL"):
             for file in os.listdir(folder):
                 if re.match(rf'TransactionTable[\d]{{6}}[.csv]', file):
-                    files.append(file)
+                    files.append(f"{folder}\\{file}")
         elif(pullMode == "DAILY"):
             for file in os.listdir(folder):
                 if re.match(rf'TransactionTable{str(recentDate.year)[2:4]}0?{str(recentDate.month)}0?{str(recentDate.day)}[.csv]', file):
-                    files.append(file)
+                    files.append(f"{folder}\\{file}")
         elif(pullMode == "RANGE"):
             date_list = [recentDate - timedelta(days=x) for x in range(1, ((recentDate-pastDate).days + 1))]
             for date in date_list:
                 for file in os.listdir(folder):
                     if re.match(rf'TransactionTable{str(date.year)[2:4]}0?{str(date.month)}0?{str(date.day)}[.csv]', file):
-                        files.append(file)
-            files = sorted(files)
-        return files
+                        files.append(f"{folder}\\{file}")
+        return sorted(files)
 
 
 def fileName(inputDate, config_data):
