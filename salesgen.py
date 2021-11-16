@@ -33,6 +33,7 @@ def main():
     root = os.getcwd()
     dateRun = datetime.today()
     lastRunDate = files.get_lastRun_Date(root)
+    log_file = f"{root}\\log.txt"
 
     with open(os.path.abspath(f"{root}\\config.yaml"))  as cfg:
         config_data = yaml.load(cfg, Loader=yaml.FullLoader)
@@ -48,18 +49,19 @@ def main():
         if headless:
             generateSales(config_data,
                           SOFTWARE_VERSION,
-                          pullFiles(config_data,pullMode,input_folders,SOFTWARE_VERSION,dateRun,lastRunDate),
+                          pullFiles(config_data,pullMode,input_folders,SOFTWARE_VERSION,dateRun,lastRunDate,log_file),
                           root,
-                          output_folder)
+                          output_folder,
+                          log_file)
         else:
             #TODO for CLI
             pass
         
         transfer(config_data, output_folder)
         files.set_lastRun_Date(dateRun, root)    
-    else:
+    else:   
         print(f"Please check config. Software version set to {SOFTWARE_VERSION}, should be either '.NET' or 'VB6'")
-        input("Press 'Enter' to exit...")
+        files.log_events(log_file,f"{dateRun}:  ERROR: incorrect software version configuration\n")
         exit(1)
 
 
@@ -77,7 +79,7 @@ def userControl():
         break
 
 
-def pullFiles(config_data, pullMode, input_Folders, SOFTWARE_VERSION, dateRun, lastRunDate, userRange=None):
+def pullFiles(config_data, pullMode, input_Folders, SOFTWARE_VERSION, dateRun, lastRunDate, log_file, userRange=None):
     fileList = []
     for folderPath in input_Folders:
         input_folder = os.path.abspath(folderPath)
@@ -94,15 +96,14 @@ def pullFiles(config_data, pullMode, input_Folders, SOFTWARE_VERSION, dateRun, l
             #implement later alongside command line interface.
             pass
     if(len(fileList) == 0):
-        print("No files found to parse matching date parameters.\n"
-                "Please check config and ensure the proper software version is set.")
-        input("Press 'Enter' to exit...")
+        print(f"No files found to parse matching date parameters in '{input_folder}'\n")
+        files.log_events(log_file,f"{dateRun}:  ERROR: no files found matching date parameters in '{input_folder}'\n")
         exit(1)
     else:
         return fileList
     
 
-def generateSales(config_data, SOFTWARE_VERSION, fileList, root, output_folder):
+def generateSales(config_data, SOFTWARE_VERSION, fileList, root, output_folder, log_file):
     if(SOFTWARE_VERSION == "VB6"):
         parseObj = VBparse.parse()
         for x in range(len(fileList[0])):

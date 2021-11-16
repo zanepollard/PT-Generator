@@ -191,6 +191,10 @@ def backupFiles(folder):
         if os.path.isfile(file):
             shutil.copyfile(os.path.abspath(f"{folder}\\{file}"), os.path.abspath(f"{backupFolder}\\{file}"))
 
+def log_events(logfile, message):
+    with open(logfile, "a") as log_output:
+        log_output.write(message)
+
 def emailTransfer(outputFolder, mailServer, port, mailUser, mailPassword, messageSubject, messageBody, recipients):
     backupFiles(outputFolder)
     os.chdir(outputFolder)
