@@ -10,12 +10,11 @@ class parse:
         self.transactions = {}
 
 
-    def parse(self, input_folder, file, config_data):
+    def parse(self,file):
         print(f"Parsing {file}")
         oD = {}
         tD = {}
         pD = {}
-        os.chdir(os.path.abspath(input_folder))
         with open(file, newline='', errors="ignore") as table:
             reader = csv.reader(table, quotechar="\"")
             next(reader)

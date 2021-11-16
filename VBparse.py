@@ -11,8 +11,7 @@ class parse:
 
 
     #Parses header sales file
-    def hParse(self, folder, hFile):
-        os.chdir(folder)
+    def hParse(self,hFile):
         with open(hFile, newline='', errors="ignore") as csvfile: 
             reader = csv.reader(csvfile, quotechar="\"")
             for row in reader:
@@ -23,8 +22,7 @@ class parse:
     
 
     #Parses data sales file
-    def dParse(self, folder, dFile): 
-        os.chdir(folder)
+    def dParse(self, dFile): 
         with open(dFile, newline='', errors="ignore") as csvfile:
             dreader = csv.reader(csvfile, quotechar="\"")
             for dRow in dreader:
@@ -40,11 +38,8 @@ class parse:
                     
 
     #Parses variables sales file
-    def vParse(self, folder, vFile):
-        os.chdir(folder)
+    def vParse(self,vFile):
         with open(vFile, newline='', errors="ignore") as csvfile:
-            #nullReader = csv.reader(x.replace('\0', '') for x in csvfile)
-            #vreader = csv.reader(csvfile, quotechar="\"")
             vreader = csv.reader((x.replace('\0', '') for x in csvfile), quotechar="\"")
             for vrow in vreader:
                 if vrow[8].lower() == "SEQUENCE#".lower():
@@ -67,12 +62,11 @@ class parse:
                     self.transactions[vrow[3]].set_cardType(str(vrow[9]))
 
 
-    def parse(self, input_folder, fileList, config_data):
-        os.chdir(input_folder)
+    def parse(self,fileList):
         print(f"Parsing {fileList[0]}, {fileList[1]}, {fileList[2]}")
-        self.hParse(input_folder, fileList[0])
-        self.dParse(input_folder, fileList[1])
-        self.vParse(input_folder, fileList[2])
+        self.hParse(fileList[0])
+        self.dParse(fileList[1])
+        self.vParse(fileList[2])
 
         return self
             
