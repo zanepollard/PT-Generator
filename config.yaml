@@ -5,17 +5,17 @@
 # File paths must not have \\ at the end
 
 #SOFTWARE_VERSION CAN BE EITHER "VB6" OR ".NET"
-SOFTWARE_VERSION: "VB6"
+SOFTWARE_VERSION: ".NET"
 
 
-site_number: "721"
+site_number: "90"
 
 ptOutput: False #CFN PT output
 gasboyOutput: False #Gasboy log printer output
 csvOutput: False #CSV output
-CFNcsv:    True
+CFNcsv:    False
 merchantAg: False #Merchant Agriculture output (EFC)
-VDPOutput: False #Van De Pol specific output
+VDPOutput: True #Van De Pol specific output
 AGTRAX: False
 JCDoyle: False
 FuelMaster: False
@@ -24,11 +24,12 @@ HuntBreshers: False
 #COMPANY LIST. ENABLE THESE FOR COMPANY SPECIFIC OUTPUT MODIFICATIONS
 Downs: False
 Busch: False
-Atlas: True
+Atlas: False
 Dawson: False
 
 #DAILY and ALL options are available for pullMode
 pullMode: "ALL"
+singleFile: False
 
 #!TODO this option is to select specific processors for import
 processors_VB6: ""
@@ -37,21 +38,21 @@ processors_VB6: ""
 # MUST USE DOUBLE BACKSLASHES
 # EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
 input_folders: 
-  - C:\SalesGen\VB6\Generic\input
-output_folder: C:\SalesGen\VB6\Acme\721\Output
+  - C:\SalesGen\.Net\Van De Pol\input
+output_folder: C:\SalesGen\.Net\Van De Pol\output
 
 file_name: # What will be included in the PT file name
   custom: # Allows for custom file name beginning if wanted
     custom_beginning: True
-    text: "Test"
+    text: "VDP_NEWSALESGEN"
   siteid: False
   date:
     include: True
     format: False # Date formatting. True = yymmdd False = mmddyy
     add_day: True # Adds day to date. Only used on Anaheim Truck Depot sites
-  extension: ".csv"
+  extension: ".txt"
 
-USE_SFTP: False
+USE_SFTP: True
 SFTP_Settings:
   Username:
   Password:
