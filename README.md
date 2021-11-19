@@ -12,7 +12,7 @@ Supports the following back office formats:
 * FuelMaster
 
 ## Requirements
-1. Python 3.6 and up.
+1. Python 3.10 and up.
 2. pyYaml
 3. pySFTP
 
