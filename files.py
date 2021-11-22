@@ -63,7 +63,7 @@ def fileFind(folder, config_data, SOFTWARE_VERSION, pullMode, recentDate = None,
                 if re.match(rf'[}}]v\d{{6}}[.][{extension}]1c',file):
                     v.append(f"{folder}/{file}")
         elif(pullMode == "RANGE"):
-            date_list = [recentDate - datetime.timedelta(days=x) for x in range(1, (recentDate-pastDate).days + 1)]
+            date_list = [recentDate - timedelta(days=x) for x in range(1, (recentDate-pastDate).days + 1)]
             for date in date_list:
                 year = str(date.year)[2:4]
                 day = str(date.day)
