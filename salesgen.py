@@ -48,12 +48,14 @@ def main():
             print(f"Software Version: {SOFTWARE_VERSION}")
             match headless:
                 case True:
-                    generateSales(config_data,
-                            SOFTWARE_VERSION,
-                            pullFiles(config_data,pullMode,input_folders,SOFTWARE_VERSION,dateRun,lastRunDate,log_file),
-                            root,
-                            output_folder,
-                            log_file)
+                    fileList = pullFiles(config_data,pullMode,input_folders,SOFTWARE_VERSION,dateRun,lastRunDate,log_file)
+                    if fileList is not None:
+                        generateSales(config_data,
+                                SOFTWARE_VERSION,
+                                fileList,
+                                root,
+                                output_folder,
+                                log_file)
                 case False:
                     pass
             transfer(config_data, output_folder)
@@ -100,9 +102,9 @@ def pullFiles(config_data, pullMode, input_Folders, SOFTWARE_VERSION, dateRun, l
                 files.log_events(log_file,f"{dateRun}:  ERROR: Check pullMode setting in config. Must be set to 'ALL', 'DAILY', or 'RANGE'. Currently set to '{pullMode}'\n")
                 exit(1)
     if(len(fileList) == 0):
-        console.print(f"ERROR: no files found matching date parameters in '{input_folder}'\n")
-        files.log_events(log_file,f"{dateRun}:  ERROR: no files found matching date parameters in '{input_folder}'\n")
-        exit(1)
+        console.print(f"ERROR: Not enough files found matching date parameters in '{input_folder}'\n")
+        files.log_events(log_file,f"{dateRun}:  ERROR: Not enough files found matching date parameters in '{input_folder}'\n")
+        return None
     else:
         return fileList
     
@@ -119,9 +121,9 @@ def generateSales(config_data, SOFTWARE_VERSION, fileList, root, output_folder, 
                 parseObj.parse(file)
 
     if(config_data.get('singleFile')):
-        files.salesOutput_ind(parseObj, config_data, root, output_folder)
+        files.salesOutput_ind(parseObj, config_data, root, output_folder, log_file)
     else:
-        files.salesOutput(parseObj, config_data, root, output_folder)
+        files.salesOutput(parseObj, config_data, root, output_folder, log_file)
 
 
 def transfer(config_data, output_folder):
@@ -129,7 +131,7 @@ def transfer(config_data, output_folder):
         files.backupFiles(output_folder)
         files.transfer_email(output_folder,
                              config_data.get('EMAIL_Settings')['mailServer'],
-                             config_data.get('EMAIL_Settings')['port'],
+                             int(config_data.get('EMAIL_Settings')['mailPort']),
                              config_data.get('EMAIL_Settings')['mailUser'],
                              config_data.get('EMAIL_Settings')['mailPassword'],
                              config_data.get('EMAIL_Settings')['messageSubject'],
