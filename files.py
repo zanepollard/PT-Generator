@@ -35,10 +35,10 @@ def set_lastRun_Date(dateRun, root):
     
 
 def fileFind(folder, config_data, SOFTWARE_VERSION, pullMode, recentDate = None, pastDate = None):
+    
     files = []
     if(SOFTWARE_VERSION == "VB6"):
         extension = f"{'^s' if config_data['processors_VB6']=='' else config_data['processors_VB6']}"
-
         h = []
         d = []
         v = []
@@ -63,23 +63,22 @@ def fileFind(folder, config_data, SOFTWARE_VERSION, pullMode, recentDate = None,
                 if re.match(rf'[}}]v\d{{6}}[.][{extension}]1c',file):
                     v.append(f"{folder}/{file}")
         elif(pullMode == "RANGE"):
-            date_list = [recentDate - timedelta(days=x) for x in range(1, (recentDate-pastDate).days + 1)]
+            date_list = [recentDate - timedelta(days=x) for x in range(0, (recentDate-pastDate).days + 1)]
             for date in date_list:
                 year = str(date.year)[2:4]
                 day = str(date.day)
                 month = str(date.month)
                 for file in os.listdir(folder):
-                    if re.match(rf'[}}]h{year}0?{month}0?{day}[.][^s]1c', file):
+                    if re.match(rf'[}}]h{year}0?{month}0?{day}[.][{extension}]1c', file):
                         h.append(f"{folder}/{file}")
-                    if re.match(rf'[}}]d{year}0?{month}0?{day}[.][^s]1c', file):
+                    if re.match(rf'[}}]d{year}0?{month}0?{day}[.][{extension}]1c', file):
                         d.append(f"{folder}/{file}")
-                    if re.match(rf'[}}]v{year}0?{month}0?{day}[.][^s]1c', file):
+                    if re.match(rf'[}}]v{year}0?{month}0?{day}[.][{extension}]1c', file):
                         v.append(f"{folder}/{file}")
-        if(len(h) == 0):
-            exit()
-        if(((len(h) == len(d) == len(v)) != True)):
-            exit()
-        return [sorted(h),sorted(d),sorted(v)]
+        if (len(h) == len(d) == len(v)): 
+            return [sorted(h),sorted(d),sorted(v)]
+        else:
+            return []
     else:
         if(pullMode == "ALL"):
             for file in os.listdir(folder):
@@ -90,8 +89,9 @@ def fileFind(folder, config_data, SOFTWARE_VERSION, pullMode, recentDate = None,
                 if re.match(rf'TransactionTable{str(recentDate.year)[2:4]}0?{str(recentDate.month)}0?{str(recentDate.day)}[.csv]', file):
                     files.append(f"{folder}\\{file}")
         elif(pullMode == "RANGE"):
-            date_list = [recentDate - timedelta(days=x) for x in range(1, ((recentDate-pastDate).days + 1))]
+            date_list = [recentDate - timedelta(days=x) for x in range(0, ((recentDate-pastDate).days + 1))]
             for date in date_list:
+                print(date)
                 for file in os.listdir(folder):
                     if re.match(rf'TransactionTable{str(date.year)[2:4]}0?{str(date.month)}0?{str(date.day)}[.csv]', file):
                         files.append(f"{folder}\\{file}")
@@ -127,10 +127,12 @@ def salesOutput_ind(parseObj, config_data, root, outputFolder):
             if bool(config_data['CFNcsv']):
                 tranWriter = csv.writer(outputFile, delimiter=',')
                 tranWriter.writerow(parseObj.transactions[key].CFNcsvPrint(config_data))
+            if bool(config_data['VDPOutput']):
+                outputFile.write(parseObj.transactions[key].VDPPrint(config_data))
     os.chdir(root)
 
 
-def salesOutput(parseObj, config_data, root, outputFolder):
+def salesOutput(parseObj, config_data, root, outputFolder, log_file ):
     os.chdir(outputFolder)
     filename = fileName(datetime(int(parseObj.tranDate[0:4]), int(parseObj.tranDate[4:6]), int(parseObj.tranDate[6:8])), config_data)
     with open(filename, "a", newline='') as outputFile:
@@ -209,24 +211,26 @@ def transfer_email(outputFolder, mailServer, port, mailUser, mailPassword, messa
     except Exception:
         print("Could not connect to SMTP server. Check connection or login info.\n")
 
-    msg = EmailMessage()
-    msg['Subject'] = messageSubject
-    msg['From'] = mailUser
-    msg.set_content(messageBody)
-    for file in os.listdir(outputFolder):
-        msg.add_attachment(open(file, 'r').read(), filename=file)
     for recipient in recipients:
+        msg = EmailMessage()
         msg['To'] = recipient
+        msg['Subject'] = messageSubject
+        msg['From'] = mailUser
+        msg.set_content(messageBody)
+        for file in os.listdir(outputFolder):
+            if os.path.isfile(file):
+                msg.add_attachment(open(file, 'r').read(), filename=file)
         messages.append(msg)
     
     for message in messages:
         try:
             server.send_message(message)   
         except Exception:
-            print("Message failed to send\n")
-            return
+            print(f"Message to {message['To']} failed to send\n")
+            
     for file in os.listdir(outputFolder):
-        os.remove(file)
+        if os.path.isfile(file):
+            os.remove(file)
 
 def transfer_SFTP(output_folder, username, password, hostname, keydata):
     key = paramiko.RSAKey(data=decodebytes(bytes(keydata, encoding="ascii")))
