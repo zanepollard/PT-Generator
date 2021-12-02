@@ -264,6 +264,7 @@ class transaction:
         elif(config_data['Atlas']):
             self.set_cardType("PV")
             self.set_siteID(config_data.get('site_number'))
+            self.set_card(format.padAdd('left','0',16,self.card))
             self.set_card(f"{format.padAdd('left','0',6, self.siteID)}{self.card[6:len(self.card)]}")
             p19 = f"{self.card}{'196'}{'001454'}{'0000'}"
             #p19 = "5550123" + "321" + "001234" + "0000"         
