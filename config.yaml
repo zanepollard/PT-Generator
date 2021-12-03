@@ -29,7 +29,7 @@ Dawson: False
 
 #DAILY and ALL options are available for pullMode
 pullMode: "ALL"
-singleFile: False
+individual_files: True
 
 #!TODO this option is to select specific processors for import
 processors_VB6: ""
@@ -44,7 +44,7 @@ output_folder: C:\SalesGen\.Net\Van De Pol\output
 file_name: # What will be included in the PT file name
   custom: # Allows for custom file name beginning if wanted
     custom_beginning: True
-    text: "VDP_NEWSALESGEN"
+    text: "VDP_"
   siteid: False
   date:
     include: True
@@ -52,7 +52,7 @@ file_name: # What will be included in the PT file name
     add_day: True # Adds day to date. Only used on Anaheim Truck Depot sites
   extension: ".txt"
 
-USE_SFTP: True
+USE_SFTP: False
 SFTP_Settings:
   Username:
   Password:
@@ -61,15 +61,15 @@ SFTP_Settings:
 
 USE_EMAIL: False
 EMAIL_Settings:
-  mailServer:
-  mailPort:
-  mailUser:
-  mailPassword:
+  mailServer: smtp.office365.com
+  mailPort: 587
+  mailUser: 
+  mailPassword: 
   messageSubject:
-  messageBody:
+  messageBody: 
   to:
-    -"example@example.com"
-   #-"more in list"
+    - example@example.net
+   #- anotherExample@example.net
 
 
 
