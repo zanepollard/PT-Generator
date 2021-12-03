@@ -195,7 +195,7 @@ class transaction:
 
         return(f"{self.siteID}{self.seqNum}{STATCODE}{self.totalAmount}{ACT}{TRANTYPE}{self.pCode}{self.price}"
                f"{self.quantity}{self.odometer}{OID}{self.pump}{self.tranNum}{self.tranDate}{self.tranTime}"
-               f"{FILL}{self.vehicle}{self.card}{PART_ID}{self.account}{self.vehicleID}{END}'\n'")
+               f"{FILL}{self.vehicle}{self.card}{PART_ID}{self.account}{self.vehicleID}{END}\n")
 
     
     def gasboyPrint(self, config_data):
