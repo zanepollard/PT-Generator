@@ -91,7 +91,6 @@ def fileFind(folder, config_data, SOFTWARE_VERSION, pullMode, recentDate = None,
         elif(pullMode == "RANGE"):
             date_list = [recentDate - timedelta(days=x) for x in range(0, ((recentDate-pastDate).days + 1))]
             for date in date_list:
-                print(date)
                 for file in os.listdir(folder):
                     if re.match(rf'TransactionTable{str(date.year)[2:4]}0?{str(date.month)}0?{str(date.day)}[.csv]', file):
                         files.append(f"{folder}\\{file}")
@@ -119,22 +118,30 @@ def fileName(inputDate, config_data):
     
     return fileName
 
-def salesOutput_ind(parseObj, config_data, root, outputFolder):
+
+def salesOutput_ind(parseObj, config_data, root, outputFolder, log_file):
     os.chdir(outputFolder)
+    fileObjDict = {}
     for key in parseObj.transactions:
-        filename = fileName(datetime(int(parseObj.transactions[key].tranDate[0:4]), int(parseObj.transactions[key].tranDate[4:6]), int(parseObj.transactions[key].tranDate[6:8])), config_data)
-        with open(filename, "a",newline='') as outputFile:
-            if bool(config_data['CFNcsv']):
-                tranWriter = csv.writer(outputFile, delimiter=',')
-                tranWriter.writerow(parseObj.transactions[key].CFNcsvPrint(config_data))
-            if bool(config_data['VDPOutput']):
-                outputFile.write(parseObj.transactions[key].VDPPrint(config_data))
+        transactionDate = parseObj.transactions[key].tranDate
+        if transactionDate not in fileObjDict:
+            fileObjDict[transactionDate] = open(fileName(datetime(int(transactionDate[0:4]), int(transactionDate[4:6]), int(transactionDate[6:8])), config_data), "a")
+        if bool(config_data['CFNcsv']):
+            tranWriter = csv.writer(fileObjDict[transactionDate], delimiter=',')
+            tranWriter.writerow(parseObj.transactions[key].CFNcsvPrint(config_data))
+        if bool(config_data['VDPOutput']):
+            fileObjDict[transactionDate].write(parseObj.transactions[key].VDPPrint(config_data))
+
+    for key in fileObjDict:
+        fileObjDict[key].close()
+
     os.chdir(root)
 
 
-def salesOutput(parseObj, config_data, root, outputFolder, log_file ):
+def salesOutput(parseObj, config_data, root, outputFolder, log_file):
     os.chdir(outputFolder)
     filename = fileName(datetime(int(parseObj.tranDate[0:4]), int(parseObj.tranDate[4:6]), int(parseObj.tranDate[6:8])), config_data)
+    log_events(log_file, "")
     with open(filename, "a", newline='') as outputFile:
         if bool(config_data['VDPOutput']):
             for key in parseObj.transactions:
