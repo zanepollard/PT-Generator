@@ -261,7 +261,7 @@ class transaction:
             else:
                 self.set_siteID(re.sub(r'[a-z_\s-]','', self.siteID, flags=re.IGNORECASE))
             tranType = "N"  
-        elif(config_data['Atlas']):
+        elif(config_data['Acme']):
             self.set_cardType("PV")
             self.set_siteID(config_data.get('site_number'))
             self.set_card(format.padAdd('left','0',16,self.card))

@@ -12,10 +12,10 @@ site_number: "90"
 
 ptOutput: False #CFN PT output
 gasboyOutput: False #Gasboy log printer output
-csvOutput: False #CSV output
+csvOutput: True #CSV output
 CFNcsv:    False
 merchantAg: False #Merchant Agriculture output (EFC)
-VDPOutput: True #Van De Pol specific output
+VDPOutput: False #Van De Pol specific output
 AGTRAX: False
 JCDoyle: False
 FuelMaster: False
@@ -24,7 +24,7 @@ HuntBreshers: False
 #COMPANY LIST. ENABLE THESE FOR COMPANY SPECIFIC OUTPUT MODIFICATIONS
 Downs: False
 Busch: False
-Atlas: False
+Acme: False
 Dawson: False
 
 #DAILY and ALL options are available for pullMode
