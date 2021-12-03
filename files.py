@@ -132,10 +132,8 @@ def salesOutput_individual(parseObj, config_data, root, outputFolder, log_file):
                                           config_data)
             fileObjDict[transactionDate] = open(file_name, "a",newline='')
         writeFile(transaction,fileObjDict[transactionDate],config_data)
-
     for key in fileObjDict:
         fileObjDict[key].close()
-
     os.chdir(root)
 
 
@@ -155,38 +153,29 @@ def salesOutput(parseObj, config_data, root, outputFolder, log_file):
 def writeFile(transaction, file_object, config_data):
     if bool(config_data['VDPOutput']):
         file_object.write(transaction.VDPPrint(config_data))
-        
     elif bool(config_data['AGTRAX']):
         file_object.write(transaction.AGTRAXPrint(config_data))
-
     elif bool(config_data['JCDoyle']):
         header = "TRAN   TY  CUSTOMER     CARD DATE       TIME  P#  GAL    PRICE   TOTAL\n"
-        if os.stat(file_object.fileno()).st_size == 0:
+        if file_object.tell() == 0:
             file_object.write(header)
         file_object.write(transaction.JCDoylePrint(config_data))
-
     elif bool(config_data['ptOutput']):
         file_object.write(transaction.ptPrint(config_data))
-
     elif bool(config_data['gasboyOutput']):
         file_object.write(transaction.gasboyPrint(config_data))                  
-
     elif bool(config_data['csvOutput']):
         header = ['Transaction Date', 'Site', 'Trans #', 'Seq #', 'Auth #', 'Card #', 'Product', 'Prod ID', 
             'Pump', 'Quantity', 'PPG', 'Total','Day', 'Time', 'Card Type']
-
         tranWriter = csv.writer(file_object, delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
         if file_object.tell() == 0:
             tranWriter.writerow(header)
         tranWriter.writerow(transaction.csvPrint(config_data))
-
     elif bool(config_data['merchantAg']):
         file_object.write(transaction.merchantAgPrint(config_data))
-        
     elif bool(config_data['CFNcsv']):
         tranWriter = csv.writer(file_object, delimiter=',')
         file_object.write(transaction.CFNcsvPrint(config_data))
-
     elif bool(config_data['FuelMaster']):
         file_object.write(transaction.FuelMasterPrint(config_data)) 
     
