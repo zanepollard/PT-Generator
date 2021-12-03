@@ -120,8 +120,8 @@ def generateSales(config_data, SOFTWARE_VERSION, fileList, root, output_folder, 
             for file in fileList:
                 parseObj.parse(file)
 
-    if(config_data.get('singleFile')):
-        files.salesOutput_ind(parseObj, config_data, root, output_folder, log_file)
+    if(config_data.get('individual_files')):
+        files.salesOutput_individual(parseObj, config_data, root, output_folder, log_file)
     else:
         files.salesOutput(parseObj, config_data, root, output_folder, log_file)
 
