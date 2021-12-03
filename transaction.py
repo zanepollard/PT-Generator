@@ -12,7 +12,7 @@ class transaction:
         self.quantity = "0.000"
         self.price = "0.00"
         self.odometer = "0"
-        self.pump = "00"
+        self.pump = "0"
         self.tranTime = "1200"
         self.tranDate = "20000101"
         self.authNum = "0"
@@ -209,9 +209,9 @@ class transaction:
             self.set_siteID(format.padAdd("left", " ", 2, format.cutLength("right",2,str(config_data['site_number']))) + " ")
         self.set_tranNum(format.padAdd("left"," ",4,format.cutLength("right",4,self.tranNum)) + " ")
         self.set_card(format.padAdd("left"," ",6,format.cutLength("right",6,self.card)) + " ")
-        self.set_account(format.padAdd("left"," ",5,format.cutLength("right",6,self.account)) + " ")
+        self.set_account(format.padAdd("left"," ",6,format.cutLength("right",6,self.account)) + " ")
         self.set_vehicle(format.padAdd("left"," ",9,format.cutLength("right",9,self.vehicle)) + " ")
-        self.set_tranDate(format.padAdd("left"," ",8,f"{self.tranDate[4:6][0].strip('0')}{self.tranDate[4:6][1]}/{self.tranDate[6:8]}/{self.tranDate[2:4]} "))
+        self.set_tranDate(format.padAdd("left"," ",8,f"{self.tranDate[4:6][0].replace('0',' ')}{self.tranDate[4:6][1]}/{self.tranDate[6:8]}/{self.tranDate[2:4]} "))
         self.set_tranTime(format.padAdd("left"," ",5,f"{self.tranTime[0:2][0].strip('0')}{self.tranTime[0:2][1]}:{self.tranTime[2:4]} "))
         self.set_pump(format.padAdd("left","0",2,self.pump) + " ")
         self.set_pCode(format.padAdd("left","0",2,self.pCode) + " ")
@@ -290,7 +290,7 @@ class transaction:
         self.set_tranDate(f"{self.tranDate[6:8]}{self.tranDate[4:6]}{self.tranDate[0:4]}")
         self.set_vehicle(format.padAdd("left","0",9,self.vehicle))
         self.set_card(format.padAdd("left","0",9,self.card))
-        self.set_account(format.padAdd("left"," ",9,self.account))
+        self.set_account(format.padAdd("left"," ",20,self.account))
         self.set_vehicleID(format.padAdd("left","0",9,self.vehicleID))
         self.set_pName(format.padAdd("right"," ",26,self.pName))
         self.set_cardType(format.mAgCardName(self.cardType))
@@ -298,10 +298,10 @@ class transaction:
         driver = self.card
         if self.account == self.card:
                 driver = "000000000"
-
+        
         return(f"{self.tranNum}{self.tranDate}{self.tranTime}{self.account}{self.pCode}{' '*20}{self.pName}"
                f"{self.quantity}{self.odometer}{self.vehicle}{self.price}{self.totalAmount}{self.totalAmount}{' '*20}"
-               f"{self.siteID}{self.pump}{driver}{' '*53}{self.cardType}{self.account}{self.totalAmount}{' '*52}")
+               f"{self.siteID}{self.pump}{driver}{' '*53}{self.cardType}{self.account}{self.totalAmount}{' '*52}\n")
 
     
     def FuelMasterPrint(self, config_data):
@@ -317,6 +317,8 @@ class transaction:
         if len(self.pCode) == 2:
             self.set_pCode(re.sub(r'0','',self.pCode[0]) + self.pCode[1])
         self.set_pCode(format.padAdd("left"," ",2,self.pCode))
+        if len(self.pump) == 2:
+            self.set_pump(re.sub(r'0',' ',self.pump[0]) + self.pump[1])
         self.set_pump(format.padAdd("left"," ",2,self.pump))
         self.set_quantity(format.padAdd("left","0",9,format.decimalPad(2, self.quantity)))
         self.set_price(format.padAdd("left","0",7,format.decimalPad(4,self.price)))
