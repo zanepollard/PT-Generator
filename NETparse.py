@@ -43,7 +43,7 @@ class parse:
                         try:
                             self.transactions[row[0]].set_cardType(row[6])
                         except Exception:
-                            print(f"Could not find 'cardType' variable for transaction number {row[0]}\n")
+                            print(f"Could not find 'cardType' variable for transaction number {row[0]}")
                         try:
                             if 'cardNumber' not in tD:
                                 if 'ID_CARD_NR' not in tD:
@@ -52,7 +52,7 @@ class parse:
                                     tD['cardNumber'] = tD['ID_CARD_NR']
                             self.transactions[row[0]].set_card(tD['cardNumber'])
                         except Exception:
-                            print(f"Could not find 'cardNumber' variable for transaction number {row[0]}\n") 
+                            print(f"Could not find 'cardNumber' variable for transaction number {row[0]}") 
                         try:
                             if 'id_accountNumber' not in tD:
                                 if 'lastFour' not in tD:
@@ -61,11 +61,11 @@ class parse:
                                     tD['id_accountNumber'] = tD['lastFour']
                             self.transactions[row[0]].set_account(tD['id_accountNumber'])
                         except Exception:
-                            print(f"Could not find 'id_accountNumber' variable for transaction number {row[0]}\n")
+                            print(f"Could not find 'id_accountNumber' variable for transaction number {row[0]}")
                         try:
                             self.transactions[row[0]].set_siteID(tD['siteid'])
                         except Exception:
-                            print(f"Could not find 'siteid' variable for transaction number {row[0]}\n")
+                            print(f"Could not find 'siteid' variable for transaction number {row[0]}")
                     case "Product":
                         self.transactions[row[0]].set_productDict(tempDict)
                         pD = tempDict
