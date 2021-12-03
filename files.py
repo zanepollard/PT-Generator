@@ -122,15 +122,16 @@ def fileName(inputDate, config_data):
 def salesOutput_individual(parseObj, config_data, root, outputFolder, log_file):
     os.chdir(outputFolder)
     fileObjDict = {}
-    for key in parseObj.transactions:
-        transactionDate = parseObj.transactions[key].tranDate
+    sorted_transactions = sorted(parseObj.transactions.values(), key=lambda x: (x.tranDate,x.tranTime))
+    for transaction in sorted_transactions:
+        transactionDate = transaction.tranDate
         if transactionDate not in fileObjDict:
             file_name = fileName(datetime(int(transactionDate[0:4]), 
                                           int(transactionDate[4:6]), 
                                           int(transactionDate[6:8])), 
                                           config_data)
-            fileObjDict[transactionDate] = open(file_name, "a")
-        writeFile(parseObj.transactions[key],fileObjDict[transactionDate],config_data)
+            fileObjDict[transactionDate] = open(file_name, "a",newline='')
+        writeFile(transaction,fileObjDict[transactionDate],config_data)
 
     for key in fileObjDict:
         fileObjDict[key].close()
@@ -140,13 +141,14 @@ def salesOutput_individual(parseObj, config_data, root, outputFolder, log_file):
 
 def salesOutput(parseObj, config_data, root, outputFolder, log_file):
     os.chdir(outputFolder)
+    sorted_transactions = sorted(parseObj.transactions.values(), key=lambda x: (x.tranDate,x.tranTime))
     filename = fileName(datetime(int(parseObj.tranDate[0:4]), 
                                  int(parseObj.tranDate[4:6]), 
                                  int(parseObj.tranDate[6:8])), 
                                  config_data)
     with open(filename, "a", newline='') as outputFile:
-        for key in parseObj.transactions:
-            writeFile(parseObj.transactions[key], outputFile, config_data) 
+        for transaction in sorted_transactions:
+            outputFile = writeFile(transaction, outputFile, config_data) 
     os.chdir(root)
 
 
@@ -174,9 +176,9 @@ def writeFile(transaction, file_object, config_data):
             'Pump', 'Quantity', 'PPG', 'Total','Day', 'Time', 'Card Type']
 
         tranWriter = csv.writer(file_object, delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
-        if os.stat(file_object.fileno()).st_size == 0:
+        if file_object.tell() == 0:
             tranWriter.writerow(header)
-        file_object.write(transaction.csvPrint(config_data))
+        tranWriter.writerow(transaction.csvPrint(config_data))
 
     elif bool(config_data['merchantAg']):
         file_object.write(transaction.merchantAgPrint(config_data))
@@ -187,6 +189,8 @@ def writeFile(transaction, file_object, config_data):
 
     elif bool(config_data['FuelMaster']):
         file_object.write(transaction.FuelMasterPrint(config_data)) 
+    
+    return file_object
 
 
 def backupFiles(folder):
