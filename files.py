@@ -119,18 +119,18 @@ def fileName(inputDate, config_data):
     return fileName
 
 
-def salesOutput_ind(parseObj, config_data, root, outputFolder, log_file):
+def salesOutput_individual(parseObj, config_data, root, outputFolder, log_file):
     os.chdir(outputFolder)
     fileObjDict = {}
     for key in parseObj.transactions:
         transactionDate = parseObj.transactions[key].tranDate
         if transactionDate not in fileObjDict:
-            fileObjDict[transactionDate] = open(fileName(datetime(int(transactionDate[0:4]), int(transactionDate[4:6]), int(transactionDate[6:8])), config_data), "a")
-        if bool(config_data['CFNcsv']):
-            tranWriter = csv.writer(fileObjDict[transactionDate], delimiter=',')
-            tranWriter.writerow(parseObj.transactions[key].CFNcsvPrint(config_data))
-        if bool(config_data['VDPOutput']):
-            fileObjDict[transactionDate].write(parseObj.transactions[key].VDPPrint(config_data))
+            file_name = fileName(datetime(int(transactionDate[0:4]), 
+                                          int(transactionDate[4:6]), 
+                                          int(transactionDate[6:8])), 
+                                          config_data)
+            fileObjDict[transactionDate] = open(file_name, "a")
+        writeFile(parseObj.transactions[key],fileObjDict[transactionDate],config_data)
 
     for key in fileObjDict:
         fileObjDict[key].close()
@@ -140,55 +140,53 @@ def salesOutput_ind(parseObj, config_data, root, outputFolder, log_file):
 
 def salesOutput(parseObj, config_data, root, outputFolder, log_file):
     os.chdir(outputFolder)
-    filename = fileName(datetime(int(parseObj.tranDate[0:4]), int(parseObj.tranDate[4:6]), int(parseObj.tranDate[6:8])), config_data)
-    log_events(log_file, "")
+    filename = fileName(datetime(int(parseObj.tranDate[0:4]), 
+                                 int(parseObj.tranDate[4:6]), 
+                                 int(parseObj.tranDate[6:8])), 
+                                 config_data)
     with open(filename, "a", newline='') as outputFile:
-        if bool(config_data['VDPOutput']):
-            for key in parseObj.transactions:
-                outputFile.write(parseObj.transactions[key].VDPPrint(config_data))
-            
-        elif bool(config_data['AGTRAX']):
-            for key in parseObj.transactions:
-                outputFile.write(parseObj.transactions[key].AGTRAXPrint(config_data))
-
-        elif bool(config_data['JCDoyle']):
-            header = True
-            if os.path.isfile(filename):
-                header = False
-            if header:
-                outputFile.write("TRAN   TY  CUSTOMER     CARD DATE       TIME  P#  GAL    PRICE   TOTAL\n")
-            for key in parseObj.transactions:
-                outputFile.write(parseObj.transactions[key].JCDoylePrint(config_data))
-
-        elif bool(config_data['ptOutput']):
-            for key in parseObj.transactions:
-                outputFile.write(parseObj.transactions[key].ptPrint(config_data))
-
-        elif bool(config_data['gasboyOutput']):
-            for key in parseObj.transactions:
-                outputFile.write(parseObj.transactions[key].gasboyPrint(config_data))                  
-
-        elif bool(config_data['csvOutput']):
-            header = ['Transaction Date', 'Site', 'Trans #', 'Seq #', 'Auth #', 'Card #', 'Product', 'Prod ID', 
-                'Pump', 'Quantity', 'PPG', 'Total','Day', 'Time', 'Card Type']
-
-            tranWriter = csv.writer(outputFile, delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
-            tranWriter.writerow(header)
-            for key in parseObj.transactions:
-                tranWriter.writerow(parseObj.transactions[key].csvPrint(config_data))
-
-        elif bool(config_data['merchantAg']):
-            for key in parseObj.transactions:
-                outputFile.write(parseObj.transactions[key].merchantAgPrint(config_data))
-            
-        elif bool(config_data['CFNcsv']):
-            tranWriter = csv.writer(outputFile, delimiter=',')
-            for key in parseObj.transactions:
-                tranWriter.writerow(parseObj.transactions[key].CFNcsvPrint(config_data))
-        elif bool(config_data['FuelMaster']):
-            for key in parseObj.transactions:
-                outputFile.write(parseObj.transactions[key].FuelMasterPrint(config_data))  
+        for key in parseObj.transactions:
+            writeFile(parseObj.transactions[key], outputFile, config_data) 
     os.chdir(root)
+
+
+def writeFile(transaction, file_object, config_data):
+    if bool(config_data['VDPOutput']):
+        file_object.write(transaction.VDPPrint(config_data))
+        
+    elif bool(config_data['AGTRAX']):
+        file_object.write(transaction.AGTRAXPrint(config_data))
+
+    elif bool(config_data['JCDoyle']):
+        header = "TRAN   TY  CUSTOMER     CARD DATE       TIME  P#  GAL    PRICE   TOTAL\n"
+        if os.stat(file_object.fileno()).st_size == 0:
+            file_object.write(header)
+        file_object.write(transaction.JCDoylePrint(config_data))
+
+    elif bool(config_data['ptOutput']):
+        file_object.write(transaction.ptPrint(config_data))
+
+    elif bool(config_data['gasboyOutput']):
+        file_object.write(transaction.gasboyPrint(config_data))                  
+
+    elif bool(config_data['csvOutput']):
+        header = ['Transaction Date', 'Site', 'Trans #', 'Seq #', 'Auth #', 'Card #', 'Product', 'Prod ID', 
+            'Pump', 'Quantity', 'PPG', 'Total','Day', 'Time', 'Card Type']
+
+        tranWriter = csv.writer(file_object, delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
+        if os.stat(file_object.fileno()).st_size == 0:
+            tranWriter.writerow(header)
+        file_object.write(transaction.csvPrint(config_data))
+
+    elif bool(config_data['merchantAg']):
+        file_object.write(transaction.merchantAgPrint(config_data))
+        
+    elif bool(config_data['CFNcsv']):
+        tranWriter = csv.writer(file_object, delimiter=',')
+        file_object.write(transaction.CFNcsvPrint(config_data))
+
+    elif bool(config_data['FuelMaster']):
+        file_object.write(transaction.FuelMasterPrint(config_data)) 
 
 
 def backupFiles(folder):
