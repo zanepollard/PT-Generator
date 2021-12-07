@@ -39,9 +39,7 @@ def fileFind(folder, config_data, SOFTWARE_VERSION, pullMode, recentDate = None,
     files = []
     if(SOFTWARE_VERSION == "VB6"):
         extension = f"{'^s' if config_data['processors_VB6']=='' else config_data['processors_VB6']}"
-        h = []
-        d = []
-        v = []
+        h,d,v = [],[],[]
         
         if(pullMode == "DAILY"):
             year = str(recentDate.year)[2:4]
@@ -63,6 +61,7 @@ def fileFind(folder, config_data, SOFTWARE_VERSION, pullMode, recentDate = None,
                 if re.match(rf'[}}]v\d{{6}}[.][{extension}]1c',file):
                     v.append(f"{folder}/{file}")
         elif(pullMode == "RANGE"):
+            
             date_list = [recentDate - timedelta(days=x) for x in range(0, (recentDate-pastDate).days + 1)]
             for date in date_list:
                 year = str(date.year)[2:4]
@@ -88,8 +87,8 @@ def fileFind(folder, config_data, SOFTWARE_VERSION, pullMode, recentDate = None,
             for file in os.listdir(folder):
                 if re.match(rf'TransactionTable{str(recentDate.year)[2:4]}0?{str(recentDate.month)}0?{str(recentDate.day)}[.csv]', file):
                     files.append(f"{folder}\\{file}")
-        elif(pullMode == "RANGE"):
-            date_list = [recentDate - timedelta(days=x) for x in range(0, ((recentDate-pastDate).days + 1))]
+        elif(pullMode == "RANGE"):  
+            date_list = [recentDate - timedelta(days=x) for x in range(0, (recentDate-pastDate).days + 1)]
             for date in date_list:
                 for file in os.listdir(folder):
                     if re.match(rf'TransactionTable{str(date.year)[2:4]}0?{str(date.month)}0?{str(date.day)}[.csv]', file):
