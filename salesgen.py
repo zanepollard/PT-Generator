@@ -52,7 +52,7 @@ def main():
             print(f"Software Version: {SOFTWARE_VERSION}")
             match headless:
                 case True:
-                    fileList = pullFiles(config_data,pullMode,input_folders,SOFTWARE_VERSION,dateRun,lastRunDate,log_file)      
+                    fileList = pullFiles(config_data,pullMode,input_folders,SOFTWARE_VERSION,log_file,dateRun,lastRunDate)      
                     files.set_lastRun_Date(dateRun, root)
                 case False:
                     fileList = userControl(config_data,input_folders,SOFTWARE_VERSION,log_file)
@@ -65,9 +65,11 @@ def main():
                         log_file)
                 if headless:
                     transfer(config_data,output_folder,log_file,dateRun)
-                Prompt.ask(f"Files output to {output_folder}. Press ENTER to continue...", console=console)
+                else:
+                    Prompt.ask(f"Files output to {output_folder}. Press ENTER to continue...", console=console)
             else:
-                Prompt.ask(f"Exiting. Press ENTER to continue...", console=console)
+                if headless:
+                    Prompt.ask(f"Exiting. Press ENTER to continue...", console=console)
             
         case _:
             print(f"Please check config. Software version set to {SOFTWARE_VERSION}, should be either '.NET' or 'VB6'")
