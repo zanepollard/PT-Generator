@@ -177,7 +177,9 @@ def writeFile(transaction, file_object, config_data):
         file_object.write(transaction.CFNcsvPrint(config_data))
     elif bool(config_data['FuelMaster']):
         file_object.write(transaction.FuelMasterPrint(config_data)) 
-    
+    elif bool(config_data['HuntBreshers']):
+        tranWriter = csv.writer(file_object, delimiter=',')
+        tranWriter.writerow(transaction.HuntBreshersPrint(config_data))
     return file_object
 
 

@@ -334,6 +334,23 @@ class transaction:
             self.set_siteID(re.sub(r'[a-z_\s-]','', self.siteID, flags=re.IGNORECASE))
         else:
             self.set_siteID(config_data['site_number'])
-        #self.set_siteID()
+        self.set_siteID(format.padAdd("left","0",8,self.siteID))
+        match self.cardType:
+            case ("VF"):
+                self.set_cardType("VY")
+            case ("CCID"):
+                self.set_cardType("CC")
+        #self.set_cardType
+        self.set_card(format.padAdd("left","X",20,self.card))
+        self.set_tranDate(f"{self.tranDate[4:6]}-{self.tranDate[6:8]}-{self.tranDate[0:4]}")
+        self.set_tranTime(f"{self.tranTime[0:2]}:{self.tranTime[2:4]}:00")
+        self.set_tranNum(format.padAdd("left","0",4,format.cutLength("right",4,self.tranNum)))
+        self.set_pDesc(format.cutLength("Right",30,self.pDesc))
+        self.set_quantity(format.decimalPad(3,self.quantity))
+        self.set_price(format.decimalPad(4,self.price))
+        self.set_totalAmount(f"${format.decimalPad(2,self.totalAmount)}")
+
+        return [self.siteID,self.cardType,self.card,self.tranDate,self.tranTime,
+                self.pCode,self.pDesc,self.quantity,self.price,self.totalAmount]
 
 
