@@ -2,21 +2,37 @@
                   ##README##
                   ##########
 # True and False values MUST be capitalized
-# File paths must not have \\ at the end
+# All option settings are CASE SENSITIVE. EX 'VB6' not 'vb6' or 'Vb6'
+
+#To install this software to run automatically on the controller, follow below:
+#   1.  Create a 'salesgen' folder on the C: drive
+#   2.  Copy the executable and .yaml config file to the salesgen folder
+#   3.  Configure the .yaml document to the necessary specs
+#   4.  Open Windows Task Scheduler
+#   5.  On the right side of Task Scheduler, click 'Create Basic Task'
+#   6.  For name enter in salesgen
+#   7.  For task trigger select 'Daily'
+#   8.  Set the start time to 1am and have it recur daily
+#   9.  Select 'Start a Program'
+#   10. Select the salesgen .exe for 'Program/script'
+#   11. Enter '-h' in 'Add arguments'
+#   12. Enter the path to the salesgen folder for 'Start in'
+#   13. Press 'Finish'
+
 
 #SOFTWARE_VERSION CAN BE EITHER "VB6" OR ".NET"
 SOFTWARE_VERSION: ".NET"
 
-
-site_number: "90"
+#Site ID/Site number override
+site_number: ""
 
 ptOutput: False #CFN PT output
 gasboyOutput: False #Gasboy log printer output
-csvOutput: True #CSV output
-CFNcsv:    False
+csvOutput: False #CSV output
+CFNcsv:    False 
 merchantAg: False #Merchant Agriculture output (EFC)
 VDPOutput: False #Van De Pol specific output
-AGTRAX: False
+AGTRAX: True
 JCDoyle: False
 FuelMaster: False
 HuntBreshers: False
@@ -28,24 +44,30 @@ Acme: False
 Dawson: False
 
 #DAILY and ALL options are available for pullMode
-pullMode: "ALL"
-individual_files: True
+pullMode: "DAILY"
 
-#!TODO this option is to select specific processors for import
+#Outputs multiple files based on date and time.
+#This requires the date to be in the file name
+individual_files: False
+
+#Selects specific VB6 sales files. 
+#EX: .p1c = 'p', .d1c = 'd', or for both 'pd'
 processors_VB6: ""
 
-# Path where PT file will get output
-# MUST USE DOUBLE BACKSLASHES
-# EX: "C:\\ICS\\YOUR FOLDER HERE\\ANOTHER FOLDER"
+#Input and output folder paths. There can be multiple input locations if you'd like.
 input_folders: 
   - C:\SalesGen\.Net\Van De Pol\input
 output_folder: C:\SalesGen\.Net\Van De Pol\output
 
-file_name: # What will be included in the PT file name
-  custom: # Allows for custom file name beginning if wanted
+# What will be included in the PT file name
+file_name: 
+  #Sets the beginning of the file
+  custom: 
     custom_beginning: True
-    text: "VDP_"
+    text: "Test"
+  #Adds the site id to the file name. Pulls from the file or the site_number override
   siteid: False
+  #Filename date options
   date:
     include: True
     format: False # Date formatting. True = yymmdd False = mmddyy
@@ -57,7 +79,8 @@ SFTP_Settings:
   Username:
   Password:
   HostName:
-  KeyData:
+  #SSH key goes here. Required in order to cleanly connect with this implementation
+  KeyData: 
 
 USE_EMAIL: False
 EMAIL_Settings:
