@@ -253,6 +253,8 @@ class transaction:
         if(len(str(self.tranNum))>4):
             self.set_tranNum(self.tranNum[len(self.tranNum)-4:len(self.tranNum)])
 
+        tranType = "T"
+
         if(config_data['Downs']):
             self.set_card(f"000{self.card[len(self.card)-4:len(self.card)]}")
             p19 = f"{self.card}{'0'*13}"
@@ -340,6 +342,8 @@ class transaction:
                 self.set_cardType("VY")
             case ("CCID"):
                 self.set_cardType("CC")
+            case ("Credit"):
+                self.set_cardType("CR")
         #self.set_cardType
         self.set_card(format.padAdd("left","X",20,self.card))
         self.set_tranDate(f"{self.tranDate[4:6]}-{self.tranDate[6:8]}-{self.tranDate[0:4]}")
