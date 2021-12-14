@@ -223,6 +223,21 @@ def transfer(config_data, output_folder,log_file,dateRun):
         except Exception:
             files.log_events(log_file,f"{dateRun}:  ERROR: SFTP transfer failed. Please verify configuration.\n")   
 
+    if(config_data.get('USE_FTP')):
+        for key in config_data['FTP_Settings']:
+            if config_data['FTP_Settings'][key] == None:
+                files.log_events(log_file,f"{dateRun}:  ERROR: Please verify FTP configuration. Required settings are missing.\n")
+                break
+        files.backupFiles(output_folder)
+        try:
+            files.transfer_FTP(output_folder,
+                               config_data.get('FTP_Settings')['Username'],
+                               config_data.get('FTP_Settings')['Password'],
+                               config_data.get('FTP_Settings')['HostName'],
+                               config_data.get('FTP_Settings')['USE_TLS'],
+                               config_data.get('FTP_Settings')['Destination'])
+        except Exception as e:
+            print(e)
 
 if __name__ == "__main__":
     main()

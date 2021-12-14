@@ -24,15 +24,15 @@
 SOFTWARE_VERSION: ".NET"
 
 #Site ID/Site number override
-site_number: ""
+site_number: "1234"
 
 ptOutput: False #CFN PT output
 gasboyOutput: False #Gasboy log printer output
-csvOutput: False #CSV output
-CFNcsv:    False 
+csvOutput: True #CSV output
+CFNcsv:    False
 merchantAg: False #Merchant Agriculture output (EFC)
 VDPOutput: False #Van De Pol specific output
-AGTRAX: True
+AGTRAX: False
 JCDoyle: False
 FuelMaster: False
 HuntBreshers: False
@@ -44,11 +44,11 @@ Acme: False
 Dawson: False
 
 #DAILY and ALL options are available for pullMode
-pullMode: "DAILY"
+pullMode: "ALL"
 
 #Outputs multiple files based on date and time.
 #This requires the date to be in the file name
-individual_files: False
+individual_files: True
 
 #Selects specific VB6 sales files. 
 #EX: .p1c = 'p', .d1c = 'd', or for both 'pd'
@@ -56,8 +56,8 @@ processors_VB6: ""
 
 #Input and output folder paths. There can be multiple input locations if you'd like.
 input_folders: 
-  - C:\SalesGen\.Net\Van De Pol\input
-output_folder: C:\SalesGen\.Net\Van De Pol\output
+  - 
+output_folder: 
 
 # What will be included in the PT file name
 file_name: 
@@ -72,7 +72,15 @@ file_name:
     include: True
     format: False # Date formatting. True = yymmdd False = mmddyy
     add_day: True # Adds day to date. Only used on Anaheim Truck Depot sites
-  extension: ".txt"
+  extension: ".csv"
+
+USE_FTP: True
+FTP_Settings:
+  Username: 
+  Password: 
+  HostName: 
+  Destination: /example
+  USE_TLS: False
 
 USE_SFTP: False
 SFTP_Settings:

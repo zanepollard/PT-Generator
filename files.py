@@ -6,6 +6,7 @@ import re
 import csv
 from datetime import datetime
 from datetime import timedelta
+import ftplib
 import smtplib
 import pysftp
 import paramiko
@@ -110,7 +111,7 @@ def fileName(inputDate, config_data):
 
         dateString = f"{str(year)+str(month)+str(day) if config_data.get('file_name')['date']['format']==True else str(month)+str(day)+str(year)}"
 
-    fileName = (f"{config_data.get('file_name')['custom']['text']+'_' if config_data.get('file_name')['custom']['custom_beginning'] == True else ''}"
+    fileName = (f"{config_data.get('file_name')['custom']['text'] if config_data.get('file_name')['custom']['custom_beginning'] == True else ''}"
                 f"{config_data.get('site_number')+'_' if config_data.get('file_name')['siteid'] == True else ''}"
                 f"{dateString}"
                 f"{config_data.get('file_name')['extension']}")
@@ -174,7 +175,7 @@ def writeFile(transaction, file_object, config_data):
         file_object.write(transaction.merchantAgPrint(config_data))
     elif bool(config_data['CFNcsv']):
         tranWriter = csv.writer(file_object, delimiter=',')
-        file_object.write(transaction.CFNcsvPrint(config_data))
+        tranWriter.writerow(transaction.CFNcsvPrint(config_data))
     elif bool(config_data['FuelMaster']):
         file_object.write(transaction.FuelMasterPrint(config_data)) 
     elif bool(config_data['HuntBreshers']):
@@ -251,7 +252,31 @@ def transfer_SFTP(output_folder, username, password, hostname, keydata):
                     print("OSError")
                 else:
                     os.remove(file) #and now we delete the local file since we succeeded. 
+
+def transfer_FTP(output_folder, username, password, hostname, tls, destination=None):
+    if tls:
+        ftp_session = ftplib.FTP_TLS(hostname)
+    else:
+        ftp_session = ftplib.FTP(hostname)
     
+    ftp_session.login(username,password)
+    if tls:
+        ftp_session.prot_p()
+    if destination is not None:
+        ftp_session.cwd(destination)   
+    for item in os.listdir(output_folder):
+        success = True
+        if os.path.isfile(item):
+            with open(item, 'rb') as file:
+                try:
+                    ftp_session.storbinary(f"STOR {item}",file)
+                except Exception as e:
+                    print(f"Transfer of file '{item}' failed, {e}")
+                    success = False
+            if success:
+                os.remove(item)
+    ftp_session.quit()
+
     
     
     
